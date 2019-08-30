@@ -1,13 +1,5 @@
 package pl.lukasz.culer.ui
 
-import org.graalvm.compiler.debug.DebugOptions.Count
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Add
-import org.graalvm.compiler.debug.DebugOptions.Count
-
-
-
-
-
 
 fun main(args: Array<String>) {
     println("Hello World!")
@@ -84,7 +76,7 @@ class LineLauncher(private val args: Array<String>) {
     }
 
     private fun handleSettings(inputParams: InputParams, settingsFile: List<String>) {
-        if (settingsFile.isNotEmpty()) inputParams.outputDict = settingsFile[0]
+        if (settingsFile.isNotEmpty()) inputParams.settingsFile = settingsFile[0]
     }
 
     private fun handleParameter(inputParams: InputParams, params: List<String>) {
@@ -103,7 +95,7 @@ class LineLauncher(private val args: Array<String>) {
 
     private fun isCommand(cmd: String) = cmd.length > 1 && cmd[0] == '-'
 
-    private fun argToCommand(arg: String) = arg.subSequence(1, arg.lastIndex).toString()
+    private fun argToCommand(arg: String) = arg.subSequence(1, arg.length).toString()
 }
 
 data class InputParams(var inputSet : String = "",
