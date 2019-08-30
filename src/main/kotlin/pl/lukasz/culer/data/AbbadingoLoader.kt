@@ -39,7 +39,7 @@ class AbbadingoLoader {
                     if(exampleSegments.size < 2) return returnWithError(ABBADINGO_INVALID_EXAMPLE.format(i, filePath), testSet)
 
                     val membershipValue = exampleSegments[0].toDoubleOrNull() ?: return returnWithError(ABBADINGO_INVALID_EXAMPLE.format(i, filePath), testSet)
-                    val sequence = exampleSegments.subList(1, exampleSegments.size).joinToString().toLowerCase()
+                    val sequence = exampleSegments.subList(2, exampleSegments.size).joinToString("").toLowerCase()
                     testSet.add(TestExample(sequence, IntervalFuzzyNumber(membershipValue)))
                 }
                 reader.close()

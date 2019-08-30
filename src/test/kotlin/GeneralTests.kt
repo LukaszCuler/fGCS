@@ -2,10 +2,13 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
+import pl.lukasz.culer.data.AbbadingoLoader
+import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.ui.LineLauncher
 
 @RunWith(MockitoJUnitRunner::class)
 class GeneralTests {
+
         @Test
         fun lineLauncherTest(){
             val INPUT_FILE = "input.txt"
@@ -29,4 +32,26 @@ class GeneralTests {
             Assert.assertEquals(PARAM_NAME, inputParams.paramPairs[0].first)
             Assert.assertEquals(PARAM_VALUE, inputParams.paramPairs[0].second)
         }
+
+    @Test
+    fun abbadingoLoaderTest(){
+        val loadAbbadingoTestSet = AbbadingoLoader.loadAbbadingoTestSet(AbbadingoLoader.L1)
+        Assert.assertEquals(loadAbbadingoTestSet.size, 16)
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("a")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaaaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaaaaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaaaaaa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("b")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("ab")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("ba")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("bb")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("baa")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aab")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("aaaaaaab")))
+        Assert.assertTrue(loadAbbadingoTestSet.contains(TestExample("abaaaaaa")))
+    }
 }
