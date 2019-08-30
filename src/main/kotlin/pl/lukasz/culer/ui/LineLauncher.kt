@@ -1,5 +1,9 @@
 package pl.lukasz.culer.ui
 
+import pl.lukasz.culer.fgcs.InputParams
+import pl.lukasz.culer.utils.LINE_LAUNCHER_LOADED
+import pl.lukasz.culer.utils.Logger
+
 
 fun main(args: Array<String>) {
     println("Hello World!")
@@ -21,12 +25,15 @@ const val SETTINGS = "s"
 const val PARAMETER = "p"
 const val TIMEOUT = "tout"
 
+const val TAG = "LineLauncher"
+
 class LineLauncher(private val args: Array<String>) {
 
     fun getInputParams() : InputParams {
         val commandsFromArgs = getCommandsFromArgs(args)
         val inputParams = InputParams()
         commandsFromArgs.forEach { dispatchCommand(inputParams, it) }
+        Logger.instance.i(TAG, LINE_LAUNCHER_LOADED.format(inputParams.toString()))
         return inputParams
     }
 
@@ -97,13 +104,6 @@ class LineLauncher(private val args: Array<String>) {
 
     private fun argToCommand(arg: String) = arg.subSequence(1, arg.length).toString()
 }
-
-data class InputParams(var inputSet : String = "",
-                       var testSet : String? = null,
-                       var outputDict : String = "",
-                       var settingsFile : String? = null,
-                       var paramPairs : MutableList<Pair<String, String>> = mutableListOf(),
-                       var timeout : Int? = null)
 
 private data class LineCommand(val command : String,
                                val values : MutableList<String> = mutableListOf())

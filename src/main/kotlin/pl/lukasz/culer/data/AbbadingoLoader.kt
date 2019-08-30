@@ -3,6 +3,7 @@ package pl.lukasz.culer.data
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.ABBADINGO_INVALID_EXAMPLE
 import pl.lukasz.culer.utils.ABBADINGO_INVALID_HEADER
+import pl.lukasz.culer.utils.ABBADINGO_LOADING_DATA
 import pl.lukasz.culer.utils.Logger
 import java.io.BufferedReader
 import java.io.FileReader
@@ -21,6 +22,7 @@ class AbbadingoLoader {
 
 
         fun loadAbbadingoTestSet(filePath : String) : List<TestExample> {
+            Logger.instance.d(TAG, ABBADINGO_LOADING_DATA.format(filePath))
             val reader: BufferedReader
             try {
                 reader = BufferedReader(FileReader(filePath))
