@@ -60,7 +60,7 @@ class LearningSandbox(private val params : InputParams) {
 
     fun verify(){
         //verification time!
-        val set = testSet ?: inputSet
+        val set = testSet ?: inputSet   //we use input set 
 
     }
 }
