@@ -1,11 +1,12 @@
 package pl.lukasz.culer.fgcs.models.rules
 
+import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.Symbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 abstract class Rule (
-    val left : Symbol,
-    val right : Array<Symbol>,
+    val left : NSymbol,
+    val right : Array<out Symbol>,
     var membership : IntervalFuzzyNumber
     ){
     //temporary properties
