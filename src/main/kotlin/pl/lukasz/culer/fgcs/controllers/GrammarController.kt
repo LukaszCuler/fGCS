@@ -60,6 +60,10 @@ class GrammarController {
             }
             .filterNotNull()
             .toSet())
+
+        //now let's take a look at temporary variables
+        createTemporaryVariables()
+        fillTemporaryVariables()
     }
 
     private fun createTemporaryVariables(){
@@ -78,22 +82,86 @@ class GrammarController {
 
     private fun fillTemporaryVariables(){
         grammar.nRules.forEach {
-            //grammar.nRulesMap[it.left][it.getRightFirst()][it.getRightSecond()]
+            grammar.nRulesMap[it.left]?.get(it.getRightFirst())?.set(it.getRightSecond(), it)
         }
     }
 
     //cleaning stuff
     private fun removeUnreachableAndUnproductiveRules(){
+        //first we have to deal witch achievability
 
+        val achievableRules : MutableSet<NRule> = mutableSetOf()
+        //symbols first
+        val achievableSymbols = mutableSetOf(grammar.starSymbol)
+        var recentlyAdded = mutableSetOf(grammar.starSymbol)
+        while (recentlyAdded.isNotEmpty()){
+            recentlyAdded = recentlyAdded
+                .flatMap { rulesWithLeft(it) }
+                .map {
+                    achievableRules.add(it)
+                    it
+                }
+                .flatMap { setOf(it.getRightFirst(), it.getRightSecond()) }
+                .filter { !achievableSymbols.contains(it) }
+                .toMutableSet()
+            achievableSymbols.addAll(recentlyAdded)
+        }
+
+        //now we remove unachievable rules
+        grammar.nRules
+            .filter { !achievableRules.contains(it) }
+            .forEach { removeNRule(it) }
+
+        //then productivity
+        val productiveSymbols : MutableSet<NSymbol> = mutableSetOf()
+        productiveSymbols.addAll(grammar.tRules.map { it.left })
+
+        //@TODO
     }
 
     private fun removeUnusedSymbols(){
+        //on start, all symbols are unused
+        val unusedSymbols : MutableSet<NSymbol> = mutableSetOf()
+        unusedSymbols.addAll(grammar.nSymbols)
+
+        //then we iterate through rules and remove used ones
+        unusedSymbols.removeAll(
+            grammar.tRules
+                .map { it.left }
+                .toSet())
+
+        unusedSymbols.removeAll(
+            grammar.nRules
+                .flatMap { listOf(it.left, it.getRightFirst(), it.getRightSecond()) }
+                .toSet())
+
+        //it's time to say goodbye
+        unusedSymbols.forEach { removeNSymbol(it) }
+    }
+
+    //set manipulation methods
+
+    private fun addNRule(rule : NRule) {
+
+    }
+
+    private fun removeNRule(rule : NRule){
+
+    }
+
+    private fun addNSymbol(symbol : NSymbol) {
+
+    }
+
+    private fun removeNSymbol(symbol : NSymbol){
 
     }
 
     //helper symbols functions
-    private fun getNRuleBySymbols() : NRule?{
-        return null
+    private fun rulesWithLeft(left : NSymbol) : MutableSet<NRule> {
+        return grammar.nRules
+            .filter { it.left == left }
+            .toMutableSet()
     }
 
     private fun setStartSymbol(newStartSymbol : NSymbol) {
