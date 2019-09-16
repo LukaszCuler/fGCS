@@ -26,6 +26,7 @@ class GrammarController {
     //simply loading grammar
     constructor(grammar: Grammar){
         this.grammar = grammar
+        updateSymbolReferences()
     }
     /** endregion **/
 
@@ -36,6 +37,8 @@ class GrammarController {
     /** region private methods **/
     //constructing grammar
     private fun createGrammarFromData(){
+        grammar = Grammar() //newborn
+
         //obtaining list of terminal chars
         grammar.tSymbols.addAll(
             learningData
@@ -60,6 +63,32 @@ class GrammarController {
             }
             .filterNotNull()
             .toSet())
+    }
+
+    private fun updateSymbolReferences(){
+        //should be probably done in deserializer...
+        //processing terminal rules
+        val newTRules : MutableSet<TRule> = mutableSetOf()
+        for(trule in grammar.tRules){
+            val validLeft = findNSymbolByChar(trule.left.symbol)
+            val validRight = findTSymbolByChar(trule.getRight().symbol)
+
+            if(validLeft!=null && validRight!=null) newTRules.add(TRule(validLeft, validRight))
+        }
+
+        grammar.tRules.clear()
+        grammar.tRules.addAll(newTRules)
+
+        //processing non-terminal rules
+        val newNRules : MutableSet<NRule> = mutableSetOf()
+        for(nrule in grammar.nRules){
+            val validLeft = findNSymbolByChar(nrule.left.symbol)
+            val validRightFirst = findNSymbolByChar(nrule.getRightFirst().symbol)
+            val validRightSecond = findNSymbolByChar(nrule.getRightSecond().symbol)
+
+            if(validLeft!=null && validRightFirst != null && validRightSecond != null)
+                newNRules.add(NRule(validLeft, arrayOf(validRightFirst, validRightSecond), nrule.membership))
+        }
     }
 
     //cleaning stuff
@@ -166,7 +195,7 @@ class GrammarController {
         newStartSymbol.isStartSymbol = true
 
         grammar.starSymbol = newStartSymbol
-        grammar.nSymbols.add(newStartSymbol)
+        addNSymbol(newStartSymbol)
     }
 
     private fun getNewNSymbol() : NSymbol?{

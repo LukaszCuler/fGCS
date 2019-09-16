@@ -1,6 +1,7 @@
 package pl.lukasz.culer.settings
 
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.fuzzy.snorms.SNormT2
 import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.utils.Logger
@@ -18,6 +19,9 @@ class Settings {
         }
     }
 
+    @SerializedName("sNorm")
     val sNorm = SNormT2.MAX
+
+    @SerializedName("tNorm")
     val tNorm = TNormT2.MIN
 }

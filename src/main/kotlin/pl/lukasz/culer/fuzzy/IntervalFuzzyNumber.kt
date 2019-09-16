@@ -4,6 +4,9 @@ import pl.lukasz.culer.settings.Settings
 
 class IntervalFuzzyNumber(var lowerBound : Double = 0.0,
                           var upperBound : Double  = 0.0) {
+    companion object {
+        lateinit var settings: Settings     //shouldn't be like that
+    }
     //region constructors
     constructor(exactValue : Double) : this() {
         lowerBound = exactValue
@@ -12,11 +15,11 @@ class IntervalFuzzyNumber(var lowerBound : Double = 0.0,
     //endregion
     //region operators
     operator fun plus(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
-        return Settings.instance.sNorm(this, second)
+        return settings.sNorm(this, second)
     }
 
     operator fun times(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
-        return Settings.instance.tNorm(this, second)
+        return settings.tNorm(this, second)
     }
     //endregion
     //region public
