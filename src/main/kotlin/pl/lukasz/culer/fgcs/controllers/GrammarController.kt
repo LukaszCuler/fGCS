@@ -89,6 +89,9 @@ class GrammarController {
             if(validLeft!=null && validRightFirst != null && validRightSecond != null)
                 newNRules.add(NRule(validLeft, arrayOf(validRightFirst, validRightSecond), nrule.membership))
         }
+
+        grammar.nRules.clear()
+        grammar.nRules.addAll(newNRules)
     }
 
     //cleaning stuff
