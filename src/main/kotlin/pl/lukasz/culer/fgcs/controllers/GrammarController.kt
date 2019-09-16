@@ -60,30 +60,6 @@ class GrammarController {
             }
             .filterNotNull()
             .toSet())
-
-        //now let's take a look at temporary variables
-        createTemporaryVariables()
-        fillTemporaryVariables()
-    }
-
-    private fun createTemporaryVariables(){
-        grammar.nRulesMap = mutableMapOf()
-        for(leftSymbol : NSymbol in grammar.nSymbols){
-
-            val rightSide : MutableMap<NSymbol, MutableMap<NSymbol, NRule?>> = mutableMapOf()
-            grammar.nRulesMap[leftSymbol] = rightSide
-
-            for(firstRightSymbol : NSymbol in grammar.nSymbols){
-                val secondSymbolSet : MutableMap<NSymbol, NRule?> = mutableMapOf()
-                rightSide[firstRightSymbol] = secondSymbolSet
-            }
-        }
-    }
-
-    private fun fillTemporaryVariables(){
-        grammar.nRules.forEach {
-            grammar.nRulesMap[it.left]?.get(it.getRightFirst())?.set(it.getRightSecond(), it)
-        }
     }
 
     //cleaning stuff
@@ -96,7 +72,7 @@ class GrammarController {
         var recentlyAdded = mutableSetOf(grammar.starSymbol)
         while (recentlyAdded.isNotEmpty()){
             recentlyAdded = recentlyAdded
-                .flatMap { rulesWithLeft(it) }
+                .flatMap { rulesWith(left = it) }
                 .map {
                     achievableRules.add(it)
                     it
@@ -116,7 +92,24 @@ class GrammarController {
         val productiveSymbols : MutableSet<NSymbol> = mutableSetOf()
         productiveSymbols.addAll(grammar.tRules.map { it.left })
 
-        //@TODO
+        val productiveRules : MutableSet<NRule> = mutableSetOf()
+        var newRules: MutableSet<NRule>
+
+        //checking performs in the iterative manner
+        do {
+            newRules = grammar.nRules
+                .filter { !productiveRules.contains(it) }
+                .filter { productiveSymbols.contains(it.getRightFirst()) && productiveSymbols.contains(it.getRightSecond()) }
+                .toMutableSet()
+
+            productiveRules.addAll(newRules)
+            productiveSymbols.addAll(newRules.map { it.left })
+        } while (newRules.isNotEmpty())
+
+        //now we remove unproductive rules
+        grammar.nRules
+            .filter { !productiveRules.contains(it) }
+            .forEach { removeNRule(it) }
     }
 
     private fun removeUnusedSymbols(){
@@ -140,27 +133,31 @@ class GrammarController {
     }
 
     //set manipulation methods
-
     private fun addNRule(rule : NRule) {
-
+        grammar.nRules.add(rule)
     }
 
     private fun removeNRule(rule : NRule){
-
+        grammar.nRules.remove(rule)
     }
 
     private fun addNSymbol(symbol : NSymbol) {
-
+        grammar.nSymbols.add(symbol)
     }
 
     private fun removeNSymbol(symbol : NSymbol){
-
+        grammar.nSymbols.remove(symbol)
     }
 
     //helper symbols functions
-    private fun rulesWithLeft(left : NSymbol) : MutableSet<NRule> {
+
+
+    private fun rulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
         return grammar.nRules
-            .filter { it.left == left }
+            .filter {
+                (left==null || it.left == left) &&
+                        (first==null || it.getRightFirst() == first) &&
+                        (second==null || it.getRightSecond() == second) }
             .toMutableSet()
     }
 

@@ -19,8 +19,4 @@ class Grammar(
 
     @SerializedName("startSymbol")
     lateinit var starSymbol : NSymbol
-
-    //help variables
-    @Transient
-    lateinit var nRulesMap: MutableMap<NSymbol, MutableMap<NSymbol, MutableMap<NSymbol, NRule?>>>
 }
