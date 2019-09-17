@@ -95,7 +95,7 @@ class GrammarController {
     }
 
     //cleaning stuff
-    private fun removeUnreachableAndUnproductiveRules(){
+    fun removeUnreachableAndUnproductiveRules(){
         //first we have to deal witch achievability
 
         val achievableRules : MutableSet<NRule> = mutableSetOf()
@@ -144,7 +144,7 @@ class GrammarController {
             .forEach { removeNRule(it) }
     }
 
-    private fun removeUnusedSymbols(){
+    fun removeUnusedSymbols(){
         //on start, all symbols are unused
         val unusedSymbols : MutableSet<NSymbol> = mutableSetOf()
         unusedSymbols.addAll(grammar.nSymbols)

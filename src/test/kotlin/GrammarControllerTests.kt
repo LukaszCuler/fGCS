@@ -58,4 +58,62 @@ class GrammarControllerTests {
         Assert.assertTrue(grammar.nRules.single().getRightFirst() === gc.grammar.nSymbols.single())
         Assert.assertTrue(grammar.nRules.single().getRightSecond() === gc.grammar.nSymbols.single())
     }
+
+    @Test
+    fun removeUnreachableAndUnproductiveRules(){
+        //preparing data
+        val ta = TSymbol('a')
+        val nS = NSymbol('$')
+        val nA = NSymbol('A')
+        val nB = NSymbol('B')
+        val nC = NSymbol('C')
+
+        val grammar = Grammar()
+        val gc = GrammarController(grammar)
+
+        grammar.tSymbols.add(ta)
+        grammar.nSymbols.add(nS)
+        grammar.nSymbols.add(nA)
+        grammar.nSymbols.add(nB)
+        grammar.nSymbols.add(nC)
+        grammar.starSymbol = nS
+
+        grammar.tRules.add(TRule(nA,ta))
+        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
+        grammar.nRules.add(NRule(nS, arrayOf(nB,nB)))       //unproductive
+        grammar.nRules.add(NRule(nC, arrayOf(nA,nA)))       //unreachable
+
+        //execution
+        gc.removeUnreachableAndUnproductiveRules()
+
+        //validation
+        Assert.assertEquals(1,grammar.tRules.size) //two of three were removed
+    }
+
+    @Test
+    fun removeUnusedSymbolsRules(){
+        //preparing data
+        val ta = TSymbol('a')
+        val nS = NSymbol('$')
+        val nA = NSymbol('A')
+        val nB = NSymbol('B')
+
+        val grammar = Grammar()
+        val gc = GrammarController(grammar)
+
+        grammar.tSymbols.add(ta)
+        grammar.nSymbols.add(nS)
+        grammar.nSymbols.add(nA)
+        grammar.nSymbols.add(nB)
+        grammar.starSymbol = nS
+
+        grammar.tRules.add(TRule(nA,ta))
+        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
+
+        //execution
+        gc.removeUnusedSymbols()
+
+        //validation
+        Assert.assertEquals(2,grammar.nSymbols.size) //one symbol removed
+    }
 }
