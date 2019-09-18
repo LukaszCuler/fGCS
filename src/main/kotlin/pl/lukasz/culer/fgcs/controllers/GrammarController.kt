@@ -92,6 +92,10 @@ class GrammarController {
 
         grammar.nRules.clear()
         grammar.nRules.addAll(newNRules)
+
+        //start symbol
+        val startSymbol = findNSymbolByChar(grammar.starSymbol.symbol);
+        if(startSymbol!=null) grammar.starSymbol = startSymbol
     }
 
     //cleaning stuff
@@ -165,26 +169,28 @@ class GrammarController {
     }
 
     //set manipulation methods
-    private fun addNRule(rule : NRule) {
+    fun addNRule(rule : NRule) {
         grammar.nRules.add(rule)
     }
 
-    private fun removeNRule(rule : NRule){
+    fun removeNRule(rule : NRule){
         grammar.nRules.remove(rule)
     }
 
-    private fun addNSymbol(symbol : NSymbol) {
+    fun addNSymbol(symbol : NSymbol) {
         grammar.nSymbols.add(symbol)
     }
 
-    private fun removeNSymbol(symbol : NSymbol){
+    fun removeNSymbol(symbol : NSymbol){
         grammar.nSymbols.remove(symbol)
     }
+
+    fun containsNRule(rule : NRule) = grammar.nRules.contains(rule)
 
     //helper symbols functions
 
 
-    private fun rulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
+    fun rulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
         return grammar.nRules
             .filter {
                 (left==null || it.left == left) &&
@@ -193,7 +199,7 @@ class GrammarController {
             .toMutableSet()
     }
 
-    private fun setStartSymbol(newStartSymbol : NSymbol) {
+    fun setStartSymbol(newStartSymbol : NSymbol) {
         grammar.starSymbol.isStartSymbol = false
         newStartSymbol.isStartSymbol = true
 
@@ -215,11 +221,11 @@ class GrammarController {
         return null     //no more chars
     }
 
-    private fun findTSymbolByChar(symbolChar : Char) : TSymbol? {
+    fun findTSymbolByChar(symbolChar : Char) : TSymbol? {
         return grammar.tSymbols.find { it.symbol == symbolChar }
     }
 
-    private fun findNSymbolByChar(symbolChar : Char) : NSymbol? {
+    fun findNSymbolByChar(symbolChar : Char) : NSymbol? {
         return grammar.nSymbols.find { it.symbol == symbolChar }
     }
     /** endregion **/

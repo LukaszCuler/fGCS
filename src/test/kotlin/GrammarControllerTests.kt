@@ -11,6 +11,7 @@ import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.ui.LineLauncher
+import pl.lukasz.culer.utils.Consts
 
 @RunWith(MockitoJUnitRunner::class)
 class GrammarControllerTests {
@@ -41,10 +42,10 @@ class GrammarControllerTests {
         //preparing data
         val grammar = Grammar()
         grammar.tSymbols.add(TSymbol('a'))
-        grammar.starSymbol = NSymbol('$')
+        grammar.starSymbol = NSymbol('$', true)
         grammar.nSymbols.add(grammar.starSymbol)
-        grammar.tRules.add(TRule(NSymbol('$'), TSymbol('a')))
-        grammar.nRules.add(NRule(NSymbol('$'), arrayOf(NSymbol('$'), NSymbol('$'))))
+        grammar.tRules.add(TRule(NSymbol('$', true), TSymbol('a')))
+        grammar.nRules.add(NRule(NSymbol('$', true), arrayOf(NSymbol('$'), NSymbol('$'))))
 
         //execution
         val gc = GrammarController(grammar)
@@ -63,13 +64,12 @@ class GrammarControllerTests {
     fun removeUnreachableAndUnproductiveRules(){
         //preparing data
         val ta = TSymbol('a')
-        val nS = NSymbol('$')
+        val nS = NSymbol('$', true)
         val nA = NSymbol('A')
         val nB = NSymbol('B')
         val nC = NSymbol('C')
 
         val grammar = Grammar()
-        val gc = GrammarController(grammar)
 
         grammar.tSymbols.add(ta)
         grammar.nSymbols.add(nS)
@@ -83,6 +83,8 @@ class GrammarControllerTests {
         grammar.nRules.add(NRule(nS, arrayOf(nB,nB)))       //unproductive
         grammar.nRules.add(NRule(nC, arrayOf(nA,nA)))       //unreachable
 
+        val gc = GrammarController(grammar)
+
         //execution
         gc.removeUnreachableAndUnproductiveRules()
 
@@ -93,13 +95,102 @@ class GrammarControllerTests {
     @Test
     fun removeUnusedSymbolsRules(){
         //preparing data
+        val grammar = getSimpleGrammar()
+        grammar.nSymbols.add(NSymbol('B'))
+        val gc = GrammarController(grammar)
+
+        //execution
+        gc.removeUnusedSymbols()
+
+        //validation
+        Assert.assertEquals(2,grammar.nSymbols.size) //one symbol removed
+    }
+
+    @Test
+    fun addNRuleTest(){     //simple for now, probably will be extended
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        val newRule = NRule(grammar.starSymbol, arrayOf(grammar.starSymbol, grammar.starSymbol))
+
+        val nRulesNumBefore = grammar.nRules.size
+        val containsBefore = gc.containsNRule(newRule)
+
+        //execution
+        gc.addNRule(newRule)
+
+        //verification
+        Assert.assertTrue(nRulesNumBefore<grammar.nRules.size)
+        Assert.assertTrue(!containsBefore && gc.containsNRule(newRule))
+    }
+
+    @Test
+    fun removeNRuleTest(){     //simple for now, probably will be extended
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        val ruleToRemove = grammar.nRules.single() //should be S->AA
+
+        val nRulesNumBefore = grammar.nRules.size
+        val containsBefore = gc.containsNRule(ruleToRemove)
+
+        //execution
+        gc.removeNRule(ruleToRemove)
+
+        //verification
+        Assert.assertTrue(nRulesNumBefore>grammar.nRules.size)
+        Assert.assertTrue(containsBefore && !gc.containsNRule(ruleToRemove))
+    }
+
+    @Test
+    fun addNSymbolTest(){     //simple for now, probably will be extended
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        val newSymbol = NSymbol('N')
+
+        val nSymbolsNumBefore = grammar.nSymbols.size
+        val containsBefore = grammar.nSymbols.contains(newSymbol)
+
+        //execution
+        gc.addNSymbol(newSymbol)
+
+        //verification
+        Assert.assertTrue(nSymbolsNumBefore<grammar.nSymbols.size)
+        Assert.assertTrue(!containsBefore && grammar.nSymbols.contains(newSymbol))
+    }
+
+    @Test
+    fun removeNSymbolTest(){     //simple for now, probably will be extended
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        val symbolToRemove = gc.findNSymbolByChar('A')
+
+        val nSymbolsNumBefore = grammar.nSymbols.size
+        val containsBefore = grammar.nSymbols.contains(symbolToRemove)
+
+        //execution
+        if(symbolToRemove!=null) gc.removeNSymbol(symbolToRemove)
+
+        //verification
+        Assert.assertTrue(nSymbolsNumBefore>grammar.nSymbols.size)
+        Assert.assertTrue(containsBefore && !grammar.nSymbols.contains(symbolToRemove))
+    }
+
+    @Test
+    fun rulesWithTest(){
+        //preparing data
         val ta = TSymbol('a')
-        val nS = NSymbol('$')
+        val nS = NSymbol('$', true)
         val nA = NSymbol('A')
         val nB = NSymbol('B')
 
         val grammar = Grammar()
-        val gc = GrammarController(grammar)
 
         grammar.tSymbols.add(ta)
         grammar.nSymbols.add(nS)
@@ -108,12 +199,80 @@ class GrammarControllerTests {
         grammar.starSymbol = nS
 
         grammar.tRules.add(TRule(nA,ta))
-        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
+        grammar.nRules.add(NRule(nS, arrayOf(nA,nB)))
+        grammar.nRules.add(NRule(nS, arrayOf(nA,nS)))
+        grammar.nRules.add(NRule(nA, arrayOf(nS,nB)))
 
-        //execution
-        gc.removeUnusedSymbols()
+        val gc = GrammarController(grammar)
 
         //validation
-        Assert.assertEquals(2,grammar.nSymbols.size) //one symbol removed
+        Assert.assertEquals(2, gc.rulesWith(left = nS).size)
+        Assert.assertEquals(2, gc.rulesWith(first = nA).size)
+        Assert.assertEquals(2, gc.rulesWith(second = nB).size)
+        Assert.assertEquals(2, gc.rulesWith(left = nS, first = nA).size)
+    }
+
+    @Test
+    fun setStartSymbolTest(){
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        val newStartSymbol = gc.findNSymbolByChar('A')
+        val oldStartSymbol = gc.findNSymbolByChar(Consts.DEFAULT_START_SYMBOL)
+
+        //pre verification
+        Assert.assertFalse(newStartSymbol==null||newStartSymbol.isStartSymbol)
+        Assert.assertTrue(oldStartSymbol!=null&&oldStartSymbol.isStartSymbol)
+        Assert.assertEquals(oldStartSymbol, grammar.starSymbol)
+
+        //executiion
+        if(newStartSymbol!=null) gc.setStartSymbol(newStartSymbol)
+
+        //verification
+        Assert.assertFalse(oldStartSymbol==null||oldStartSymbol.isStartSymbol)
+        Assert.assertTrue(newStartSymbol!=null&&newStartSymbol.isStartSymbol)
+        Assert.assertEquals(newStartSymbol, grammar.starSymbol)
+    }
+
+    @Test
+    fun findTSymbolByCharTest(){
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        //execution & verification
+        Assert.assertNotNull(gc.findTSymbolByChar('a'))
+        Assert.assertNull(gc.findTSymbolByChar('b'))
+    }
+
+    @Test
+    fun findNSymbolByCharTest(){
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(grammar)
+
+        //execution & verification
+        Assert.assertNotNull(gc.findNSymbolByChar('$'))
+        Assert.assertNull(gc.findNSymbolByChar('B'))
+    }
+
+    //helper methods
+    private fun getSimpleGrammar() : Grammar {
+        //preparing data
+        val ta = TSymbol('a')
+        val nS = NSymbol('$', true)
+        val nA = NSymbol('A')
+
+        val grammar = Grammar()
+
+        grammar.tSymbols.add(ta)
+        grammar.nSymbols.add(nS)
+        grammar.nSymbols.add(nA)
+        grammar.starSymbol = nS
+
+        grammar.tRules.add(TRule(nA,ta))
+        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
+        return grammar
     }
 }
