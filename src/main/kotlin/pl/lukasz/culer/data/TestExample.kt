@@ -4,6 +4,8 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 class TestExample(var sequence : String = "",
                   var membership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0)) {
+    //shortcut to sequence size
+    val size get() = sequence.length
 
     init {
         sequence = sequence.toLowerCase()

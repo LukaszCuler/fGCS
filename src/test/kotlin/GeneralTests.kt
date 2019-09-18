@@ -6,6 +6,9 @@ import pl.lukasz.culer.data.AbbadingoLoader
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.ui.LineLauncher
 
+/**
+ * Tests for smaller classes
+ */
 @RunWith(MockitoJUnitRunner::class)
 class GeneralTests {
 

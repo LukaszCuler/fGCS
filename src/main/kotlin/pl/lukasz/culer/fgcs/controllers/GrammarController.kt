@@ -10,13 +10,17 @@ import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DEFAULT_START_SYMBOL
 
 class GrammarController {
-    /**region params **/
+    /**
+     * region params
+     * **/
     lateinit var grammar : Grammar
     var learningData : List<TestExample> = mutableListOf()
     var testData : List<TestExample>? = null
-    /** endregion **/
+    //endregion
 
-    /**region constructors **/
+    /**
+     * region constructors
+     **/
     //creating grammar from data
     constructor(learningData : List<TestExample>){
         this.learningData = learningData
@@ -28,13 +32,17 @@ class GrammarController {
         this.grammar = grammar
         updateSymbolReferences()
     }
-    /** endregion **/
+    //endregion
 
-    /**region public methods **/
+    /**
+     * region public methods
+     **/
 
-    /** endregion **/
+    //endregion
 
-    /** region private methods **/
+    /**
+     * region private methods
+     **/
     //constructing grammar
     private fun createGrammarFromData(){
         grammar = Grammar() //newborn
@@ -228,5 +236,5 @@ class GrammarController {
     fun findNSymbolByChar(symbolChar : Char) : NSymbol? {
         return grammar.nSymbols.find { it.symbol == symbolChar }
     }
-    /** endregion **/
+    //endregion
 }
