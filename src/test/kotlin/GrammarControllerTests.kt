@@ -2,7 +2,6 @@ import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
-import pl.lukasz.culer.data.AbbadingoLoader
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.Grammar
@@ -10,11 +9,11 @@ import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
-import pl.lukasz.culer.ui.LineLauncher
 import pl.lukasz.culer.utils.Consts
 
 @RunWith(MockitoJUnitRunner::class)
 class GrammarControllerTests {
+    //@TODO - parsed examples?
 
     @Test
     fun createGrammarFromDataTest(){
@@ -206,10 +205,10 @@ class GrammarControllerTests {
         val gc = GrammarController(grammar)
 
         //validation
-        Assert.assertEquals(2, gc.rulesWith(left = nS).size)
-        Assert.assertEquals(2, gc.rulesWith(first = nA).size)
-        Assert.assertEquals(2, gc.rulesWith(second = nB).size)
-        Assert.assertEquals(2, gc.rulesWith(left = nS, first = nA).size)
+        Assert.assertEquals(2, gc.nRulesWith(left = nS).size)
+        Assert.assertEquals(2, gc.nRulesWith(first = nA).size)
+        Assert.assertEquals(2, gc.nRulesWith(second = nB).size)
+        Assert.assertEquals(2, gc.nRulesWith(left = nS, first = nA).size)
     }
 
     @Test

@@ -1,5 +1,7 @@
 package pl.lukasz.culer.data
 
+import pl.lukasz.culer.fgcs.controllers.GrammarController
+import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 class TestExample(var sequence : String = "",
@@ -7,8 +9,21 @@ class TestExample(var sequence : String = "",
     //shortcut to sequence size
     val size get() = sequence.length
 
+    var parsedSequence : Array<TSymbol> = arrayOf()
+
     init {
         sequence = sequence.toLowerCase()
+    }
+
+    fun parse(grammarController: GrammarController){
+        val parsedExample : MutableList<TSymbol> = mutableListOf()
+        for(unparsedTerminal in sequence){
+            val parsedTerminal = grammarController.findTSymbolByChar(unparsedTerminal)
+            if(parsedTerminal!=null) parsedExample.add(parsedTerminal)
+        }
+        parsedSequence = Array(parsedExample.size) {
+            parsedExample[it]
+        }
     }
 
     override fun equals(other: Any?): Boolean {

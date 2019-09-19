@@ -71,6 +71,17 @@ class GrammarController {
             }
             .filterNotNull()
             .toSet())
+
+        //now we can parse examples
+        for(example in learningData) {
+            example.parse(this)
+        }
+
+        if(testData!=null) {
+            for(example in testData!!) {
+                example.parse(this)
+            }
+        }
     }
 
     private fun updateSymbolReferences(){
@@ -116,7 +127,7 @@ class GrammarController {
         var recentlyAdded = mutableSetOf(grammar.starSymbol)
         while (recentlyAdded.isNotEmpty()){
             recentlyAdded = recentlyAdded
-                .flatMap { rulesWith(left = it) }
+                .flatMap { nRulesWith(left = it) }
                 .map {
                     achievableRules.add(it)
                     it
@@ -198,12 +209,20 @@ class GrammarController {
     //helper symbols functions
 
 
-    fun rulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
+    fun nRulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
         return grammar.nRules
             .filter {
                 (left==null || it.left == left) &&
                         (first==null || it.getRightFirst() == first) &&
                         (second==null || it.getRightSecond() == second) }
+            .toMutableSet()
+    }
+
+    fun tRulesWith(left : NSymbol? = null, terminal : TSymbol? = null) : MutableSet<TRule> {
+        return grammar.tRules
+            .filter {
+                (left==null || it.left == left) &&
+                        (terminal==null || it.getRight() == terminal) }
             .toMutableSet()
     }
 

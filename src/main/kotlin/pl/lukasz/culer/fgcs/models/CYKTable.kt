@@ -3,6 +3,8 @@ package pl.lukasz.culer.fgcs.models
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fgcs.models.symbols.TSymbol
+import java.util.LinkedHashSet
 
 class CYKTable(val example: TestExample) {
     //parsing-related variables
@@ -12,7 +14,21 @@ class CYKTable(val example: TestExample) {
     //cykTable[y][x]
     val cykTable : Array<Array<MutableSet<NSymbol>>> = Array(example.size) {
         Array(example.size) {
-            mutableSetOf<NSymbol>()
+            object : LinkedHashSet<NSymbol>() {
+                override fun add(element: NSymbol): Boolean {
+                    return super.add(element).also { if(it) recentlyModified = true }   //listener for changes
+                }
+
+                override fun remove(element: NSymbol): Boolean {
+                    return super.remove(element).also { if(it) recentlyModified = true }   //listener for changes
+                }
+            } as MutableSet<NSymbol>
         }
     }
+
+    //helper shortcuts
+    val size get() = example.size
+    val lastIndex get() = size-1
+    val unitExample get() = size == 1
+    val rootCell get() = cykTable[lastIndex][0]
 }
