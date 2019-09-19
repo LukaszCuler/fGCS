@@ -4,7 +4,6 @@ import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
-import java.util.LinkedHashSet
 
 class CYKTable(val example: TestExample) {
     //parsing-related variables
