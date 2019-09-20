@@ -3,6 +3,7 @@ package pl.lukasz.culer.fgcs.controllers
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
@@ -106,7 +107,7 @@ class GrammarController {
             val validRightSecond = findNSymbolByChar(nrule.getRightSecond().symbol)
 
             if(validLeft!=null && validRightFirst != null && validRightSecond != null)
-                newNRules.add(NRule(validLeft, arrayOf(validRightFirst, validRightSecond), nrule.membership))
+                newNRules.add(NRule(validLeft, NRuleRHS(validRightFirst, validRightSecond), nrule.membership))
         }
 
         grammar.nRules.clear()

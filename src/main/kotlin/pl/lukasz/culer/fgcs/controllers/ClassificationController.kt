@@ -5,7 +5,6 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 
 class ClassificationController(val gc: GrammarController,
-                               val cyk : CYKController,
                                val settings: Settings) {
 
     fun getFuzzyClassification(example: TestExample) : IntervalFuzzyNumber {

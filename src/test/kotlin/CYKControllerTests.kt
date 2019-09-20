@@ -9,6 +9,7 @@ import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 
@@ -170,9 +171,9 @@ class CYKControllerTests {
 
         gc.grammar.tRules.add(TRule(gc.grammar.starSymbol, ta))
 
-        gc.addNRule(NRule(nA, arrayOf(nA, nB)))
-        gc.addNRule(NRule(nB, arrayOf(nA, nC)))
-        gc.addNRule(NRule(gc.grammar.starSymbol, arrayOf(nB, nA)))
+        gc.addNRule(NRule(nA, NRuleRHS(nA, nB)))
+        gc.addNRule(NRule(nB, NRuleRHS(nA, nC)))
+        gc.addNRule(NRule(gc.grammar.starSymbol, NRuleRHS(nB, nA)))
         return gc
     }
 }

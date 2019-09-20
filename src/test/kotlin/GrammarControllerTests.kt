@@ -6,6 +6,7 @@ import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
@@ -57,7 +58,7 @@ class GrammarControllerTests {
         grammar.starSymbol = NSymbol('$', true)
         grammar.nSymbols.add(grammar.starSymbol)
         grammar.tRules.add(TRule(NSymbol('$', true), TSymbol('a')))
-        grammar.nRules.add(NRule(NSymbol('$', true), arrayOf(NSymbol('$'), NSymbol('$'))))
+        grammar.nRules.add(NRule(NSymbol('$', true), NRuleRHS(NSymbol('$'), NSymbol('$'))))
 
         //execution
         val gc = GrammarController(grammar)
@@ -91,9 +92,9 @@ class GrammarControllerTests {
         grammar.starSymbol = nS
 
         grammar.tRules.add(TRule(nA,ta))
-        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
-        grammar.nRules.add(NRule(nS, arrayOf(nB,nB)))       //unproductive
-        grammar.nRules.add(NRule(nC, arrayOf(nA,nA)))       //unreachable
+        grammar.nRules.add(NRule(nS, NRuleRHS(nA,nA)))
+        grammar.nRules.add(NRule(nS, NRuleRHS(nB,nB)))       //unproductive
+        grammar.nRules.add(NRule(nC, NRuleRHS(nA,nA)))       //unreachable
 
         val gc = GrammarController(grammar)
 
@@ -124,7 +125,7 @@ class GrammarControllerTests {
         val grammar = getSimpleGrammar()
         val gc = GrammarController(grammar)
 
-        val newRule = NRule(grammar.starSymbol, arrayOf(grammar.starSymbol, grammar.starSymbol))
+        val newRule = NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol))
 
         val nRulesNumBefore = grammar.nRules.size
         val containsBefore = gc.containsNRule(newRule)
@@ -211,9 +212,9 @@ class GrammarControllerTests {
         grammar.starSymbol = nS
 
         grammar.tRules.add(TRule(nA,ta))
-        grammar.nRules.add(NRule(nS, arrayOf(nA,nB)))
-        grammar.nRules.add(NRule(nS, arrayOf(nA,nS)))
-        grammar.nRules.add(NRule(nA, arrayOf(nS,nB)))
+        grammar.nRules.add(NRule(nS, NRuleRHS(nA,nB)))
+        grammar.nRules.add(NRule(nS, NRuleRHS(nA,nS)))
+        grammar.nRules.add(NRule(nA, NRuleRHS(nS,nB)))
 
         val gc = GrammarController(grammar)
 
@@ -301,7 +302,7 @@ class GrammarControllerTests {
         grammar.starSymbol = nS
 
         grammar.tRules.add(TRule(nA,ta))
-        grammar.nRules.add(NRule(nS, arrayOf(nA,nA)))
+        grammar.nRules.add(NRule(nS, NRuleRHS(nA,nA)))
         return grammar
     }
 }

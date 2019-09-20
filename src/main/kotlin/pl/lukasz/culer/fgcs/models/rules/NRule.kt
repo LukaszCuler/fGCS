@@ -5,10 +5,12 @@ import pl.lukasz.culer.fgcs.models.symbols.Symbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.Consts.Companion.N_RULE_MEMBERSHIP
 
+typealias NRuleRHS = Pair<NSymbol, NSymbol>
+
 class NRule(
     left : NSymbol,
-    right : Array<NSymbol>,
-    membership : IntervalFuzzyNumber = IntervalFuzzyNumber(N_RULE_MEMBERSHIP)) : Rule(left, right, membership) {
+    right : NRuleRHS,
+    membership : IntervalFuzzyNumber = IntervalFuzzyNumber(N_RULE_MEMBERSHIP)) : Rule(left, arrayOf(right.first, right.second), membership) {
     //region public
     fun getRightFirst() = right[0] as NSymbol
     fun getRightSecond() = right[1] as NSymbol
