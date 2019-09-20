@@ -13,15 +13,14 @@ import pl.lukasz.culer.utils.Consts
 
 @RunWith(MockitoJUnitRunner::class)
 class GrammarControllerTests {
-    //@TODO - parsed examples?
 
     @Test
     fun createGrammarFromDataTest(){
         //preparing data
-        val dataSet = listOf(
-            TestExample("aabb"),
-            TestExample("ccccb"),
-            TestExample("acacac"))
+        val te1 = TestExample("aabb")
+        val te2 = TestExample("ccccb")
+        val te3 = TestExample("acacac")
+        val dataSet = listOf(te1, te2, te3)
 
         //execution
         val gc = GrammarController(dataSet)
@@ -34,6 +33,20 @@ class GrammarControllerTests {
         Assert.assertEquals(3, gc.grammar.tRules.size)       //rule for each terminal
         Assert.assertEquals(0, gc.grammar.nRules.size)       //but not for non-terminals
         //probably no need in checking exact rules
+
+        //examples validation
+        val ta = gc.findTSymbolByChar('a')
+        val tb = gc.findTSymbolByChar('b')
+        val tc = gc.findTSymbolByChar('c')
+
+        Assert.assertEquals(4, te1.parsedSequence.size)
+        Assert.assertArrayEquals(arrayOf(ta, ta, tb, tb), te1.parsedSequence)
+
+        Assert.assertEquals(5, te2.parsedSequence.size)
+        Assert.assertArrayEquals(arrayOf(tc, tc, tc, tc, tb), te2.parsedSequence)
+
+        Assert.assertEquals(6, te3.parsedSequence.size)
+        Assert.assertArrayEquals(arrayOf(ta, tc, ta, tc, ta, tc), te3.parsedSequence)
     }
 
     @Test
@@ -232,6 +245,23 @@ class GrammarControllerTests {
         Assert.assertFalse(oldStartSymbol==null||oldStartSymbol.isStartSymbol)
         Assert.assertTrue(newStartSymbol!=null&&newStartSymbol.isStartSymbol)
         Assert.assertEquals(newStartSymbol, grammar.starSymbol)
+    }
+
+    @Test
+    fun getNewNSymbolTest(){
+        //preparing data
+        val grammarPre = getSimpleGrammar()
+        val grammarModified = getSimpleGrammar()
+        val gcMod = GrammarController(grammarModified)
+
+        //execution
+        val newSymbol = gcMod.getNewNSymbol()
+
+        //verification
+        Assert.assertNotNull(newSymbol)
+        Assert.assertFalse(grammarPre.nSymbols.contains(newSymbol))
+        Assert.assertTrue(grammarModified.nSymbols.contains(newSymbol))
+        Assert.assertEquals(grammarPre.nSymbols.size+1, grammarModified.nSymbols.size)
     }
 
     @Test

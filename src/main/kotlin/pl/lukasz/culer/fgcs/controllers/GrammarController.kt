@@ -234,7 +234,7 @@ class GrammarController {
         addNSymbol(newStartSymbol)
     }
 
-    private fun getNewNSymbol() : NSymbol?{
+    fun getNewNSymbol() : NSymbol?{
         var currentSymbol = Consts.N_GEN_START
         while(currentSymbol<= Char.MAX_VALUE){
             val findNSymbolByChar = findNSymbolByChar(currentSymbol)
