@@ -64,7 +64,96 @@ class CYKControllerTests {
         cykController.fillForUnitExample(table)
 
         //verification
-        table.rootCell.contains(gc.grammar.starSymbol)
+        Assert.assertTrue(table.rootCell.contains(gc.grammar.starSymbol))
+    }
+
+    @Test
+    fun fillTerminalRulesTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+
+        val table = CYKTable(example)
+
+        //execution
+        cykController.fillTerminalRules(table)
+
+        //verification
+        val nA = gc.findNSymbolByChar('A')!!
+        val nB = gc.findNSymbolByChar('B')!!
+        val nC = gc.findNSymbolByChar('C')!!
+
+        Assert.assertEquals(nA,table.cykTable[0][0].single())
+        Assert.assertEquals(nB,table.cykTable[0][1].single())
+        Assert.assertEquals(nC,table.cykTable[0][2].single())
+        Assert.assertEquals(nA,table.cykTable[0][3].single())
+    }
+
+    @Test
+    fun fillNonTerminalRulesTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+
+        val table = CYKTable(example)
+
+        //execution
+        cykController.fillTerminalRules(table)      //needed ;_;
+        cykController.fillNonTerminalRules(table)
+
+        //verification
+        val nA = gc.findNSymbolByChar('A')!!
+        val nB = gc.findNSymbolByChar('B')!!
+        val nC = gc.findNSymbolByChar('C')!!
+
+        Assert.assertEquals(nA, table.cykTable[1][0].single())
+        Assert.assertEquals(nB, table.cykTable[2][0].single())
+        Assert.assertTrue(table.cykTable[1][1].isEmpty())
+        Assert.assertTrue(table.cykTable[1][2].isEmpty())
+        Assert.assertTrue(table.cykTable[2][1].isEmpty())
+        Assert.assertEquals(gc.grammar.starSymbol, table.cykTable[3][0].single())
+    }
+
+    @Test
+    fun getEffectorsTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+
+        val table = CYKTable(example)
+        cykController.fillTerminalRules(table)
+
+        //execution
+        val effectors = cykController.getEfectors(cykController.findDetectors(table, 1, 0))
+
+        //verification
+        val nA = gc.findNSymbolByChar('A')!!
+        Assert.assertEquals(nA, effectors.single())
+    }
+
+    @Test
+    fun fillCYKTableAndIsExampleParsed(){
+        //stage1 - preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+
+        val tableParsed = CYKTable(example)
+
+        //stage1 - execution
+        cykController.fillCYKTable(tableParsed)
+
+        //stage1 - verification
+        Assert.assertTrue(cykController.isExampleParsed(tableParsed))
+
+        //stage2 - preparing data
+        gc.removeNRule(gc.nRulesWith(gc.grammar.starSymbol, gc.findNSymbolByChar('B'), gc.findNSymbolByChar('A')).single())
+        val tableNotParsed = CYKTable(example)
+
+        //stage1 - execution
+        cykController.fillCYKTable(tableNotParsed)
+
+        //stage1 - verification
+        Assert.assertFalse(cykController.isExampleParsed(tableNotParsed))
     }
 
     //private methods
