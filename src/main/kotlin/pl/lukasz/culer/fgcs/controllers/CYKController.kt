@@ -1,12 +1,13 @@
 package pl.lukasz.culer.fgcs.controllers
 
+import pl.lukasz.culer.fgcs.controllers.CYKController.DetectorElement
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 
 //typealiases linked with CYK
-typealias Detectors = MutableList<Pair<NSymbol, NSymbol>>
-typealias Detector = Pair<NSymbol, NSymbol>
+typealias Detectors = MutableList<Detector>
+typealias Detector = Pair<DetectorElement, DetectorElement>
 
 class CYKController(val gc: GrammarController) {
     /**
@@ -29,12 +30,19 @@ class CYKController(val gc: GrammarController) {
         val detectors : Detectors = mutableListOf()
 
         for(k in 0 until y){
-            val lefts = table.cykTable[k][x]
-            val rights = table.cykTable[y-k-1][x+k+1]
+            val leftY = k
+            val leftX = x
+            val rightY = y-k-1
+            val rightX = x+k+1
+            val lefts = table.cykTable[leftY][leftX]
+            val rights = table.cykTable[rightY][rightX]
 
             for(left in lefts){
                 for(right in rights){
-                    detectors.add(Detector(left,right))
+                    detectors.add(
+                        Detector(
+                            DetectorElement(left, leftY, leftX),
+                            DetectorElement(right, rightY, rightX)))
                 }
             }
         }
@@ -84,9 +92,21 @@ class CYKController(val gc: GrammarController) {
 
     fun getEfectors(detectors: Detectors) : Set<NSymbol> {
         return detectors
-            .flatMap { gc.nRulesWith(first = it.first, second = it.second) }
+            .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol) }
             .map { it.left }
             .toSet()
     }
+
+    //@TODO unit test
+    fun getDetectorsForLeft(left : NSymbol, detectors: Detectors) : Detectors {
+        return detectors
+            .filter { gc.nRulesWith(left = left, first = it.first.symbol, second = it.second.symbol).isNotEmpty() }
+            .toMutableList()
+    }
+    //endregion
+    /**
+     * region inner classes
+     */
+    data class DetectorElement(val symbol : NSymbol, val y: Int, val x:Int)
     //endregion
 }

@@ -1,15 +1,15 @@
 package pl.lukasz.culer.fgcs.models.trees
 
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
-import pl.lukasz.culer.fgcs.models.symbols.Symbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
-typealias TreeNodeChildren = Pair<MultiParseTreeNode, MultiParseTreeNode>
-
-open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<TreeNodeChildren> = mutableListOf()) {
+open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<SubTrees> = mutableListOf()) {
     //params to fill
-    var treeMembership = IntervalFuzzyNumber(0.0)
+    var mainChild : SubTrees? = null
 
     //shortcuts
     val isLeaf : Boolean get() = subtrees.isEmpty()
+
+    data class SubTrees(val subtrees : Pair<MultiParseTreeNode, MultiParseTreeNode>,
+                        var treeMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
 }

@@ -4,6 +4,7 @@ import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.CYKController
+import pl.lukasz.culer.fgcs.controllers.CYKController.DetectorElement
 import pl.lukasz.culer.fgcs.controllers.Detector
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.CYKTable
@@ -47,10 +48,10 @@ class CYKControllerTests {
 
         //verification
         Assert.assertEquals(4, detectors.size)
-        Assert.assertTrue(detectors.contains(Detector(nC, nC)))
-        Assert.assertTrue(detectors.contains(Detector(nC, nE)))
-        Assert.assertTrue(detectors.contains(Detector(nD, nC)))
-        Assert.assertTrue(detectors.contains(Detector(nE, nC)))
+        Assert.assertTrue(detectors.contains(Detector(DetectorElement(nC,0,0), DetectorElement(nC,1,1))))
+        Assert.assertTrue(detectors.contains(Detector(DetectorElement(nC,0,0), DetectorElement(nE,1,1))))
+        Assert.assertTrue(detectors.contains(Detector(DetectorElement(nD,1,0), DetectorElement(nC,0,2))))
+        Assert.assertTrue(detectors.contains(Detector(DetectorElement(nE,1,0), DetectorElement(nC,0,2))))
     }
 
     @Test

@@ -5,13 +5,15 @@ import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 
+typealias CYKCell = MutableSet<NSymbol>
+
 class CYKTable(val example: TestExample) {
     //parsing-related variables
     var recentlyModified = false
     val privateRuleSet : MutableSet<NRule> = mutableSetOf()
 
     //cykTable[y][x]
-    val cykTable : Array<Array<MutableSet<NSymbol>>> = Array(example.size) {
+    val cykTable : Array<Array<CYKCell>> = Array(example.size) {
         Array(example.size) {
             object : LinkedHashSet<NSymbol>() {
                 override fun add(element: NSymbol): Boolean {
