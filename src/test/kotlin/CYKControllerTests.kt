@@ -7,10 +7,16 @@ import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.Detector
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.CYKTable
+import pl.lukasz.culer.fgcs.models.Grammar
+import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 
 @RunWith(MockitoJUnitRunner::class)
 class CYKControllerTests {
+    val example = TestExample("abca")
+    val exampleUnit = TestExample("a")
+
     @Test
     fun findDetectorsTest(){
         //preparing data
@@ -46,6 +52,38 @@ class CYKControllerTests {
         Assert.assertTrue(detectors.contains(Detector(nE, nC)))
     }
 
-    //private methods
+    @Test
+    fun fillForUnitExampleTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
 
+        val table = CYKTable(exampleUnit)
+
+        //execution
+        cykController.fillForUnitExample(table)
+
+        //verification
+        table.rootCell.contains(gc.grammar.starSymbol)
+    }
+
+    //private methods
+    private fun createGrammarForExample() : GrammarController {
+        val gc = GrammarController(listOf(example, exampleUnit))
+
+        val ta = gc.findTSymbolByChar('a')!!
+        val tb = gc.findTSymbolByChar('b')!!
+        val tc = gc.findTSymbolByChar('c')!!
+
+        val nA = gc.findNSymbolByChar('A')!!
+        val nB = gc.findNSymbolByChar('B')!!
+        val nC = gc.findNSymbolByChar('C')!!
+
+        gc.grammar.tRules.add(TRule(gc.grammar.starSymbol, ta))
+
+        gc.addNRule(NRule(nA, arrayOf(nA, nB)))
+        gc.addNRule(NRule(nB, arrayOf(nA, nC)))
+        gc.addNRule(NRule(gc.grammar.starSymbol, arrayOf(nB, nA)))
+        return gc
+    }
 }
