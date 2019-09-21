@@ -6,6 +6,7 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<SubTrees> = mutableListOf()) {
     //params to fill
     var mainChild : SubTrees? = null
+    var mainMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0)
 
     //shortcuts
     val isLeaf : Boolean get() = subtrees.isEmpty()
