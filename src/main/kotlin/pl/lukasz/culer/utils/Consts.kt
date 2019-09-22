@@ -1,5 +1,6 @@
 package pl.lukasz.culer.utils
 
+import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 class Consts {
@@ -8,6 +9,7 @@ class Consts {
         val N_RULE_MEMBERSHIP = IntervalFuzzyNumber(0.0)        //just initial non-terminal rule membership
 
         const val DEFAULT_START_SYMBOL = '$'
+        val END_STRING_SYMBOL = NSymbol('Γ')
 
         const val N_GEN_START = 'A'
     }

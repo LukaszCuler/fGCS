@@ -4,7 +4,9 @@ import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import pl.lukasz.culer.data.AbbadingoLoader
+import pl.lukasz.culer.data.ProcessDataLoader
 import pl.lukasz.culer.data.TestExample
+import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.*
 import java.util.concurrent.TimeUnit
@@ -12,7 +14,8 @@ import java.util.concurrent.TimeUnit
 const val TAG = "LearningSandbox"
 
 class LearningSandbox(private val params : InputParams) {
-    lateinit var inputSet : List<TestExample>
+    var inputSet : List<TestExample>? = null
+    var inputGrammar : Grammar? = null
     var testSet : List<TestExample>? = null
     var settings : Settings = Settings()
 
@@ -20,9 +23,10 @@ class LearningSandbox(private val params : InputParams) {
         //preparing simulation...
         Logger.instance.d(TAG, LEARNING_SANDBOX_PREPARING_SIMULATION)
 
-        inputSet = AbbadingoLoader.loadAbbadingoTestSet(params.inputSet)
-        if(params.testSet!=null) testSet = AbbadingoLoader.loadAbbadingoTestSet(params.inputSet)
-        if(params.settingsFile!=null) settings = Settings.loadFromObject(params.settingsFile)
+        params.inputSet?.let {inputSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
+        params.testSet?.let { testSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
+        params.grammarFile?.let { inputGrammar = ProcessDataLoader.loadGrammar(it)}
+        params.settingsFile?.let {settings = Settings.loadFromObject(it)}
         //simulation
         Logger.instance.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
 
@@ -65,7 +69,8 @@ class LearningSandbox(private val params : InputParams) {
     }
 }
 
-data class InputParams(var inputSet : String = "",
+data class InputParams(var inputSet : String? = null,
+                       var grammarFile : String? = null,
                        var testSet : String? = null,
                        var outputDict : String = "",
                        var settingsFile : String? = null,

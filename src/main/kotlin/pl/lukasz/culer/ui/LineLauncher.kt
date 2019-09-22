@@ -1,17 +1,55 @@
 package pl.lukasz.culer.ui
 
+import pl.lukasz.culer.data.ProcessDataLoader
 import pl.lukasz.culer.fgcs.InputParams
+import pl.lukasz.culer.fgcs.controllers.DataCollectionController
+import pl.lukasz.culer.fgcs.controllers.GrammarController
+import pl.lukasz.culer.fgcs.models.Grammar
+import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
+import pl.lukasz.culer.fgcs.models.rules.TRule
+import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fgcs.models.symbols.TSymbol
+import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.LINE_LAUNCHER_LOADED
 import pl.lukasz.culer.utils.Logger
 
 
 fun main(args: Array<String>) {
-    println("Hello World!")
+    val grammar = Grammar()
+
+
+
+    val tA = TSymbol('a')
+    val tB = TSymbol('b')
+
+    val nS = NSymbol(Consts.DEFAULT_START_SYMBOL, true)
+    val nA = NSymbol('A')
+    val nB = NSymbol('B')
+    val nC = NSymbol('C')
+
+    grammar.nSymbols.add(nS)
+    grammar.nSymbols.add(nA)
+    grammar.nSymbols.add(nB)
+    grammar.nSymbols.add(nC)
+    grammar.starSymbol = nS
+
+    grammar.tRules.add(TRule(nA, tA))
+    grammar.tRules.add(TRule(nB, tB))
+
+    val grammarController = GrammarController(grammar)
+
+    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nB)))
+    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nC)))
+    grammarController.addNRule(NRule(nC, NRuleRHS(nS, nB)))
+
+    ProcessDataLoader.saveGrammar(grammar, "testgrammar.txt")
 }
 
 /**
  * Komendy dostępne z linii poleceń:
- *  -i - zbiór uczący w formacie abbadingo
+ *  -i - /opcjonalny/ zbiór uczący w formacie abbadingo, w przypadku braku nie jest przeprowadzany proces uczenia
+ *  -g - /opcjonalny/ wykluczający się z -i - wczytuje gramatykę do badań
  *  -o - nazwa katalogu wyjściowego, do którego zapisywane są gramatyki, raporty i wyniki. [MOD] - zamieniane jest na datę + czas
  *  -t - /opcjonalny/ - zbiór testowy, w przypadku braku wykorzystywany jest uczący
  *  -s - /opcjonalny/ - plik zawierający ustawienia dla symulacji, w przypadku braku wykorzystywane są standardowe
@@ -19,6 +57,7 @@ fun main(args: Array<String>) {
  *  -tout - /opcjonalny/ - timeout w sekundach
  **/
 const val INPUT = "i"
+const val GRAMMAR = "g"
 const val OUTPUT = "o"
 const val TEST = "t"
 const val SETTINGS = "s"
@@ -62,6 +101,7 @@ class LineLauncher(private val args: Array<String>) {
     private fun dispatchCommand(inputParams: InputParams, lineCommand: LineCommand) {
         when (lineCommand.command) {
             INPUT -> handleInput(inputParams, lineCommand.values)
+            GRAMMAR -> handleGrammar(inputParams, lineCommand.values)
             OUTPUT -> handleOutput(inputParams, lineCommand.values)
             TEST -> handleTest(inputParams, lineCommand.values)
             SETTINGS -> handleSettings(inputParams, lineCommand.values)
@@ -72,6 +112,10 @@ class LineLauncher(private val args: Array<String>) {
 
     private fun handleInput(inputParams: InputParams, file: List<String>) {
         if (file.isNotEmpty()) inputParams.inputSet = file[0]
+    }
+
+    private fun handleGrammar(inputParams: InputParams, grammar: List<String>) {
+        if (grammar.isNotEmpty()) inputParams.grammarFile = grammar[0]
     }
 
     private fun handleTest(inputParams: InputParams, file: List<String>) {
