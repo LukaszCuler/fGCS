@@ -1,6 +1,14 @@
 package pl.lukasz.culer.fgcs.models.symbols
 
-abstract class Symbol(val symbol : Char, val isTerminal : Boolean, var isStartSymbol : Boolean = false){
+import com.google.gson.annotations.SerializedName
+
+abstract class Symbol(
+    @SerializedName("symbol")
+    val symbol : Char,
+    @SerializedName("isTerminal")
+    val isTerminal : Boolean,
+    @SerializedName("isStartSymbol")
+    var isStartSymbol : Boolean = false){
 
     //boilerplate stuff
     override fun equals(other: Any?): Boolean {

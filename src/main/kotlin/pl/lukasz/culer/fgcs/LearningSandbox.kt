@@ -29,9 +29,11 @@ class LearningSandbox(private val params : InputParams) {
         params.settingsFile?.let {settings = Settings.loadFromObject(it)}
         //simulation
         Logger.instance.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
+        val fgcs = FGCS(inputSet, inputGrammar, testSet, settings)
 
         var simulationObservable = Observable.create<Boolean> {
             //this is the part where it learns
+            fgcs.inferGrammar()
             it.onNext(false)
         }
 
@@ -51,7 +53,7 @@ class LearningSandbox(private val params : InputParams) {
 
             override fun onNext(timeout: Boolean) {
                 if(timeout) Logger.instance.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
-                else verify()
+                else fgcs.verifyPerformance()
                 if(simulation?.isDisposed == false) simulation?.dispose()
             }
 
@@ -60,12 +62,6 @@ class LearningSandbox(private val params : InputParams) {
                 e.printStackTrace()
             }
         })
-    }
-
-    fun verify(){
-        //verification time!
-        val set = testSet ?: inputSet   //we use input set 
-
     }
 }
 

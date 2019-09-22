@@ -10,9 +10,9 @@ typealias NRuleRHS = Pair<NSymbol, NSymbol>
 class NRule(
     left : NSymbol,
     right : NRuleRHS,
-    membership : IntervalFuzzyNumber = N_RULE_MEMBERSHIP) : Rule(left, arrayOf(right.first, right.second), membership) {
+    membership : IntervalFuzzyNumber = N_RULE_MEMBERSHIP) : Rule<NSymbol>(left, arrayOf(right.first, right.second), membership) {
     //region public
-    fun getRightFirst() = right[0] as NSymbol
-    fun getRightSecond() = right[1] as NSymbol
+    fun getRightFirst() = right[0]
+    fun getRightSecond() = right[1]
     //endregion
 }

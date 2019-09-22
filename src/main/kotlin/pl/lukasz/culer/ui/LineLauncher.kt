@@ -1,7 +1,9 @@
 package pl.lukasz.culer.ui
 
 import pl.lukasz.culer.data.ProcessDataLoader
+import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.InputParams
+import pl.lukasz.culer.fgcs.LearningSandbox
 import pl.lukasz.culer.fgcs.controllers.DataCollectionController
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.Grammar
@@ -10,13 +12,18 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
+import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.LINE_LAUNCHER_LOADED
 import pl.lukasz.culer.utils.Logger
 
 
 fun main(args: Array<String>) {
-    val grammar = Grammar()
+    LearningSandbox(
+        LineLauncher(args)
+            .getInputParams()
+    ).startSimulation()
+    /*val grammar = Grammar()
 
 
 
@@ -34,16 +41,19 @@ fun main(args: Array<String>) {
     grammar.nSymbols.add(nC)
     grammar.starSymbol = nS
 
+    grammar.tSymbols.add(tA)
+    grammar.tSymbols.add(tB)
+
     grammar.tRules.add(TRule(nA, tA))
     grammar.tRules.add(TRule(nB, tB))
 
     val grammarController = GrammarController(grammar)
 
-    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nB)))
-    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nC)))
-    grammarController.addNRule(NRule(nC, NRuleRHS(nS, nB)))
+    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nB), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nC), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nC, NRuleRHS(nS, nB), IntervalFuzzyNumber(1.0)))
 
-    ProcessDataLoader.saveGrammar(grammar, "testgrammar.txt")
+    ProcessDataLoader.saveGrammar(grammar, "testgrammar.txt")*/
 }
 
 /**

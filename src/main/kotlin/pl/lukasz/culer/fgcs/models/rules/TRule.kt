@@ -9,8 +9,8 @@ import pl.lukasz.culer.utils.Consts.Companion.T_RULE_MEMBERSHIP
 
 class TRule(
     left : NSymbol,
-    right : TSymbol) : Rule(left, arrayOf(right), T_RULE_MEMBERSHIP) {
+    right : TSymbol) : Rule<TSymbol>(left, arrayOf(right), T_RULE_MEMBERSHIP) {
     //region public
-    fun getRight() = right[0] as TSymbol
+    fun getRight() = right[0]
     //endregion
 }

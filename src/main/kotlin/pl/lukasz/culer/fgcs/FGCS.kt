@@ -1,8 +1,6 @@
 package pl.lukasz.culer.fgcs
 
-import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import io.reactivex.Observer
+import io.reactivex.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
@@ -42,31 +40,19 @@ class FGCS(val inputSet : List<TestExample>? = null,
         val properTestSet : List<TestExample> = testSet ?: (inputSet ?: return) //ooops...
 
         //since we want multithreading, we need to do some initial work
-        Observable.zip(properTestSet.map { example ->
-            Observable.create(ObservableOnSubscribe<ExampleAnalysisResult> {
-                it.onNext(testExample(example))
-                it.onComplete()
+        val exampleList = Single.zip(properTestSet.map { example ->
+            Single.create(SingleOnSubscribe<ExampleAnalysisResult> {
+                it.onSuccess(testExample(example))
             })
         }.toList()) { resultsArray ->
             resultsArray.map { it as ExampleAnalysisResult }.toList()
-        }.subscribeOn(Schedulers.computation())
-            .observeOn(Schedulers.trampoline())
-            .subscribe(object : Observer<List<ExampleAnalysisResult>> {
-                override fun onComplete() {
-                }
+        }.subscribeOn(Schedulers.computation()).blockingGet()
 
-                override fun onSubscribe(d: Disposable) {
-                }
-
-                override fun onNext(exampleList: List<ExampleAnalysisResult>) {
-                    //visualize
-                }
-
-                override fun onError(e: Throwable) {
-                }
-
-            })
-
+        for(example in exampleList){
+            val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
+            val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
+            println("${example.example.sequence}: $fuzzyClass - $crispClass")
+        }
     }
     //endregion
     /**
@@ -74,20 +60,17 @@ class FGCS(val inputSet : List<TestExample>? = null,
      */
     private fun initiateFGCS() : Boolean{
         //ok we have grammar on input, no need for inference :(
-        if(inputGrammar!=null) {
-            grammarController = GrammarController(inputGrammar)
-            return false //no need for inference
+        grammarController = when {
+            inputGrammar!=null -> GrammarController(inputGrammar)
+            inputSet==null -> return false //if there is no input grammar and input set - we have nothing to do
+            else -> GrammarController(inputSet)
         }
 
-        //if there is no input grammar and input set - we have nothing to do
-        if(inputSet==null) return false
-
         //everything is fine, lets rock
-        grammarController = GrammarController(inputSet)
         cykController = CYKController(grammarController)
         parseTreeController = ParseTreeController(grammarController, cykController)
         classificationController =  ClassificationController(grammarController, settings)
-        return true
+        return inputGrammar==null //@TODO make this look better, please
     }
 
     private fun testExample(example: TestExample) : ExampleAnalysisResult{
