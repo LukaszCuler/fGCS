@@ -4,6 +4,7 @@ import io.reactivex.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
+import pl.lukasz.culer.data.ProcessDataLoader
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.ClassificationController
@@ -13,6 +14,7 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.settings.Settings
+import java.io.File
 
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
@@ -53,6 +55,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
+
+        saveVis("heatmap.html", exampleList)
     }
     //endregion
     /**
@@ -88,4 +92,33 @@ class FGCS(val inputSet : List<TestExample>? = null,
      */
     data class ExampleAnalysisResult(val example: TestExample, val table : CYKTable, val multiParseTreeNode: MultiParseTreeNode)
     //endregion
+
+    //@TODO TO REMOVE
+    fun saveVis(filePath : String, exampleList : List<ExampleAnalysisResult>){
+        var html = "<html><body>Membership | Crisp classification | Example<br><br>"
+
+        for(example in exampleList){
+            val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
+            val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
+            val exampleHeatmap = classificationController.getExampleHeatmap(example.multiParseTreeNode)
+
+            var exampleString = "${"%.2f".format(fuzzyClass.midpoint)} | $crispClass | "
+
+            if(example.multiParseTreeNode.isDeadEnd){
+                exampleString += "<font color='#ff0000'>${example.example.sequence}</font>"
+            } else {
+                for(i in 0 until example.example.size){
+                    val colorR = (255*(1.0-exampleHeatmap[i].midpoint)).toInt()
+                    val colorG = (255*exampleHeatmap[i].midpoint).toInt()
+                    val hexR = "%02x".format(colorR)
+                    val hexG = "%02x".format(colorG)
+
+                    exampleString += "<font color='#$hexR${hexG}00'>${example.example.sequence[i]}</font>"
+                }
+            }
+            html += "$exampleString<br>"
+        }
+        html+="</body></html>"
+        File(filePath).writeText(html)
+    }
 }

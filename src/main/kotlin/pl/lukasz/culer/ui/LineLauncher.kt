@@ -52,6 +52,7 @@ fun main(args: Array<String>) {
     grammarController.addNRule(NRule(nS, NRuleRHS(nA, nB), IntervalFuzzyNumber(1.0)))
     grammarController.addNRule(NRule(nS, NRuleRHS(nA, nC), IntervalFuzzyNumber(1.0)))
     grammarController.addNRule(NRule(nC, NRuleRHS(nS, nB), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nA, NRuleRHS(nS, nS), IntervalFuzzyNumber(0.2)))
 
     ProcessDataLoader.saveGrammar(grammar, "testgrammar.txt")*/
 }
