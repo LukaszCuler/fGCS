@@ -19,10 +19,10 @@ import pl.lukasz.culer.utils.Logger
 
 
 fun main(args: Array<String>) {
-    LearningSandbox(
+/*    LearningSandbox(
         LineLauncher(args)
             .getInputParams()
-    ).startSimulation()
+    ).startSimulation()*/
     /*val grammar = Grammar()
 
 
@@ -33,12 +33,10 @@ fun main(args: Array<String>) {
     val nS = NSymbol(Consts.DEFAULT_START_SYMBOL, true)
     val nA = NSymbol('A')
     val nB = NSymbol('B')
-    val nC = NSymbol('C')
 
     grammar.nSymbols.add(nS)
     grammar.nSymbols.add(nA)
     grammar.nSymbols.add(nB)
-    grammar.nSymbols.add(nC)
     grammar.starSymbol = nS
 
     grammar.tSymbols.add(tA)
@@ -50,11 +48,14 @@ fun main(args: Array<String>) {
     val grammarController = GrammarController(grammar)
 
     grammarController.addNRule(NRule(nS, NRuleRHS(nA, nB), IntervalFuzzyNumber(1.0)))
-    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nC), IntervalFuzzyNumber(1.0)))
-    grammarController.addNRule(NRule(nC, NRuleRHS(nS, nB), IntervalFuzzyNumber(1.0)))
-    grammarController.addNRule(NRule(nA, NRuleRHS(nS, nS), IntervalFuzzyNumber(0.2)))
-
-    ProcessDataLoader.saveGrammar(grammar, "testgrammar.txt")*/
+    grammarController.addNRule(NRule(nS, NRuleRHS(nB, nA), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nS, NRuleRHS(nA, nA), IntervalFuzzyNumber(0.1)))
+    grammarController.addNRule(NRule(nS, NRuleRHS(nB, nB), IntervalFuzzyNumber(0.9)))
+    grammarController.addNRule(NRule(nA, NRuleRHS(nS, nA), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nA, NRuleRHS(nA, nS), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nB, NRuleRHS(nB, nS), IntervalFuzzyNumber(1.0)))
+    grammarController.addNRule(NRule(nB, NRuleRHS(nS, nB), IntervalFuzzyNumber(1.0)))
+    ProcessDataLoader.saveGrammar(grammar, "g2.txt")*/
 }
 
 /**

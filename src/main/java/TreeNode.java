@@ -5,6 +5,7 @@ import java.util.List;
 public class TreeNode {
 
     String name;
+    public double memb;
     public List<TreeNode> children = new ArrayList<>();
 
     public TreeNode(String name) {
@@ -18,15 +19,22 @@ public class TreeNode {
     }
 
     private void print(StringBuilder buffer, String prefix, String childrenPrefix) {
+        int colorR = (int)(255*(1.0-memb));
+        int colorG = (int)(255*memb);
+        String hexR = String.format("%02x",colorR);
+        String hexG = String.format("%02x",colorG);
+
+        String colorCommand = "<font color='#"+hexR+""+hexG+"00'>";
+        String endColor = "</font>";
         buffer.append(prefix);
-        buffer.append(name);
+        buffer.append(colorCommand+name+endColor);
         buffer.append("<br>");
         for (Iterator<TreeNode> it = children.iterator(); it.hasNext();) {
             TreeNode next = it.next();
             if (it.hasNext()) {
-                next.print(buffer, childrenPrefix + "├──&nbsp", childrenPrefix + "│&nbsp&nbsp&nbsp");
+                next.print(buffer, childrenPrefix + colorCommand + "├──&nbsp"+endColor, childrenPrefix + colorCommand + "│&nbsp&nbsp&nbsp"+endColor);
             } else {
-                next.print(buffer, childrenPrefix + "└──&nbsp", childrenPrefix + "&nbsp&nbsp&nbsp&nbsp");
+                next.print(buffer, childrenPrefix + colorCommand + "└──&nbsp"+endColor, childrenPrefix + colorCommand + "&nbsp&nbsp&nbsp&nbsp"+endColor);
             }
         }
     }

@@ -1,0 +1,9 @@
+8 2
+1 2 a b
+1 4 a b a b
+1 4 b b a a
+1 8 a b a b b a b a
+0 10 a b a a a a b a a a
+0 6 b a b b a b
+0 8 a a a a a b a b
+0 12 a a b b b b b b b b a a

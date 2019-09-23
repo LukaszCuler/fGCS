@@ -73,7 +73,7 @@ class CYKController(val gc: GrammarController) {
             val terminalRules = gc.tRulesWith(terminal = table.example.parsedSequence[i])
             if(terminalRules.size == 1) table.cykTable[0][i].add(terminalRules.single().left)
             else if(terminalRules.size>1) {
-                table.cykTable[0][i].addAll(terminalRules.filter { it.left != gc.grammar.starSymbol }.map { it.left })
+                table.cykTable[0][i].addAll(terminalRules.filter { it.left != gc.grammar.starSymbol }.map { it.left }.toList())
             }
             //else should not happen
         }

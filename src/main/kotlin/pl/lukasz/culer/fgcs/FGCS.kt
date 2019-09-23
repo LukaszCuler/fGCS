@@ -130,8 +130,9 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
     fun getNode(tree : MultiParseTreeNode) : TreeNode {
         val myNode = TreeNode(tree.node.symbol.toString())
+        myNode.memb = tree.mainMembership.midpoint;
         if(tree.isLeaf){
-            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()))
+            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { memb = tree.mainMembership.midpoint })
         } else {
             myNode.children.add(getNode(tree.mainChild!!.subtrees.first))
             myNode.children.add(getNode(tree.mainChild!!.subtrees.second))

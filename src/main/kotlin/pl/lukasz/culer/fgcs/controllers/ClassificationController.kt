@@ -53,7 +53,10 @@ class ClassificationController(val gc: GrammarController,
 
         //leaf support
         if(parseTree.isLeaf){
-            if(inhMembership!=null) return mutableListOf(inhMembership)
+            if(inhMembership!=null) {
+                parseTree.mainMembership = inhMembership
+                return mutableListOf(inhMembership)
+            }
             return mutableListOf() //ofc should not happen
         }
 
@@ -63,14 +66,14 @@ class ClassificationController(val gc: GrammarController,
         //ok so let's calculate stuff for children
         val myListToReturn : MutableList<IntervalFuzzyNumber> = mutableListOf()
 
-        var newInhValue =
+        parseTree.mainMembership =
             gc.nRulesWith(parseTree.node, mainSub.subtrees.first.node, mainSub.subtrees.second.node).single().membership
 
-        inhMembership?.let {newInhValue = settings.tNorm(it, newInhValue) }
+        inhMembership?.let {parseTree.mainMembership = settings.tNorm(it, parseTree.mainMembership) }
 
         //@TODO - add S-norm
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.first, newInhValue))
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.second, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.first, parseTree.mainMembership))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.second, parseTree.mainMembership))
         return myListToReturn
     }
     //endregion
