@@ -71,14 +71,11 @@ class CYKController(val gc: GrammarController) {
     fun fillTerminalRules(table : CYKTable){
         for(i in 0..table.lastIndex){
             val terminalRules = gc.tRulesWith(terminal = table.example.parsedSequence[i])
-            var symbolToAdd : NSymbol? = null
-            if(terminalRules.size == 1) symbolToAdd = terminalRules.single().left
+            if(terminalRules.size == 1) table.cykTable[0][i].add(terminalRules.single().left)
             else if(terminalRules.size>1) {
-                symbolToAdd = terminalRules.firstOrNull { it.left != gc.grammar.starSymbol }?.left
+                table.cykTable[0][i].addAll(terminalRules.filter { it.left != gc.grammar.starSymbol }.map { it.left })
             }
-            if(symbolToAdd!=null){
-                table.cykTable[0][i].add(symbolToAdd)
-            } //else should not happen
+            //else should not happen
         }
     }
 
