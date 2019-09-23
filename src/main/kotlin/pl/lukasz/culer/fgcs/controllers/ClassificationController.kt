@@ -5,6 +5,7 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 
 //@TODO unit tests!
 class ClassificationController(val gc: GrammarController,
@@ -15,7 +16,7 @@ class ClassificationController(val gc: GrammarController,
     fun tagTree(parseTree : MultiParseTreeNode) {
         //for leaves we return default membership
         if(parseTree.isLeaf) {
-            parseTree.mainMembership = Consts.T_RULE_MEMBERSHIP
+            parseTree.mainMembership = if(parseTree.isDeadEnd) DO_NOT_BELONG_AT_ALL else Consts.T_RULE_MEMBERSHIP
             return
         }
 

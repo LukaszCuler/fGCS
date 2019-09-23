@@ -23,15 +23,21 @@ class GrammarController {
      * region constructors
      **/
     //creating grammar from data
-    constructor(learningData : List<TestExample>){
+    constructor(learningData : List<TestExample>, testData : List<TestExample>? = null){
         this.learningData = learningData
+        this.testData = testData
         createGrammarFromData()
     }
 
     //simply loading grammar
-    constructor(grammar: Grammar){
+    constructor(grammar: Grammar, testData : List<TestExample>? = null){
+        //grammar is ready, just needs some refreshment
         this.grammar = grammar
         updateSymbolReferences()
+
+        //but we have to take care of data
+        this.testData = testData
+        parseTestData()
     }
     //endregion
 
@@ -78,11 +84,7 @@ class GrammarController {
             example.parse(this)
         }
 
-        if(testData!=null) {
-            for(example in testData!!) {
-                example.parse(this)
-            }
-        }
+        parseTestData()
     }
 
     private fun updateSymbolReferences(){
@@ -255,6 +257,14 @@ class GrammarController {
 
     fun findNSymbolByChar(symbolChar : Char) : NSymbol? {
         return grammar.nSymbols.find { it.symbol == symbolChar }
+    }
+
+    private fun parseTestData(){
+        if(testData!=null) {
+            for(example in testData!!) {
+                example.parse(this)
+            }
+        }
     }
     //endregion
 }

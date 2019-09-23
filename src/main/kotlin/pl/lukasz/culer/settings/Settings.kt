@@ -30,5 +30,5 @@ class Settings {
     val subtreeMembership = SubtreeMembershipT2.MIN_SQRT
 
     @SerializedName("threshold")
-    val crispClassificationThreshold : Double? = null       //if null it will be determined dynamically [recommended]
+    val crispClassificationThreshold : Double? = 0.5       //if null it will be determined dynamically [recommended]
 }

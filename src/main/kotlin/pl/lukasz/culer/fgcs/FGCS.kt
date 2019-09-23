@@ -61,9 +61,9 @@ class FGCS(val inputSet : List<TestExample>? = null,
     private fun initiateFGCS() : Boolean{
         //ok we have grammar on input, no need for inference :(
         grammarController = when {
-            inputGrammar!=null -> GrammarController(inputGrammar)
+            inputGrammar!=null -> GrammarController(inputGrammar, testData = testSet)
             inputSet==null -> return false //if there is no input grammar and input set - we have nothing to do
-            else -> GrammarController(inputSet)
+            else -> GrammarController(inputSet, testData = testSet)
         }
 
         //everything is fine, lets rock

@@ -2,6 +2,7 @@ package pl.lukasz.culer.fgcs.models.trees
 
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
+import pl.lukasz.culer.utils.Consts
 
 open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<SubTrees> = mutableListOf()) {
     //params to fill
@@ -10,6 +11,7 @@ open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<Sub
 
     //shortcuts
     val isLeaf : Boolean get() = subtrees.isEmpty()
+    val isDeadEnd : Boolean get() = node == Consts.END_STRING_SYMBOL
 
     data class SubTrees(val subtrees : Pair<MultiParseTreeNode, MultiParseTreeNode>,
                         var treeMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
