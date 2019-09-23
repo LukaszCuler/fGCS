@@ -1,5 +1,6 @@
 package pl.lukasz.culer.fgcs
 
+import TreeNode
 import io.reactivex.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Function
@@ -117,8 +118,24 @@ class FGCS(val inputSet : List<TestExample>? = null,
                 }
             }
             html += "$exampleString<br>"
+
+            if(!example.multiParseTreeNode.isDeadEnd){
+                val root = getNode(example.multiParseTreeNode)
+                html+= "<tt>$root</tt><br><br>"
+            }
         }
         html+="</body></html>"
         File(filePath).writeText(html)
+    }
+
+    fun getNode(tree : MultiParseTreeNode) : TreeNode {
+        val myNode = TreeNode(tree.node.symbol.toString())
+        if(tree.isLeaf){
+            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()))
+        } else {
+            myNode.children.add(getNode(tree.mainChild!!.subtrees.first))
+            myNode.children.add(getNode(tree.mainChild!!.subtrees.second))
+        }
+        return myNode
     }
 }
