@@ -19,10 +19,10 @@ import pl.lukasz.culer.utils.Logger
 
 
 fun main(args: Array<String>) {
-/*    LearningSandbox(
+    LearningSandbox(
         LineLauncher(args)
             .getInputParams()
-    ).startSimulation()*/
+    ).startSimulation()
     /*val grammar = Grammar()
 
 
