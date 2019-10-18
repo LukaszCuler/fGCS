@@ -1,11 +1,7 @@
 package pl.lukasz.culer.fgcs
 
-import TreeNode
 import io.reactivex.*
-import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Function
 import io.reactivex.schedulers.Schedulers
-import pl.lukasz.culer.data.ProcessDataLoader
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.ClassificationController
@@ -15,6 +11,7 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.vis.heatmap.TreeNode
 import java.io.File
 
 class FGCS(val inputSet : List<TestExample>? = null,
