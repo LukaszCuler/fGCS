@@ -93,15 +93,18 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
     //@TODO TO REMOVE
     fun saveVis(filePath : String, exampleList : List<ExampleAnalysisResult>){
-        var html = "<html><body>Membership | Crisp classification | Example<br><br>"
+        var html = File("start.html").readText()
 
         for(example in exampleList){
             val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             val exampleHeatmap = classificationController.getExampleHeatmap(example.multiParseTreeNode)
 
-            var exampleString = "${"%.2f".format(fuzzyClass.midpoint)} | $crispClass | "
-
+            var exampleString = if(crispClass) "<span class=\"label label-success\">positive</span>"
+            else "<span class=\"label label-danger\">negative</span>"
+            exampleString += "&nbsp&nbsp&nbsp&nbsp<span class=\"lead\">"
+            //var exampleString = "${"%.2f".format(fuzzyClass.midpoint)} | $crispClass | "
+//<span class="lead">fitness: <span class="label label-success">0,94</span></span>
             if(example.multiParseTreeNode.isDeadEnd){
                 exampleString += "<font color='#ff0000'>${example.example.sequence}</font>"
             } else {
@@ -114,6 +117,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
                     exampleString += "<font color='#$hexR${hexG}00'>${example.example.sequence[i]}</font>"
                 }
             }
+            exampleString+="&nbsp&nbsp&nbsp&nbsp<span class=\"label label-primary\">${"%.2f".format(fuzzyClass.midpoint)}</span></span>"
             html += "$exampleString<br>"
 
             if(!example.multiParseTreeNode.isDeadEnd){
@@ -121,14 +125,15 @@ class FGCS(val inputSet : List<TestExample>? = null,
                 html+= "<tt>$root</tt><br><br>"
             }
         }
-        html+="</body></html>"
+        html+=File("end.html").readText()
         File(filePath).writeText(html)
     }
 
     fun getNode(tree : MultiParseTreeNode) : TreeNode {
         val myNode = TreeNode(tree.node.symbol.toString())
+        myNode.memb = tree.mainMembership.midpoint;
         if(tree.isLeaf){
-            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()))
+            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { memb = tree.mainMembership.midpoint })
         } else {
             myNode.children.add(getNode(tree.mainChild!!.subtrees.first))
             myNode.children.add(getNode(tree.mainChild!!.subtrees.second))

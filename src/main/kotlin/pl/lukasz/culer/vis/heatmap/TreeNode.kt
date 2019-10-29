@@ -13,7 +13,7 @@ const val N_TH_ELEMENT_POSTFIX = "│&nbsp&nbsp&nbsp"
 const val LAST_ELEMENT_PREFIX = "└──&nbsp"
 const val LAST_ELEMENT_POSTFIX = "&nbsp&nbsp&nbsp&nbsp"
 
-class TreeNode(private val nodeName : String, private val membership : Double = 0.0, val children: MutableList<TreeNode> = mutableListOf()) {
+class TreeNode(private val nodeName : String, var membership : Double = 0.0, val children: MutableList<TreeNode> = mutableListOf()) {
     override fun toString(): String {
         val buffer = StringBuilder()
         print(buffer, EMPTY_STING, EMPTY_STING)
