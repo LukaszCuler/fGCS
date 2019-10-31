@@ -3,11 +3,9 @@ package pl.lukasz.culer.vis.heatmap
 import java.util.ArrayList
 
 const val EMPTY_STING = ""
-const val MAX_COLOR_VALUE = 255
 const val UNIT_VAL = 1.0
 const val HEX_COLOR_FORMATTER = "%02x"
 const val END_COLOR = "</font>"
-const val NEW_LINE = "<br>"
 const val N_TH_ELEMENT_PREFIX = "├──&nbsp"
 const val N_TH_ELEMENT_POSTFIX = "│&nbsp&nbsp&nbsp"
 const val LAST_ELEMENT_PREFIX = "└──&nbsp"

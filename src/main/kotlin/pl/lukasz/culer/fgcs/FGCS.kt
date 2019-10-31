@@ -53,8 +53,6 @@ class FGCS(val inputSet : List<TestExample>? = null,
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
-
-        saveVis("heatmap.html", exampleList)
     }
     //endregion
     /**
@@ -90,54 +88,4 @@ class FGCS(val inputSet : List<TestExample>? = null,
      */
     data class ExampleAnalysisResult(val example: TestExample, val table : CYKTable, val multiParseTreeNode: MultiParseTreeNode)
     //endregion
-
-    //@TODO TO REMOVE
-    fun saveVis(filePath : String, exampleList : List<ExampleAnalysisResult>){
-        var html = File("start.html").readText()
-
-        for(example in exampleList){
-            val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
-            val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
-            val exampleHeatmap = classificationController.getExampleHeatmap(example.multiParseTreeNode)
-
-            var exampleString = if(crispClass) "<span class=\"label label-success\">positive</span>"
-            else "<span class=\"label label-danger\">negative</span>"
-            exampleString += "&nbsp&nbsp&nbsp&nbsp<span class=\"lead\">"
-            //var exampleString = "${"%.2f".format(fuzzyClass.midpoint)} | $crispClass | "
-//<span class="lead">fitness: <span class="label label-success">0,94</span></span>
-            if(example.multiParseTreeNode.isDeadEnd){
-                exampleString += "<font color='#ff0000'>${example.example.sequence}</font>"
-            } else {
-                for(i in 0 until example.example.size){
-                    val colorR = (255*(1.0-exampleHeatmap[i].midpoint)).toInt()
-                    val colorG = (255*exampleHeatmap[i].midpoint).toInt()
-                    val hexR = "%02x".format(colorR)
-                    val hexG = "%02x".format(colorG)
-
-                    exampleString += "<font color='#$hexR${hexG}00'>${example.example.sequence[i]}</font>"
-                }
-            }
-            exampleString+="&nbsp&nbsp&nbsp&nbsp<span class=\"label label-primary\">${"%.2f".format(fuzzyClass.midpoint)}</span></span>"
-            html += "$exampleString<br>"
-
-            if(!example.multiParseTreeNode.isDeadEnd){
-                val root = getNode(example.multiParseTreeNode)
-                html+= "<tt>$root</tt><br><br>"
-            }
-        }
-        html+=File("end.html").readText()
-        File(filePath).writeText(html)
-    }
-
-    fun getNode(tree : MultiParseTreeNode) : TreeNode {
-        val myNode = TreeNode(tree.node.symbol.toString())
-        myNode.memb = tree.mainMembership.midpoint;
-        if(tree.isLeaf){
-            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { memb = tree.mainMembership.midpoint })
-        } else {
-            myNode.children.add(getNode(tree.mainChild!!.subtrees.first))
-            myNode.children.add(getNode(tree.mainChild!!.subtrees.second))
-        }
-        return myNode
-    }
 }
