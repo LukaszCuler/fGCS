@@ -80,8 +80,8 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
         if(tree.isLeaf){
             myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = tree.mainMembership.midpoint })
         } else {
-            myNode.children.add(getNode(tree.mainChild!!.subtrees.first))
-            myNode.children.add(getNode(tree.mainChild!!.subtrees.second))
+            myNode.children.add(getNode(tree.mainChild!!.subTreePair.first))
+            myNode.children.add(getNode(tree.mainChild!!.subTreePair.second))
         }
         return myNode
     }

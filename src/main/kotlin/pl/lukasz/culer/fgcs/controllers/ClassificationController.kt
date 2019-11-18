@@ -1,6 +1,5 @@
 package pl.lukasz.culer.fgcs.controllers
 
-import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
@@ -23,14 +22,14 @@ class ClassificationController(val gc: GrammarController,
         //now for multiple subtree variants
         for(subtree in parseTree.subtrees){
             //tagging subtrees
-            tagTree(subtree.subtrees.first)
-            tagTree(subtree.subtrees.second)
+            tagTree(subtree.subTreePair.first)
+            tagTree(subtree.subTreePair.second)
 
             //membership calculation of subtrees and link rule
             subtree.treeMembership = settings.subtreeMembership(
-                subtree.subtrees.first.mainMembership,
-                subtree.subtrees.second.mainMembership,
-                gc.nRulesWith(parseTree.node, subtree.subtrees.first.node, subtree.subtrees.second.node).single().membership)
+                subtree.subTreePair.first.mainMembership,
+                subtree.subTreePair.second.mainMembership,
+                gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership)
         }
 
         parseTree.subtrees.sortBy { it.treeMembership }
@@ -64,13 +63,13 @@ class ClassificationController(val gc: GrammarController,
         val myListToReturn : MutableList<IntervalFuzzyNumber> = mutableListOf()
 
         var newInhValue =
-            gc.nRulesWith(parseTree.node, mainSub.subtrees.first.node, mainSub.subtrees.second.node).single().membership
+            gc.nRulesWith(parseTree.node, mainSub.subTreePair.first.node, mainSub.subTreePair.second.node).single().membership
 
         inhMembership?.let {newInhValue = settings.tNorm(it, newInhValue) }
 
         //@TODO - add S-norm
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.first, newInhValue))
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subtrees.second, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.first, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.second, newInhValue))
         return myListToReturn
     }
     //endregion

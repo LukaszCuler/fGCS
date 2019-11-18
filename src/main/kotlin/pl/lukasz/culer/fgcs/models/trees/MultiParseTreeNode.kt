@@ -4,15 +4,15 @@ import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.Consts
 
-open class MultiParseTreeNode(val node : NSymbol, val subtrees : MutableList<SubTrees> = mutableListOf()) {
+open class MultiParseTreeNode(val node : NSymbol = Consts.END_STRING_SYMBOL, val subtrees : MutableList<SubTreePair> = mutableListOf()) {
     //params to fill
-    var mainChild : SubTrees? = null
+    var mainChild : SubTreePair? = null
     var mainMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0)
 
     //shortcuts
     val isLeaf : Boolean get() = subtrees.isEmpty()
     val isDeadEnd : Boolean get() = node == Consts.END_STRING_SYMBOL
 
-    data class SubTrees(val subtrees : Pair<MultiParseTreeNode, MultiParseTreeNode>,
-                        var treeMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
+    data class SubTreePair(val subTreePair : Pair<MultiParseTreeNode, MultiParseTreeNode>,
+                           var treeMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
 }
