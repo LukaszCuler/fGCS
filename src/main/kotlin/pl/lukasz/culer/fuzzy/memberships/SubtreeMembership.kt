@@ -2,6 +2,7 @@ package pl.lukasz.culer.fuzzy.memberships
 
 import kotlin.math.min
 
+@Deprecated("To replace")
 enum class SubtreeMembership : (Double, Double, Double) -> Double {
     MIN {
         override fun invoke(a: Double, b: Double, c : Double) = min(min(a,b),c)

@@ -3,6 +3,7 @@ package pl.lukasz.culer.fuzzy.memberships
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import kotlin.math.min
 
+@Deprecated("To replace")
 enum class SubtreeMembershipT2 : (IntervalFuzzyNumber, IntervalFuzzyNumber, IntervalFuzzyNumber) -> IntervalFuzzyNumber {
     MIN {
         override fun invoke(a: IntervalFuzzyNumber, b: IntervalFuzzyNumber, c : IntervalFuzzyNumber) =
