@@ -2,6 +2,7 @@ package pl.lukasz.culer.fgcs.controllers
 
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
+import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
@@ -46,7 +47,8 @@ class ClassificationController(val gc: GrammarController,
         return parseTree.mainMembership.midpoint >= (settings.crispClassificationThreshold?: 0.0)
     }
 
-    fun getExampleHeatmap(parseTree : MultiParseTreeNode,
+    fun getExampleHeatmap(heatmapProcessor : HeatmapProcessor,
+                          parseTree : MultiParseTreeNode,
                           inhMembership : IntervalFuzzyNumber? = null
     ) : MutableList<IntervalFuzzyNumber> {
 
@@ -68,8 +70,8 @@ class ClassificationController(val gc: GrammarController,
         inhMembership?.let {newInhValue = settings.tNorm(it, newInhValue) }
 
         //@TODO - add S-norm
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.first, newInhValue))
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.second, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(heatmapProcessor, mainSub.subTreePair.first, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(heatmapProcessor, mainSub.subTreePair.second, newInhValue))
         return myListToReturn
     }
     //endregion
