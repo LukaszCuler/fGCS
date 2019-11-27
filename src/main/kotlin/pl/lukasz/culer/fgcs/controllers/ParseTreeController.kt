@@ -19,7 +19,7 @@ class ParseTreeController(val gc: GrammarController, val cykController: CYKContr
     /**
      * region private methods
      */
-    fun getTreeForSymbolAndPosition(symbol : NSymbol,
+    private fun getTreeForSymbolAndPosition(symbol : NSymbol,
                                     y : Int, x : Int,
                                     cykTable : CYKTable) : MultiParseTreeNode {
         //creating current node

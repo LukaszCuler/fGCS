@@ -11,8 +11,6 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.vis.heatmap.TreeNode
-import java.io.File
 
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
@@ -28,7 +26,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
      * region public methods
      */
     fun inferGrammar(){
-        if(!initiateFGCS()) return //no need for interence
+        if(!initiateFGCS()) return //no need for inference
 
         //@TODO :)
     }
@@ -77,7 +75,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         val exampleTable = CYKTable(example)    //we are creating cyk table for example
         cykController.fillCYKTable(exampleTable)    //...fill it...
         val parseTree = parseTreeController.getMultiParseTreeFromCYK(exampleTable)  //...create tree using it...
-        classificationController.tagTree(parseTree) //...and tag it!
+        classificationController.assignClassificationMembership(parseTree) //...and tag it!
 
         //ok, so lets collect what we got :)
         return ExampleAnalysisResult(example, exampleTable, parseTree)

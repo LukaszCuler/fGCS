@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
+import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessorFactory
 import pl.lukasz.culer.fuzzy.snorms.SNormT2
 import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.utils.Logger
@@ -32,6 +33,9 @@ class Settings {
 
     @SerializedName("heatmapProcessorFactory")
     val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
+
+    @SerializedName("relevanceProcessorFactory")
+    val relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA
 
     @SerializedName("threshold")
     val crispClassificationThreshold : Double? = 0.5       //if null it will be determined dynamically [recommended]

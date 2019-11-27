@@ -11,9 +11,15 @@ import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 class ClassificationController(val gc: GrammarController,
                                val settings: Settings) {
     /**
+     * region consts
+     */
+    val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
+    val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
+    //endregion
+    /**
      * region public methods
      */
-    fun tagTree(parseTree : MultiParseTreeNode) {
+    fun assignClassificationMembership(parseTree : MultiParseTreeNode) {
         //for leaves we return default membership
         if(parseTree.isLeaf) {
             parseTree.mainMembership = if(parseTree.isDeadEnd) DO_NOT_BELONG_AT_ALL else Consts.T_RULE_MEMBERSHIP
@@ -23,20 +29,28 @@ class ClassificationController(val gc: GrammarController,
         //now for multiple subtree variants
         for(subtree in parseTree.subtrees){
             //tagging subtrees
-            tagTree(subtree.subTreePair.first)
-            tagTree(subtree.subTreePair.second)
+            assignClassificationMembership(subtree.subTreePair.first)
+            assignClassificationMembership(subtree.subTreePair.second)
 
             //membership calculation of subtrees and link rule
-            subtree.treeMembership = settings.subtreeMembership(
+            subtree.classificationMembership = settings.subtreeMembership(
                 subtree.subTreePair.first.mainMembership,
                 subtree.subTreePair.second.mainMembership,
                 gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership)
         }
 
-        parseTree.subtrees.sortBy { it.treeMembership }
+        parseTree.subtrees.sortBy { it.classificationMembership }
         parseTree.mainChild = parseTree.subtrees.last()
         //@TODO should be S-norm
-        parseTree.mainMembership = parseTree.subtrees.last().treeMembership
+        parseTree.mainMembership = parseTree.subtrees.last().classificationMembership
+    }
+
+    fun assignRelevance(parseTree : MultiParseTreeNode) {
+        //@TODO
+    }
+
+    fun assignDerivationMembership(parseTree : MultiParseTreeNode) {
+        //@TODO
     }
 
     fun getFuzzyClassification(parseTree : MultiParseTreeNode) : IntervalFuzzyNumber {
@@ -47,8 +61,7 @@ class ClassificationController(val gc: GrammarController,
         return parseTree.mainMembership.midpoint >= (settings.crispClassificationThreshold?: 0.0)
     }
 
-    fun getExampleHeatmap(heatmapProcessor : HeatmapProcessor,
-                          parseTree : MultiParseTreeNode,
+    fun getExampleHeatmap(parseTree : MultiParseTreeNode,
                           inhMembership : IntervalFuzzyNumber? = null
     ) : MutableList<IntervalFuzzyNumber> {
 
@@ -70,8 +83,8 @@ class ClassificationController(val gc: GrammarController,
         inhMembership?.let {newInhValue = settings.tNorm(it, newInhValue) }
 
         //@TODO - add S-norm
-        myListToReturn.addAll(getExampleHeatmap(heatmapProcessor, mainSub.subTreePair.first, newInhValue))
-        myListToReturn.addAll(getExampleHeatmap(heatmapProcessor, mainSub.subTreePair.second, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.first, newInhValue))
+        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.second, newInhValue))
         return myListToReturn
     }
     //endregion

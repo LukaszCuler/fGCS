@@ -4,6 +4,7 @@ import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.controllers.ClassificationController
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
+import pl.lukasz.culer.settings.Settings
 import java.io.File
 
 const val HEAD_CONTENT_FILE = "fgcs-utils/reports/start.html"
@@ -26,6 +27,7 @@ const val PARSE_TREE_CONTAINER_END = "</tt><br><br>"
 
 class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                                    val classificationController : ClassificationController,
+                                   val settings: Settings,
                                    val listToVisualize : List<FGCS.ExampleAnalysisResult>){
     /**
      * region public methods
