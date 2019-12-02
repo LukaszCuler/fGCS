@@ -13,8 +13,8 @@ class ClassificationController(val gc: GrammarController,
     /**
      * region consts
      */
-    val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
-    val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
+    private val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
+    private val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
     //endregion
     /**
      * region public methods
@@ -46,11 +46,23 @@ class ClassificationController(val gc: GrammarController,
     }
 
     fun assignRelevance(parseTree : MultiParseTreeNode) {
-        //@TODO
+        if(parseTree.isLeaf) return
+        relevanceProcessor.assignRelevanceToVariants(parseTree.subtrees)
+
+        for(childVariant in parseTree.subtrees){
+            assignRelevance(childVariant.subTreePair.first)
+            assignRelevance(childVariant.subTreePair.second)
+        }
     }
 
-    fun assignDerivationMembership(parseTree : MultiParseTreeNode) {
-        //@TODO
+    fun assignDerivationMembership(parseTree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber? = null) {
+        if(parseTree.isLeaf) return
+        heatmapProcessor.assignDerivationMembershipToVariants(inhValue, parseTree.subtrees, settings)
+
+        for(childVariant in parseTree.subtrees){
+            assignDerivationMembership(childVariant.subTreePair.first, childVariant.derivationMembership)
+            assignDerivationMembership(childVariant.subTreePair.second, childVariant.derivationMembership)
+        }
     }
 
     fun getFuzzyClassification(parseTree : MultiParseTreeNode) : IntervalFuzzyNumber {
