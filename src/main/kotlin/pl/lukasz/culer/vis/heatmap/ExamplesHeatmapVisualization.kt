@@ -9,8 +9,8 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import java.io.File
 
-const val HEAD_CONTENT_FILE = "fgcs-utils/reports/start.html"
-const val TAIL_CONTENT_FILE = "fgcs-utils/reports/end.html"
+const val HEAD_CONTENT_FILE = "fgcsUtils/reports/start.html"
+const val TAIL_CONTENT_FILE = "fgcsUtils/reports/end.html"
 const val POSITIVE_LABEL = "<span class=\"label label-success\">positive</span>"
 const val NEGATIVE_LABEL = "<span class=\"label label-danger\">negative</span>"
 const val SEQUENCE_INIT = "&nbsp&nbsp&nbsp&nbsp<span class=\"lead\">"
