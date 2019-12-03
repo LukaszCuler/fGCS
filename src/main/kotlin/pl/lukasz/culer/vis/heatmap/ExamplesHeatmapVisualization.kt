@@ -4,7 +4,9 @@ import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.controllers.ClassificationController
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
+import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.utils.Consts
 import java.io.File
 
 const val HEAD_CONTENT_FILE = "fgcs-utils/reports/start.html"
@@ -71,14 +73,14 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
     /**
      * region private methods
      */
-    private fun getNode(tree : MultiParseTreeNode) : TreeNode {
+    private fun getNode(tree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = Consts.FULL_MEMBERSHIP) : TreeNode {
         val myNode = TreeNode(tree.node.symbol.toString())
-        myNode.membership = tree.mainMembership.midpoint;
         if(tree.isLeaf){
-            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = tree.mainMembership.midpoint })
+            myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = inhValue.midpoint })
         } else {
-            myNode.children.add(getNode(tree.mainChild!!.subTreePair.first))
-            myNode.children.add(getNode(tree.mainChild!!.subTreePair.second))
+            val mainTree = classificationController.heatmapProcessor.getMainTree(tree.subtrees) ?: return myNode
+            myNode.children.add(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
+            myNode.children.add(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))
         }
         return myNode
     }
