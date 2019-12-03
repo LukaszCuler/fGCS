@@ -41,8 +41,15 @@ class FGCS(val inputSet : List<TestExample>? = null,
         //since we want multithreading, we need to do some initial work
         val exampleList = Single.zip(properTestSet.map { example ->
             Single.create(SingleOnSubscribe<ExampleAnalysisResult> {
-                it.onSuccess(testExample(example))
-            })
+                try {
+                    it.onSuccess(testExample(example))
+                } catch (ex : Throwable) {
+                    it.onError(ex)
+                }
+
+            }).doOnError {
+                it.printStackTrace()
+            }
         }.toList()) { resultsArray ->
             resultsArray.map { it as ExampleAnalysisResult }.toList()
         }.subscribeOn(Schedulers.computation()).blockingGet()
