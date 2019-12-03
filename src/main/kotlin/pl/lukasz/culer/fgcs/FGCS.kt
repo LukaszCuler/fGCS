@@ -11,6 +11,7 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
@@ -51,6 +52,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
+
+        ExamplesHeatmapVisualization(grammarController, classificationController, exampleList).saveToFile("heatmap.html")
     }
     //endregion
     /**
