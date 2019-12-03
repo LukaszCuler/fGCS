@@ -7,6 +7,7 @@ import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
 import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessorFactory
 import pl.lukasz.culer.fuzzy.snorms.SNormT2
 import pl.lukasz.culer.fuzzy.tnorms.TNormT2
+import pl.lukasz.culer.utils.Consts.Companion.DEFAULT_THRESHOLD
 import pl.lukasz.culer.utils.Logger
 import pl.lukasz.culer.utils.SETTINGS_LOADING
 import java.io.File
@@ -32,11 +33,11 @@ class Settings {
     val subtreeMembership = SubtreeMembershipT2.MIN_SQRT
 
     @SerializedName("heatmapProcessorFactory")
-    val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
+    val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.MINMAX      //@TODO should be created after init as singleton
 
     @SerializedName("relevanceProcessorFactory")
-    val relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA
+    val relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA   //@TODO should be created after init as singleton
 
     @SerializedName("threshold")
-    val crispClassificationThreshold : Double? = 0.5       //if null it will be determined dynamically [recommended]
+    val crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]
 }

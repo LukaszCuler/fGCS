@@ -6,6 +6,8 @@ import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
+import pl.lukasz.culer.utils.Consts.Companion.FULL_MEMBERSHIP
+import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
 //@TODO unit tests!
@@ -14,8 +16,8 @@ class ClassificationController(val gc: GrammarController,
     /**
      * region consts
      */
-    private val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
-    private val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
+    val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
+    val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
     //endregion
     /**
      * region public methods
@@ -56,17 +58,17 @@ class ClassificationController(val gc: GrammarController,
         }
     }
 
-    fun assignDerivationMembership(parseTree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = DO_NOT_BELONG_AT_ALL, relValue : IntervalFuzzyNumber = NOT_RELEVANT_AT_ALL)
-            : MutableList<MutableList<IntervalFuzzyNumber>>{
-        if(parseTree.isLeaf) return mutableListOf(mutableListOf(inhValue))  //latter should not happen
-        heatmapProcessor.assignDerivationMembershipToVariants(inhValue, parseTree.subtrees, settings)
+    fun assignDerivationMembership(parseTree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = FULL_MEMBERSHIP, relValue : IntervalFuzzyNumber = FULL_RELEVANCE)
+            : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>{
+        if(parseTree.isLeaf || inhValue == DO_NOT_BELONG_AT_ALL) return mutableListOf(mutableListOf(Pair(inhValue, relValue)))
+        heatmapProcessor.assignDerivationMembershipToVariants(inhValue, relValue, parseTree.subtrees, settings)
 
-        var valuesToReturn : MutableList<MutableList<IntervalFuzzyNumber>>? = null
+        var valuesToReturn : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>? = null
 
         for(childVariant in parseTree.subtrees){
-            val currentValues :  MutableList<MutableList<IntervalFuzzyNumber>>  = mutableListOf()
-            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.first, childVariant.derivationMembership))
-            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.second, childVariant.derivationMembership))
+            val currentValues :  MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>  = mutableListOf()
+            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.first, childVariant.derivationMembership, childVariant.relevance))
+            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.second, childVariant.derivationMembership, childVariant.relevance))
             if(valuesToReturn!=null){
                 for(i in 0 until valuesToReturn.size){
                     valuesToReturn[i].addAll(currentValues[i])
@@ -84,32 +86,10 @@ class ClassificationController(val gc: GrammarController,
         return parseTree.mainMembership.midpoint >= (settings.crispClassificationThreshold?: 0.0)
     }
 
-    fun getExampleHeatmap(parseTree : MultiParseTreeNode,
-                          inhMembership : IntervalFuzzyNumber? = null
-    ) /*: MutableList<IntervalFuzzyNumber>*/ {
-
-        //@TODO
-        /*//leaf support
-        if(parseTree.isLeaf){
-            if(inhMembership!=null) return mutableListOf(inhMembership)
-            return mutableListOf() //ofc should not happen
-        }
-
-        //should not happen ;_;
-        val mainSub = parseTree.mainChild ?: return mutableListOf()
-
-        //ok so let's calculate stuff for children
-        val myListToReturn : MutableList<IntervalFuzzyNumber> = mutableListOf()
-
-        var newInhValue =
-            gc.nRulesWith(parseTree.node, mainSub.subTreePair.first.node, mainSub.subTreePair.second.node).single().membership
-
-        inhMembership?.let {newInhValue = settings.tNorm(it, newInhValue) }
-
-        //@TODO - add S-norm
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.first, newInhValue))
-        myListToReturn.addAll(getExampleHeatmap(mainSub.subTreePair.second, newInhValue))
-        return myListToReturn*/
+    fun getExampleHeatmap(parseTree : MultiParseTreeNode) : List<IntervalFuzzyNumber> {
+        return assignDerivationMembership(parseTree)
+            .map { heatmapProcessor.assignValueToSymbol(it) }
+            .toList()
     }
     //endregion
 }

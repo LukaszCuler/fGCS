@@ -27,15 +27,10 @@ const val PARSE_TREE_CONTAINER_END = "</tt><br><br>"
 
 class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                                    val classificationController : ClassificationController,
-                                   val settings: Settings,
                                    val listToVisualize : List<FGCS.ExampleAnalysisResult>){
     /**
      * region public methods
      */
-    fun performAnalysis() {
-
-    }
-
     fun saveToFile(filePath : String){
         var html = File(HEAD_CONTENT_FILE).readText()   //starts html file with proper head
 
@@ -62,7 +57,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             exampleString+=MEMBERSHIP_VALUE_START+MEMBERSHIP_FORMATTER.format(fuzzyClass.midpoint)+END_ALL_FORMATTING
             html += exampleString+NEW_LINE
 
-            if(!example.multiParseTreeNode.isDeadEnd){
+            if(!example.multiParseTreeNode.isDeadEnd && classificationController.heatmapProcessor.mainTreeDistinguishable()){
                 val root = getNode(example.multiParseTreeNode)
                 html+= PARSE_TREE_CONTAINER_START+root+PARSE_TREE_CONTAINER_END
             }
