@@ -24,8 +24,7 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
             }
         }
         if(bestChild!=null){
-            bestChild.derivationMembership = bestChild.classificationMembership
-            settings.tNorm(inhValue, bestChild.derivationMembership)
+            bestChild.derivationMembership = settings.tNorm(inhValue, bestChild.classificationMembership)
         }
     }
 

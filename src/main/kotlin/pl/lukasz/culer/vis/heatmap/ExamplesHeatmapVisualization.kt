@@ -7,6 +7,7 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 import java.io.File
 
 const val HEAD_CONTENT_FILE = "fgcsUtils/reports/start.html"
@@ -18,12 +19,11 @@ const val EXAMPLE_NOT_PARSED = "<font color='#ff0000'>"
 const val EXAMPLE_END = "</font>"
 const val HEX_FORMATTER = "%02x"
 const val MAX_COLOR_VALUE = 255
-const val CUSTOM_COLOR_START = "\"<font color='#"
+const val CUSTOM_COLOR_START = "<font color='#"
 const val CUSTOM_COLOR_END = "00'>"
 const val MEMBERSHIP_VALUE_START = "&nbsp&nbsp&nbsp&nbsp<span class=\"label label-primary\">"
 const val END_ALL_FORMATTING = "</span></span>"
 const val NEW_LINE = "<br>"
-const val MEMBERSHIP_FORMATTER = "%.2f"
 const val PARSE_TREE_CONTAINER_START = "<tt>"
 const val PARSE_TREE_CONTAINER_END = "</tt><br><br>"
 
@@ -56,7 +56,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                     exampleString += CUSTOM_COLOR_START + hexR + hexG + CUSTOM_COLOR_END+example.example.sequence[i]+EXAMPLE_END
                 }
             }
-            exampleString+=MEMBERSHIP_VALUE_START+MEMBERSHIP_FORMATTER.format(fuzzyClass.midpoint)+END_ALL_FORMATTING
+            exampleString+=MEMBERSHIP_VALUE_START+MEMBERSHIP_SHORT_FORMATTER.format(fuzzyClass.midpoint)+END_ALL_FORMATTING
             html += exampleString+NEW_LINE
 
             if(!example.multiParseTreeNode.isDeadEnd && classificationController.heatmapProcessor.mainTreeDistinguishable()){
@@ -76,9 +76,11 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
     private fun getNode(tree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = Consts.FULL_MEMBERSHIP) : TreeNode {
         val myNode = TreeNode(tree.node.symbol.toString())
         if(tree.isLeaf){
+            myNode.membership = inhValue.midpoint
             myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = inhValue.midpoint })
         } else {
             val mainTree = classificationController.heatmapProcessor.getMainTree(tree.subtrees) ?: return myNode
+            myNode.membership = mainTree.derivationMembership.midpoint
             myNode.children.add(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
             myNode.children.add(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))
         }

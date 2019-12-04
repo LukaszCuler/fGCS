@@ -2,6 +2,8 @@ package pl.lukasz.culer.fuzzy
 
 import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 
 class IntervalFuzzyNumber(
     @SerializedName("lowerBound")
@@ -19,6 +21,6 @@ class IntervalFuzzyNumber(
     }
     //endregion
     //region public
-    override fun toString() = "[$lowerBound,$upperBound]"
+    override fun toString() = "[ ${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)},${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
     //endregion
 }

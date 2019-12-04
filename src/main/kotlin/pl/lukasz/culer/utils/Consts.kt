@@ -18,5 +18,6 @@ class Consts {
         val END_STRING_SYMBOL = NSymbol('Γ')
 
         const val N_GEN_START = 'A'
+        const val MEMBERSHIP_SHORT_FORMATTER = "%.2f"
     }
 }
