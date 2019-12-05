@@ -61,7 +61,7 @@ class ClassificationController(val gc: GrammarController,
     fun assignDerivationMembership(parseTree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = FULL_MEMBERSHIP, relValue : IntervalFuzzyNumber = FULL_RELEVANCE)
             : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>{
         if(parseTree.isLeaf || inhValue == DO_NOT_BELONG_AT_ALL) return mutableListOf(mutableListOf(Pair(inhValue, relValue)))
-        heatmapProcessor.assignDerivationMembershipToVariants(inhValue, relValue, parseTree.subtrees, settings)
+        heatmapProcessor.assignDerivationMembershipToVariants(gc, inhValue, relValue, parseTree, settings)
 
         var valuesToReturn : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>? = null
 

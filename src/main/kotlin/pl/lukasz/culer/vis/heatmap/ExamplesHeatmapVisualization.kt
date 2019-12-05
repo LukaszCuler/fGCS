@@ -79,7 +79,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             myNode.membership = inhValue.midpoint
             myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = inhValue.midpoint })
         } else {
-            val mainTree = classificationController.heatmapProcessor.getMainTree(tree.subtrees) ?: return myNode
+            val mainTree = classificationController.heatmapProcessor.getMainTree(tree, grammarController) ?: return myNode
             myNode.membership = mainTree.derivationMembership.midpoint
             myNode.children.add(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
             myNode.children.add(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))

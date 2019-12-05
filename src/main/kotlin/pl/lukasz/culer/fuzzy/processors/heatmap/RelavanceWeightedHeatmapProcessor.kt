@@ -1,5 +1,6 @@
 package pl.lukasz.culer.fuzzy.processors.heatmap
 
+import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
@@ -11,13 +12,16 @@ import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
  * @TODO unit tests!
  */
 class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
-    override fun assignDerivationMembershipToVariants(inhValue : IntervalFuzzyNumber,
+    override fun assignDerivationMembershipToVariants(grammarController: GrammarController,
+                                                      inhValue : IntervalFuzzyNumber,
                                                       relValue : IntervalFuzzyNumber,
-                                                      children: List<MultiParseTreeNode.SubTreePair>,
+                                                      parseTreeNode: MultiParseTreeNode,
                                                       settings: Settings) {
         if(inhValue.midpoint == 0.0) return
-        for(child in children){
-            child.derivationMembership = settings.tNorm(inhValue, child.classificationMembership)
+        for(child in parseTreeNode.subtrees){
+            val appliedRuleMembership =
+                grammarController.nRulesWith(parseTreeNode.node, child.subTreePair.first.node, child.subTreePair.second.node).single().membership
+            child.derivationMembership = settings.tNorm(inhValue, appliedRuleMembership)
         }
     }
 
@@ -31,8 +35,7 @@ class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
 
     override fun mainTreeDistinguishable(): Boolean = false
 
-    override fun getMainTree(children: List<MultiParseTreeNode.SubTreePair>): MultiParseTreeNode.SubTreePair?
-            = null
+    override fun getMainTree(parseTreeNode: MultiParseTreeNode, grammarController: GrammarController): MultiParseTreeNode.SubTreePair? = null
 
 
 }

@@ -1,5 +1,6 @@
 package pl.lukasz.culer.fuzzy.processors.heatmap
 
+import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
@@ -11,20 +12,25 @@ import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
  * @TODO unit tests!
  */
 class MaxMembershipHeatmapProcessor : HeatmapProcessor {
-    override fun assignDerivationMembershipToVariants(inhValue : IntervalFuzzyNumber,
+    override fun assignDerivationMembershipToVariants(grammarController: GrammarController,
+                                                      inhValue : IntervalFuzzyNumber,
                                                       relValue : IntervalFuzzyNumber,
-                                                      children: List<MultiParseTreeNode.SubTreePair>,
+                                                      parseTreeNode: MultiParseTreeNode,
                                                       settings: Settings) {
         if(inhValue.midpoint == 0.0) return
 
         var bestChild : MultiParseTreeNode.SubTreePair? = null
-        for(child in children){
-            if(bestChild==null || child.classificationMembership.midpoint > bestChild.classificationMembership.midpoint) {
+        var bestValue : IntervalFuzzyNumber? = null
+        for(child in parseTreeNode.subtrees){
+            val appliedRuleMembership =
+                grammarController.nRulesWith(parseTreeNode.node, child.subTreePair.first.node, child.subTreePair.second.node).single().membership
+            if(bestValue==null || appliedRuleMembership > bestValue) {
                 bestChild = child
+                bestValue = appliedRuleMembership
             }
         }
-        if(bestChild!=null){
-            bestChild.derivationMembership = settings.tNorm(inhValue, bestChild.classificationMembership)
+        if(bestValue!=null&&bestChild!=null){
+            bestChild.derivationMembership = settings.tNorm(inhValue, bestValue)
         }
     }
 
@@ -33,8 +39,10 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
 
     override fun mainTreeDistinguishable(): Boolean = true
 
-    override fun getMainTree(children: List<MultiParseTreeNode.SubTreePair>): MultiParseTreeNode.SubTreePair?
-            = children.maxBy { it.classificationMembership }
+    override fun getMainTree(parseTreeNode: MultiParseTreeNode, grammarController: GrammarController): MultiParseTreeNode.SubTreePair?
+            = parseTreeNode.subtrees.maxBy {
+            grammarController.nRulesWith(parseTreeNode.node, it.subTreePair.first.node, it.subTreePair.second.node).single().membership
+        }
 
 
 }
