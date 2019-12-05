@@ -23,4 +23,43 @@ class IntervalFuzzyNumber(
     //region public
     override fun toString() = "[ ${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)},${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
     //endregion
+    //region operators overloading section
+    //with each other
+    operator fun plus(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound + second.lowerBound, upperBound + second.upperBound)
+    }
+
+    operator fun minus(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound - second.lowerBound, upperBound - second.upperBound)
+    }
+
+    operator fun times(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound * second.lowerBound, upperBound * second.upperBound)
+    }
+
+    //@TODO inaczej powinno być rozwiazane
+    operator fun div(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(if(second.lowerBound != 0.0) lowerBound / second.lowerBound else 0.0,
+            if(second.upperBound != 0.0) upperBound / second.upperBound else 0.0)
+    }
+
+    //with number
+    operator fun plus(second: Double): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound + second, upperBound + second)
+    }
+
+    operator fun minus(second: Double): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound - second, upperBound - second)
+    }
+
+    operator fun times(second: Double): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(lowerBound * second, upperBound * second)
+    }
+
+    //@TODO inaczej powinno być rozwiazane
+    operator fun div(second: Double): IntervalFuzzyNumber {
+        return IntervalFuzzyNumber(if(second != 0.0) lowerBound / second else 0.0,
+            if(second != 0.0) upperBound / second else 0.0)
+    }
+    //endregion
 }

@@ -86,6 +86,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         cykController.fillCYKTable(exampleTable)    //...fill it...
         val parseTree = parseTreeController.getMultiParseTreeFromCYK(exampleTable)  //...create tree using it...
         classificationController.assignClassificationMembership(parseTree) //...and tag it!
+        classificationController.assignRelevance(parseTree)                 //assigning relevance
 
         //ok, so lets collect what we got :)
         return ExampleAnalysisResult(example, exampleTable, parseTree)
