@@ -26,11 +26,11 @@ class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
     }
 
     override fun assignValueToSymbol(symbolValues: List<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>) : IntervalFuzzyNumber {
-        val sumOfMemberships = symbolValues.map { it.first }.reduce { first, second -> first + second }
+        val sumOfWeightedMemberships = symbolValues.map { it.first * it.second }.reduce { first, second -> first + second }
         val sumOfRelevance = symbolValues.map { it.second }.reduce { first, second -> first + second }
 
         //weighted mean
-        return sumOfMemberships / sumOfRelevance
+        return sumOfWeightedMemberships / sumOfRelevance
     }
 
     override fun mainTreeDistinguishable(): Boolean = false
