@@ -15,6 +15,7 @@ open class MultiParseTreeNode(val node : NSymbol = Consts.END_STRING_SYMBOL, val
 
     data class SubTreePair(val subTreePair : Pair<MultiParseTreeNode, MultiParseTreeNode>,
                            var classificationMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),
+                           var relevance : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),
                            var derivationMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),
-                           var relevance : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
+                           var derivationRelevance : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0))
 }

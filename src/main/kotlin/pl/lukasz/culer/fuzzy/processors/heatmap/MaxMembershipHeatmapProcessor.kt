@@ -4,9 +4,12 @@ import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
+import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeData
+import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeMembership
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
+import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 
 /**
  * @TODO unit tests!
@@ -31,13 +34,14 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
         }
         if(bestValue!=null&&bestChild!=null){
             bestChild.derivationMembership = settings.tNorm(inhValue, bestValue)
+            bestChild.derivationRelevance = FULL_RELEVANCE
         }
     }
 
-    override fun assignValueToSymbol(symbolValues: List<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>) : IntervalFuzzyNumber
+    override fun assignValueToSymbol(symbolValues: List<SymbolDerivativeData>) : SymbolDerivativeMembership
             = symbolValues.map { it.first }.max() ?: DO_NOT_BELONG_AT_ALL
 
-    override fun mainTreeDistinguishable(): Boolean = true
+    override fun mainTreeDistinguishable(): Boolean = false
 
     override fun getMainTree(parseTreeNode: MultiParseTreeNode, grammarController: GrammarController): MultiParseTreeNode.SubTreePair?
             = parseTreeNode.subtrees.maxBy {

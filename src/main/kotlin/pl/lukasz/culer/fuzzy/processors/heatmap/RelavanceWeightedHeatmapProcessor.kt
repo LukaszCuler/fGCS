@@ -22,6 +22,7 @@ class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
             val appliedRuleMembership =
                 grammarController.nRulesWith(parseTreeNode.node, child.subTreePair.first.node, child.subTreePair.second.node).single().membership
             child.derivationMembership = settings.tNorm(inhValue, appliedRuleMembership)
+            child.derivationRelevance = settings.tNorm(relValue, child.relevance)
         }
     }
 

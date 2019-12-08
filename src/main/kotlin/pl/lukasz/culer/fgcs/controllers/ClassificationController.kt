@@ -67,8 +67,8 @@ class ClassificationController(val gc: GrammarController,
 
         for(childVariant in parseTree.subtrees){
             val currentValues :  MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>  = mutableListOf()
-            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.first, childVariant.derivationMembership, childVariant.relevance))
-            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.second, childVariant.derivationMembership, childVariant.relevance))
+            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.first, childVariant.derivationMembership, childVariant.derivationRelevance))
+            currentValues.addAll(assignDerivationMembership(childVariant.subTreePair.second, childVariant.derivationMembership, childVariant.derivationRelevance))
             if(valuesToReturn!=null){
                 for(i in 0 until valuesToReturn.size){
                     valuesToReturn[i].addAll(currentValues[i])
