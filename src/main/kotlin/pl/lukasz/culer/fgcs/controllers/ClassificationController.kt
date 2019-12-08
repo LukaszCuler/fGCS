@@ -87,9 +87,23 @@ class ClassificationController(val gc: GrammarController,
     }
 
     fun getExampleHeatmap(parseTree : MultiParseTreeNode) : List<IntervalFuzzyNumber> {
-        return assignDerivationMembership(parseTree)
+        val membershipsList = assignDerivationMembership(parseTree)
             .map { heatmapProcessor.assignValueToSymbol(it) }
-            .toList()
+            .toMutableList()
+
+        //normalization
+ /*       val maxItem = membershipsList.maxBy { it.midpoint }
+        val minItem = membershipsList.minBy { it.midpoint }
+
+        if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
+            val coef = 1.0/(maxItem.midpoint-minItem.midpoint)
+            for(i in membershipsList.indices){
+                membershipsList[i] = membershipsList[i] - minItem
+                membershipsList[i] = membershipsList[i] * coef
+            }
+        }*/
+
+        return membershipsList
     }
     //endregion
 }
