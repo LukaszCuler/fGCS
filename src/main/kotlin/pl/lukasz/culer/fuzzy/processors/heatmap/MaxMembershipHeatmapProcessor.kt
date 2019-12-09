@@ -48,5 +48,5 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
             grammarController.nRulesWith(parseTreeNode.node, it.subTreePair.first.node, it.subTreePair.second.node).single().membership
         }
 
-
+    override fun showAllSubtrees(): Boolean = false
 }

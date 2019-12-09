@@ -38,5 +38,5 @@ class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
 
     override fun getMainTree(parseTreeNode: MultiParseTreeNode, grammarController: GrammarController): MultiParseTreeNode.SubTreePair? = null
 
-
+    override fun showAllSubtrees(): Boolean = false
 }

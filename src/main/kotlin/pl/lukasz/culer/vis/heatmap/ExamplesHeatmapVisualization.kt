@@ -7,6 +7,7 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.Consts.Companion.FULL_MEMBERSHIP
 import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 import java.io.File
 
@@ -26,6 +27,7 @@ const val END_ALL_FORMATTING = "</span></span>"
 const val NEW_LINE = "<br>"
 const val PARSE_TREE_CONTAINER_START = "<tt>"
 const val PARSE_TREE_CONTAINER_END = "</tt><br><br>"
+const val SUPER_ROOT = "#"
 
 class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                                    val classificationController : ClassificationController,
@@ -59,8 +61,18 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             exampleString+=MEMBERSHIP_VALUE_START+MEMBERSHIP_SHORT_FORMATTER.format(fuzzyClass.midpoint)+END_ALL_FORMATTING
             html += exampleString+NEW_LINE
 
-            if(!example.multiParseTreeNode.isDeadEnd && classificationController.heatmapProcessor.mainTreeDistinguishable()){
-                val root = getNode(example.multiParseTreeNode)
+            if(!example.multiParseTreeNode.isDeadEnd &&
+                (classificationController.heatmapProcessor.mainTreeDistinguishable()
+                        || classificationController.heatmapProcessor.showAllSubtrees())){
+                val startNodes = getNode(example.multiParseTreeNode)
+                val root : TreeNode
+                if(startNodes.size==1){
+                    root = startNodes.first()
+                } else {
+                    root = TreeNode(SUPER_ROOT)
+                    root.membership = FULL_MEMBERSHIP.midpoint
+                    root.children.addAll(startNodes)
+                }
                 html+= PARSE_TREE_CONTAINER_START+root+PARSE_TREE_CONTAINER_END
             }
         }
@@ -73,18 +85,34 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
     /**
      * region private methods
      */
-    private fun getNode(tree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = Consts.FULL_MEMBERSHIP) : TreeNode {
-        val myNode = TreeNode(tree.node.symbol.toString())
+    private fun getNode(tree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = Consts.FULL_MEMBERSHIP) : List<TreeNode> {
+        val nodesList = mutableListOf<TreeNode>()
         if(tree.isLeaf){
+            val myNode = TreeNode(tree.node.symbol.toString())
+            //leaf time!
             myNode.membership = inhValue.midpoint
             myNode.children.add(TreeNode(grammarController.tRulesWith(left = tree.node).single().getRight().symbol.toString()).apply { membership = inhValue.midpoint })
+            nodesList.add(myNode)
         } else {
-            val mainTree = classificationController.heatmapProcessor.getMainTree(tree, grammarController) ?: return myNode
-            myNode.membership = mainTree.derivationMembership.midpoint
-            myNode.children.add(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
-            myNode.children.add(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))
+            //we have to print children
+            if(classificationController.heatmapProcessor.mainTreeDistinguishable()){
+                val myNode = TreeNode(tree.node.symbol.toString())
+                val mainTree = classificationController.heatmapProcessor.getMainTree(tree, grammarController) ?: return mutableListOf(myNode)
+                myNode.membership = mainTree.derivationMembership.midpoint
+                myNode.children.addAll(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
+                myNode.children.addAll(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))
+                nodesList.add(myNode)
+            } else {
+                for(idx in tree.subtrees.indices){
+                    val myNode = TreeNode("${tree.node.symbol} <sub>${idx+1}</sub>")
+                    myNode.membership = tree.subtrees[idx].derivationMembership.midpoint
+                    myNode.children.addAll(getNode(tree.subtrees[idx].subTreePair.first, tree.subtrees[idx].derivationMembership))
+                    myNode.children.addAll(getNode(tree.subtrees[idx].subTreePair.second, tree.subtrees[idx].derivationMembership))
+                    nodesList.add(myNode)
+                }
+            }
         }
-        return myNode
+        return nodesList
     }
     //endregion
 }

@@ -18,4 +18,5 @@ interface HeatmapProcessor {
     fun assignValueToSymbol(symbolValues : List<SymbolDerivativeData>) : SymbolDerivativeMembership    //first in pair - derivMembership, second - relevance
     fun mainTreeDistinguishable() : Boolean //can we display main tree?
     fun getMainTree(parseTreeNode: MultiParseTreeNode, grammarController: GrammarController) : MultiParseTreeNode.SubTreePair?
+    fun showAllSubtrees() : Boolean //should visualize all subtrees?
 }
