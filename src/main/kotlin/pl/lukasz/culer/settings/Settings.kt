@@ -33,7 +33,7 @@ class Settings {
     val subtreeMembership = SubtreeMembershipT2.MIN_SQRT
 
     @SerializedName("heatmapProcessorFactory")
-    val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.MINMAX      //@TODO should be created after init as singleton
+    val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.EQUAL_TREES      //@TODO should be created after init as singleton
 
     @SerializedName("relevanceProcessorFactory")
     val relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA   //@TODO should be created after init as singleton
