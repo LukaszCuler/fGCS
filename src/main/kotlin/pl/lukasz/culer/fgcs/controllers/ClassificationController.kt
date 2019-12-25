@@ -103,18 +103,29 @@ class ClassificationController(val gc: GrammarController,
             }
         }*/
 
-        //uniform
-        /*
+        //uniform n eq
+/*        val maxItem = membershipsList.maxBy { it.midpoint }?.midpoint
+        val minItem = membershipsList.minBy { it.midpoint }?.midpoint
+
+        if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
+            val diff = 1.0/(membershipsList.size-1)
+            val sortedList = membershipsList.sorted()
+            for(i in sortedList.indices){
+                membershipsList[membershipsList.indexOf(sortedList[i])] = IntervalFuzzyNumber(0.0+i*diff)
+            }
+        }*/
+
+        //uniform 'n' upper eq
         val maxItem = membershipsList.maxBy { it.midpoint }?.midpoint
         val minItem = membershipsList.minBy { it.midpoint }?.midpoint
 
         if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
-            val diff = (maxItem-minItem)/membershipsList.size
+            val diff = (1.0-minItem)/(membershipsList.size-1)
             val sortedList = membershipsList.sorted()
             for(i in sortedList.indices){
                 membershipsList[membershipsList.indexOf(sortedList[i])] = IntervalFuzzyNumber(minItem+i*diff)
             }
-        }*/
+        }
         return membershipsList
     }
     //endregion
