@@ -22,6 +22,24 @@ class IntervalFuzzyNumber(
     //endregion
     //region public
     override fun toString() = "[ ${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)},${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as IntervalFuzzyNumber
+
+        if (lowerBound != other.lowerBound) return false
+        if (upperBound != other.upperBound) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lowerBound.hashCode()
+        result = 31 * result + upperBound.hashCode()
+        return result
+    }
     //endregion
     //region operators overloading section
     //with each other

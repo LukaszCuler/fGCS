@@ -13,7 +13,7 @@ open class MultiParseTreeNode(val node : NSymbol = Consts.END_STRING_SYMBOL, val
     val isLeaf : Boolean get() = subtrees.isEmpty()
     val isDeadEnd : Boolean get() = node == Consts.END_STRING_SYMBOL
 
-    data class SubTreePair(val subTreePair : Pair<MultiParseTreeNode, MultiParseTreeNode>,
+    data class SubTreePair(val subTreePair : Pair<MultiParseTreeNode, MultiParseTreeNode> = Pair(MultiParseTreeNode(), MultiParseTreeNode()),
                            var classificationMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),
                            var relevance : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),
                            var derivationMembership : IntervalFuzzyNumber = IntervalFuzzyNumber(0.0),

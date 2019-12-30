@@ -1,6 +1,5 @@
 package pl.lukasz.culer.utils
 
-//@TODO add logging
 class Logger {
     companion object {
         val instance = Logger()
