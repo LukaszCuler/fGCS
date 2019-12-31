@@ -8,7 +8,6 @@ import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
 /**
  * The only one with the greatest membership is relevant
- * @TODO unit tests!
  */
 class WTARelevanceProcessor : RelevanceProcessor {
     override fun assignRelevanceToVariants(children: MutableList<MultiParseTreeNode.SubTreePair>) {
