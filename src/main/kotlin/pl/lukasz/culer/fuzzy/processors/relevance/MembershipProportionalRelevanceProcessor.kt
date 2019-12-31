@@ -8,7 +8,6 @@ import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
 /**
  * Variant with highest membership is baseline - max relevance
- * @TODO unit tests!
  */
 class MembershipProportionalRelevanceProcessor : RelevanceProcessor {
     override fun assignRelevanceToVariants(children: MutableList<MultiParseTreeNode.SubTreePair>) {
