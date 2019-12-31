@@ -1,3 +1,5 @@
+package pl.lukasz.culer.fuzzy.processors.relevance.base
+
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

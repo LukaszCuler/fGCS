@@ -1,14 +1,12 @@
+package pl.lukasz.culer.fgcs.controllers
+
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
 import pl.lukasz.culer.data.TestExample
-import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.CYKController.DetectorElement
-import pl.lukasz.culer.fgcs.controllers.Detector
-import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.CYKTable
-import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule

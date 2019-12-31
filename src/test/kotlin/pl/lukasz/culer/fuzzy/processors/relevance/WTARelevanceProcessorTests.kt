@@ -1,3 +1,5 @@
+package pl.lukasz.culer.fuzzy.processors.relevance
+
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -5,16 +7,15 @@ import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
-import pl.lukasz.culer.fuzzy.processors.heatmap.MaxMembershipHeatmapProcessor
-import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
 import pl.lukasz.culer.fuzzy.processors.relevance.MembershipProportionalRelevanceProcessor
+import pl.lukasz.culer.fuzzy.processors.relevance.WTARelevanceProcessor
 
 @RunWith(MockitoJUnitRunner::class)
-class MembershipProportionalRelevanceProcessorTests {
-    lateinit var processor : MembershipProportionalRelevanceProcessor
+class WTARelevanceProcessorTests {
+    lateinit var processor : WTARelevanceProcessor
     @Before
     fun init(){
-        processor = MembershipProportionalRelevanceProcessor()
+        processor = WTARelevanceProcessor()
     }
 
     @Test
@@ -31,8 +32,7 @@ class MembershipProportionalRelevanceProcessorTests {
 
         //verification
         Assert.assertEquals(IntervalFuzzyNumber(1.0), treeA.relevance)
-        Assert.assertEquals(IntervalFuzzyNumber(0.5), treeB.relevance)
+        Assert.assertEquals(IntervalFuzzyNumber(0.0), treeB.relevance)
         Assert.assertEquals(IntervalFuzzyNumber(0.0), treeC.relevance)
     }
-
 }

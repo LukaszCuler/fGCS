@@ -1,3 +1,5 @@
+package pl.lukasz.culer.fuzzy.processors.heatmap.base
+
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
