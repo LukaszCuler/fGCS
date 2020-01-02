@@ -3,7 +3,6 @@ package pl.lukasz.culer.fuzzy.processors.relevance.base
 import pl.lukasz.culer.fuzzy.processors.relevance.MembershipProportionalRelevanceProcessor
 import pl.lukasz.culer.fuzzy.processors.relevance.WTARelevanceProcessor
 
-//@TODO unit tests!
 enum class RelevanceProcessorFactory : () -> RelevanceProcessor {
     WTA {
         override fun invoke() = WTARelevanceProcessor()

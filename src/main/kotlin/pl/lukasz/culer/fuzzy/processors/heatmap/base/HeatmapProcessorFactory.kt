@@ -4,7 +4,6 @@ import pl.lukasz.culer.fuzzy.processors.heatmap.EqualTreesHeatmapProcessor
 import pl.lukasz.culer.fuzzy.processors.heatmap.MaxMembershipHeatmapProcessor
 import pl.lukasz.culer.fuzzy.processors.heatmap.RelavanceWeightedHeatmapProcessor
 
-//@TODO unit tests!
 enum class HeatmapProcessorFactory : () -> HeatmapProcessor {
     MINMAX {
         override fun invoke(): HeatmapProcessor = MaxMembershipHeatmapProcessor()
