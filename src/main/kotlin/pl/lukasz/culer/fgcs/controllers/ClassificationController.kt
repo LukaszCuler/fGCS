@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
+import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
@@ -123,7 +124,7 @@ class ClassificationController(val gc: GrammarController,
             val diff = (1.0-minItem)/(membershipsList.size-1)
             val sortedList = membershipsList.sorted()
             for(i in sortedList.indices){
-                membershipsList[membershipsList.indexOf(sortedList[i])] = IntervalFuzzyNumber(minItem+i*diff)
+                membershipsList[membershipsList.indexOf(sortedList[i])] = F(minItem+i*diff)
             }
         }
         return membershipsList

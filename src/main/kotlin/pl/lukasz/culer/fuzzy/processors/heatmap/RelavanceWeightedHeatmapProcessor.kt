@@ -5,8 +5,6 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.utils.Consts
-import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 
 /**
  * @TODO unit tests!

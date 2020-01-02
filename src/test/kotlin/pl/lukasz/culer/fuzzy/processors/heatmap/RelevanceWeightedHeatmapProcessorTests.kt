@@ -23,8 +23,8 @@ import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
 
 @RunWith(MockitoJUnitRunner::class)
-class MaxMembershipHeatmapProcessorTests {
-    private lateinit var processor : MaxMembershipHeatmapProcessor
+class RelevanceWeightedHeatmapProcessorTests {
+    private lateinit var processor : RelavanceWeightedHeatmapProcessor
     private lateinit var settings : Settings
     private lateinit var gc : GrammarController
     private lateinit var aaPair : MultiParseTreeNode.SubTreePair
@@ -36,7 +36,7 @@ class MaxMembershipHeatmapProcessorTests {
 
     @Before
     fun init(){
-        processor = MaxMembershipHeatmapProcessor()
+        processor = RelavanceWeightedHeatmapProcessor()
         //preparing data
         val grammar = Grammar()
         grammar.starSymbol = NSymbol('$', true)
@@ -44,13 +44,13 @@ class MaxMembershipHeatmapProcessorTests {
         grammar.nSymbols.add(grammar.starSymbol)
         grammar.nSymbols.add(aSymbol)
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(aSymbol, aSymbol), F(1.0)))
-        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, aSymbol), F(0.5)))
-        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.1)))
+        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, aSymbol), F(0.25)))
+        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.25)))
         gc = GrammarController(grammar)
 
         settings = Settings()
 
-        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)))
+        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = IntervalFuzzyNumber())
         saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)))
         ssPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)))
 
@@ -66,7 +66,7 @@ class MaxMembershipHeatmapProcessorTests {
     @Test
     fun assignDerivationMembershipToVariantsTest(){
         //work
-        processor.assignDerivationMembershipToVariants(gc, IntervalFuzzyNumber(1.0), IntervalFuzzyNumber(1.0), parseTree, settings)
+        processor.assignDerivationMembershipToVariants(gc, F(1.0), F(1.0), parseTree, settings)
 
         //verification
         Assert.assertTrue(aaPair.derivationMembership.equals(1.0))

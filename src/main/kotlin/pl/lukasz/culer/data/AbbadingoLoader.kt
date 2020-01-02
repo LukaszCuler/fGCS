@@ -1,5 +1,6 @@
 package pl.lukasz.culer.data
 
+import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.ABBADINGO_INVALID_EXAMPLE
 import pl.lukasz.culer.utils.ABBADINGO_INVALID_HEADER
@@ -42,7 +43,7 @@ class AbbadingoLoader {
 
                     val membershipValue = exampleSegments[0].toDoubleOrNull() ?: return returnWithError(ABBADINGO_INVALID_EXAMPLE.format(i, filePath), testSet)
                     val sequence = exampleSegments.subList(2, exampleSegments.size).joinToString("").toLowerCase()
-                    testSet.add(TestExample(sequence, IntervalFuzzyNumber(membershipValue)))
+                    testSet.add(TestExample(sequence, F(membershipValue)))
                 }
                 reader.close()
                 return testSet

@@ -1,16 +1,17 @@
 package pl.lukasz.culer.utils
 
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 class Consts {
     companion object {
-        val T_RULE_MEMBERSHIP = IntervalFuzzyNumber(1.0)         //default and constant terminal rule membership
-        val N_RULE_MEMBERSHIP = IntervalFuzzyNumber(0.0)        //just initial non-terminal rule membership
-        val FULL_MEMBERSHIP = IntervalFuzzyNumber(1.0)
-        val DO_NOT_BELONG_AT_ALL = IntervalFuzzyNumber(0.0)
-        val FULL_RELEVANCE = IntervalFuzzyNumber(1.0)
-        val NOT_RELEVANT_AT_ALL = IntervalFuzzyNumber(0.0)
+        val T_RULE_MEMBERSHIP = F(1.0)         //default and constant terminal rule membership
+        val N_RULE_MEMBERSHIP = F(0.0)        //just initial non-terminal rule membership
+        val FULL_MEMBERSHIP = F(1.0)
+        val DO_NOT_BELONG_AT_ALL = F(0.0)
+        val FULL_RELEVANCE = F(1.0)
+        val NOT_RELEVANT_AT_ALL = F(0.0)
 
         val DEFAULT_THRESHOLD = 0.5
 

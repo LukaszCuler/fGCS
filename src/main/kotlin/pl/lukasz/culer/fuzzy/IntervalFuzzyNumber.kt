@@ -5,6 +5,8 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 
+typealias F = IntervalFuzzyNumber
+
 class IntervalFuzzyNumber(
     @SerializedName("lowerBound")
     var lowerBound : Double = 0.0,
