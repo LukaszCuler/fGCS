@@ -94,7 +94,6 @@ class CYKController(val gc: GrammarController) {
             .toSet()
     }
 
-    //@TODO unit test
     fun getDetectorsForLeft(left : NSymbol, detectors: Detectors) : Detectors {
         return detectors
             .filter { gc.nRulesWith(left = left, first = it.first.symbol, second = it.second.symbol).isNotEmpty() }

@@ -131,6 +131,31 @@ class CYKControllerTests {
         Assert.assertEquals(nA, effectors.single())
     }
 
+    fun getDetectorsForLeftTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+
+        //verification
+        val nA = gc.findNSymbolByChar('A')!!
+        val nB = gc.findNSymbolByChar('B')!!
+        val nC = gc.findNSymbolByChar('C')!!
+
+        //execution
+        val detectorsForLeft = cykController.getDetectorsForLeft(
+            nA, mutableListOf(
+                Detector(DetectorElement(nA, x = 0, y = 0), DetectorElement(nA, x = 0, y = 0)),
+                Detector(DetectorElement(nA, x = 0, y = 0), DetectorElement(nB, x = 0, y = 0)),
+                Detector(DetectorElement(nB, x = 0, y = 0), DetectorElement(nC, x = 0, y = 0))
+            )
+        )    //x and y doesn't matter
+
+        //verification
+        Assert.assertEquals(1, detectorsForLeft.size)
+        Assert.assertEquals(nA, detectorsForLeft.single().first.symbol)
+        Assert.assertEquals(nB, detectorsForLeft.single().second.symbol)
+    }
+
     @Test
     fun fillCYKTableAndIsExampleParsed(){
         //stage1 - preparing data
