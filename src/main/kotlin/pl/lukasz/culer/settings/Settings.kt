@@ -24,20 +24,20 @@ class Settings {
     }
 
     @SerializedName("sNorm")
-    val sNorm = SNormT2.MAX
+    var sNorm = SNormT2.MAX
 
     @SerializedName("tNorm")
-    val tNorm = TNormT2.MIN
+    var tNorm = TNormT2.MIN
 
     @SerializedName("subtreeMembership")
-    val subtreeMembership = SubtreeMembershipT2.MIN_SQRT
+    var subtreeMembership = SubtreeMembershipT2.MIN_SQRT
 
     @SerializedName("heatmapProcessorFactory")
-    val heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.EQUAL_TREES      //@TODO should be created after init as singleton
+    var heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.EQUAL_TREES      //@TODO should be created after init as singleton
 
     @SerializedName("relevanceProcessorFactory")
-    val relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA   //@TODO should be created after init as singleton
+    var relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA   //@TODO should be created after init as singleton
 
     @SerializedName("threshold")
-    val crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]
+    var crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]
 }

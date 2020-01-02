@@ -15,6 +15,7 @@ import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeData
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeMembership
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeRelevance
+import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
 
 @RunWith(MockitoJUnitRunner::class)
@@ -44,6 +45,7 @@ class EqualTreesHeatmapProcessorTests {
         gc = GrammarController(grammar)
 
         settings = Settings()
+        settings.tNorm = TNormT2.MIN
 
         aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
         saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))
