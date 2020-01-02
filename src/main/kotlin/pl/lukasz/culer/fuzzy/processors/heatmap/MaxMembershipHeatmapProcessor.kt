@@ -10,10 +10,9 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
+import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
-/**
- * @TODO unit tests!
- */
+
 class MaxMembershipHeatmapProcessor : HeatmapProcessor {
     override fun assignDerivationMembershipToVariants(grammarController: GrammarController,
                                                       inhValue : IntervalFuzzyNumber,
@@ -31,6 +30,8 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
                 bestChild = child
                 bestValue = appliedRuleMembership
             }
+            child.derivationRelevance = NOT_RELEVANT_AT_ALL
+            child.derivationMembership = DO_NOT_BELONG_AT_ALL
         }
         if(bestValue!=null&&bestChild!=null){
             bestChild.derivationMembership = settings.tNorm(inhValue, bestValue)

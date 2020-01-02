@@ -25,14 +25,18 @@ class IntervalFuzzyNumber(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        if (javaClass == other?.javaClass){
+            other as IntervalFuzzyNumber
 
-        other as IntervalFuzzyNumber
+            if (lowerBound != other.lowerBound) return false
+            if (upperBound != other.upperBound) return false
 
-        if (lowerBound != other.lowerBound) return false
-        if (upperBound != other.upperBound) return false
+            return true
+        } else if(lowerBound == upperBound){
+            return lowerBound == upperBound && upperBound == other
+        }
 
-        return true
+        return false
     }
 
     override fun hashCode(): Int {
