@@ -1,6 +1,5 @@
 package pl.lukasz.culer.fuzzy.processors.heatmap
 
-import com.sun.source.tree.AssertTree
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -10,16 +9,13 @@ import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
-import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
-import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeData
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeMembership
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeRelevance
-import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
 
 @RunWith(MockitoJUnitRunner::class)
