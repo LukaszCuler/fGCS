@@ -9,9 +9,6 @@ import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 
-/**
- * @TODO unit tests!
- */
 class EqualTreesHeatmapProcessor : HeatmapProcessor {
     override fun assignDerivationMembershipToVariants(grammarController: GrammarController,
                                                       inhValue : IntervalFuzzyNumber,
