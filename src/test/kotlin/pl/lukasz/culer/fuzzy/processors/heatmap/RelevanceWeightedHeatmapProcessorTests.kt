@@ -44,22 +44,22 @@ class RelevanceWeightedHeatmapProcessorTests {
         grammar.nSymbols.add(grammar.starSymbol)
         grammar.nSymbols.add(aSymbol)
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(aSymbol, aSymbol), F(1.0)))
-        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, aSymbol), F(0.25)))
-        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.25)))
+        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, aSymbol), F(1.0)))
+        grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.6)))
         gc = GrammarController(grammar)
 
         settings = Settings()
 
-        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = IntervalFuzzyNumber())
-        saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)))
-        ssPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)))
+        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
+        saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))
+        ssPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)), relevance = F(0.5))
 
         parseTree = MultiParseTreeNode(grammar.starSymbol, mutableListOf(aaPair, saPair, ssPair))
 
         symbolValues = listOf(
-            SymbolDerivativeData(SymbolDerivativeMembership(0.8), SymbolDerivativeRelevance(0.2)),
-            SymbolDerivativeData(SymbolDerivativeMembership(0.3), SymbolDerivativeRelevance(0.7)),
-            SymbolDerivativeData(SymbolDerivativeMembership(0.7), SymbolDerivativeRelevance(0.7))
+            SymbolDerivativeData(SymbolDerivativeMembership(1.0), SymbolDerivativeRelevance(1.0)),
+            SymbolDerivativeData(SymbolDerivativeMembership(1.0), SymbolDerivativeRelevance(0.5)),
+            SymbolDerivativeData(SymbolDerivativeMembership(0.6), SymbolDerivativeRelevance(0.5))
         )
     }
 
@@ -70,15 +70,15 @@ class RelevanceWeightedHeatmapProcessorTests {
 
         //verification
         Assert.assertTrue(aaPair.derivationMembership.equals(1.0))
-        Assert.assertTrue(saPair.derivationMembership.equals(0.0))
-        Assert.assertTrue(ssPair.derivationMembership.equals(0.0))
+        Assert.assertTrue(saPair.derivationMembership.equals(1.0))
+        Assert.assertTrue(ssPair.derivationMembership.equals(0.6))
         Assert.assertTrue(aaPair.derivationRelevance.equals(1.0))
-        Assert.assertTrue(saPair.derivationRelevance.equals(0.0))
-        Assert.assertTrue(ssPair.derivationRelevance.equals(0.0))
+        Assert.assertTrue(saPair.derivationRelevance.equals(0.5))
+        Assert.assertTrue(ssPair.derivationRelevance.equals(0.5))
     }
 
     @Test
     fun assignValueToSymbolTest(){
-        Assert.assertTrue(processor.assignValueToSymbol(symbolValues).equals(0.8))
+        Assert.assertTrue(processor.assignValueToSymbol(symbolValues).equals(0.9))
     }
 }

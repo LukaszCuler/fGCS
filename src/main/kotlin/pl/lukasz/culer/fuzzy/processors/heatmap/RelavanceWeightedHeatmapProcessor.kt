@@ -6,9 +6,6 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
 
-/**
- * @TODO unit tests!
- */
 class RelavanceWeightedHeatmapProcessor : HeatmapProcessor {
     override fun assignDerivationMembershipToVariants(grammarController: GrammarController,
                                                       inhValue : IntervalFuzzyNumber,
