@@ -16,6 +16,8 @@ import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
+import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
+import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessorFactory
 import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
 
@@ -50,6 +52,8 @@ class ClassificationControllerTests {
 
         settings = Settings()
         settings.subtreeMembership = SubtreeMembershipT2.MIN
+        settings.relevanceProcessorFactory = RelevanceProcessorFactory.WTA
+        settings.heatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
 
         val cykController = CYKController(gc)
         val testExample = TestExample("aabb", F(1.0))
@@ -64,5 +68,22 @@ class ClassificationControllerTests {
     fun assignClassificationMembershipTest(){
         classificationController.assignClassificationMembership(multiParseTreeFromCYK)
         Assert.assertTrue(multiParseTreeFromCYK.mainMembership.equals(0.5))
+    }
+
+    @Test
+    fun assignDerivationMembershipTest(){
+        val derivationMemberships = classificationController.assignDerivationMembership(multiParseTreeFromCYK)
+
+        Assert.assertEquals(4, derivationMemberships.size)
+
+        Assert.assertEquals(1, derivationMemberships[0].size)
+        Assert.assertEquals(1, derivationMemberships[1].size)
+        Assert.assertEquals(1, derivationMemberships[2].size)
+        Assert.assertEquals(1, derivationMemberships[3].size)
+
+        Assert.assertEquals(Pair(F(1.0), F(1.0)),derivationMemberships[0].first())
+        Assert.assertEquals(Pair(F(1.0), F(1.0)),derivationMemberships[1].first())
+        Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[2].first())
+        Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[3].first())
     }
 }
