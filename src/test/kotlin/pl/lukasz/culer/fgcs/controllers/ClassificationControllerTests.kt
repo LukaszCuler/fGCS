@@ -20,6 +20,7 @@ import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
 import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessorFactory
 import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.utils.Consts
 
 @RunWith(MockitoJUnitRunner::class)
 class ClassificationControllerTests {
@@ -71,6 +72,14 @@ class ClassificationControllerTests {
     }
 
     @Test
+    fun assignRelevanceTest(){
+        classificationController.assignRelevance(multiParseTreeFromCYK)
+
+        //every subtree should have assigned relevance
+        checkIfTreeAndChildrenHaveFullRelevance(multiParseTreeFromCYK)
+    }
+
+    @Test
     fun assignDerivationMembershipTest(){
         val derivationMemberships = classificationController.assignDerivationMembership(multiParseTreeFromCYK)
 
@@ -85,5 +94,15 @@ class ClassificationControllerTests {
         Assert.assertEquals(Pair(F(1.0), F(1.0)),derivationMemberships[1].first())
         Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[2].first())
         Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[3].first())
+    }
+
+    //private functions
+    private fun checkIfTreeAndChildrenHaveFullRelevance(parseTree : MultiParseTreeNode) {
+        if(parseTree.isLeaf) return
+        for(childVariant in parseTree.subtrees){
+            Assert.assertEquals(Consts.FULL_RELEVANCE, childVariant.relevance)
+            checkIfTreeAndChildrenHaveFullRelevance(childVariant.subTreePair.first)
+            checkIfTreeAndChildrenHaveFullRelevance(childVariant.subTreePair.second)
+        }
     }
 }

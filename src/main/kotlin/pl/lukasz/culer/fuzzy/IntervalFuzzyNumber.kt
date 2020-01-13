@@ -61,7 +61,7 @@ class IntervalFuzzyNumber(
         return IntervalFuzzyNumber(lowerBound * second.lowerBound, upperBound * second.upperBound)
     }
 
-    //@TODO inaczej powinno być rozwiazane
+    //@TODO should be solved differently
     operator fun div(second: IntervalFuzzyNumber): IntervalFuzzyNumber {
         return IntervalFuzzyNumber(if(second.lowerBound != 0.0) lowerBound / second.lowerBound else 0.0,
             if(second.upperBound != 0.0) upperBound / second.upperBound else 0.0)
@@ -80,7 +80,7 @@ class IntervalFuzzyNumber(
         return IntervalFuzzyNumber(lowerBound * second, upperBound * second)
     }
 
-    //@TODO inaczej powinno być rozwiazane
+    //@TODO should be solved differently
     operator fun div(second: Double): IntervalFuzzyNumber {
         return IntervalFuzzyNumber(if(second != 0.0) lowerBound / second else 0.0,
             if(second != 0.0) upperBound / second else 0.0)
