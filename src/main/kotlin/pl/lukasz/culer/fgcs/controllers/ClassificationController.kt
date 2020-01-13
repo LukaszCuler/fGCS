@@ -11,7 +11,6 @@ import pl.lukasz.culer.utils.Consts.Companion.FULL_MEMBERSHIP
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
-//@TODO unit tests!
 class ClassificationController(val gc: GrammarController,
                                val settings: Settings) {
     /**
@@ -79,6 +78,7 @@ class ClassificationController(val gc: GrammarController,
         return valuesToReturn ?: mutableListOf()
     }
 
+    @Deprecated("should implement selection")
     fun getFuzzyClassification(parseTree : MultiParseTreeNode) : IntervalFuzzyNumber {
         return parseTree.mainMembership
     }
@@ -117,14 +117,15 @@ class ClassificationController(val gc: GrammarController,
         }*/
 
         //uniform 'n' upper eq
-        val maxItem = membershipsList.maxBy { it.midpoint }?.midpoint
-        val minItem = membershipsList.minBy { it.midpoint }?.midpoint
+        val uniqueList = membershipsList.toSet().toList().sorted()
+        val maxItem = uniqueList.maxBy { it.midpoint }?.midpoint
+        val minItem = uniqueList.minBy { it.midpoint }?.midpoint
 
         if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
-            val diff = (1.0-minItem)/(membershipsList.size-1)
-            val sortedList = membershipsList.sorted()
-            for(i in sortedList.indices){
-                membershipsList[membershipsList.indexOf(sortedList[i])] = F(minItem+i*diff)
+            val diff = (1.0-minItem)/(uniqueList.size-1)
+            for(i in membershipsList.indices){
+                val idx = uniqueList.indexOf(membershipsList[i])
+                membershipsList[i] = F(minItem+idx*diff)
             }
         }
         return membershipsList

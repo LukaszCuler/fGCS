@@ -103,10 +103,23 @@ class ClassificationControllerTests {
         Assert.assertEquals(F(0.5), classificationController.getFuzzyClassification(multiParseTreeFromCYK))
     }
 
-    @Test @Deprecated("mainMembership & mainChild are deprecated")
+    @Test
     fun getCrispClassificationTest(){
         classificationController.assignClassificationMembership(multiParseTreeFromCYK)
         Assert.assertTrue(classificationController.getCrispClassification(multiParseTreeFromCYK))
+    }
+
+    @Test
+    fun getExampleHeatmapTest(){
+        val exampleHeatmap = classificationController.getExampleHeatmap(multiParseTreeFromCYK)
+
+        //formulas checked at
+        Assert.assertEquals(4, exampleHeatmap.size)
+
+        Assert.assertEquals(F(1.0),exampleHeatmap[0])
+        Assert.assertEquals(F(1.0),exampleHeatmap[1])
+        Assert.assertEquals(F(0.5),exampleHeatmap[2])
+        Assert.assertEquals(F(0.5),exampleHeatmap[3])
     }
 
     //private functions
