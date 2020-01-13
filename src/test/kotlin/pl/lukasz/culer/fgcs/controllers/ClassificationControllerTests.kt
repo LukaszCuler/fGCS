@@ -55,6 +55,7 @@ class ClassificationControllerTests {
         settings.subtreeMembership = SubtreeMembershipT2.MIN
         settings.relevanceProcessorFactory = RelevanceProcessorFactory.WTA
         settings.heatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
+        settings.crispClassificationThreshold = 0.4
 
         val cykController = CYKController(gc)
         val testExample = TestExample("aabb", F(1.0))
@@ -94,6 +95,18 @@ class ClassificationControllerTests {
         Assert.assertEquals(Pair(F(1.0), F(1.0)),derivationMemberships[1].first())
         Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[2].first())
         Assert.assertEquals(Pair(F(0.5), F(1.0)),derivationMemberships[3].first())
+    }
+
+    @Test @Deprecated("mainMembership & mainChild are deprecated")
+    fun getFuzzyClassificationTest(){
+        classificationController.assignClassificationMembership(multiParseTreeFromCYK)
+        Assert.assertEquals(F(0.5), classificationController.getFuzzyClassification(multiParseTreeFromCYK))
+    }
+
+    @Test @Deprecated("mainMembership & mainChild are deprecated")
+    fun getCrispClassificationTest(){
+        classificationController.assignClassificationMembership(multiParseTreeFromCYK)
+        Assert.assertTrue(classificationController.getCrispClassification(multiParseTreeFromCYK))
     }
 
     //private functions
