@@ -92,30 +92,6 @@ class ClassificationController(val gc: GrammarController,
             .map { heatmapProcessor.assignValueToSymbol(it) }
             .toMutableList()
 
-        //normalization
- /*       val maxItem = membershipsList.maxBy { it.midpoint }
-        val minItem = membershipsList.minBy { it.midpoint }
-
-        if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
-            val coef = 1.0/(maxItem.midpoint-minItem.midpoint)
-            for(i in membershipsList.indices){
-                membershipsList[i] = membershipsList[i] - minItem
-                membershipsList[i] = membershipsList[i] * coef
-            }
-        }*/
-
-        //uniform n eq
-/*        val maxItem = membershipsList.maxBy { it.midpoint }?.midpoint
-        val minItem = membershipsList.minBy { it.midpoint }?.midpoint
-
-        if(maxItem!=null&&minItem!=null&&maxItem!=minItem){
-            val diff = 1.0/(membershipsList.size-1)
-            val sortedList = membershipsList.sorted()
-            for(i in sortedList.indices){
-                membershipsList[membershipsList.indexOf(sortedList[i])] = IntervalFuzzyNumber(0.0+i*diff)
-            }
-        }*/
-
         //uniform 'n' upper eq
         val uniqueList = membershipsList.toSet().toList().sorted()
         val maxItem = uniqueList.maxBy { it.midpoint }?.midpoint
