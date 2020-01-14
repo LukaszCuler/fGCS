@@ -16,8 +16,7 @@ class ClassificationController(val gc: GrammarController,
     /**
      * region consts
      */
-    val heatmapProcessor = settings.heatmapProcessorFactory.invoke()
-    val relevanceProcessor = settings.relevanceProcessorFactory.invoke()
+
     //endregion
     /**
      * region public methods
@@ -50,7 +49,7 @@ class ClassificationController(val gc: GrammarController,
 
     fun assignRelevance(parseTree : MultiParseTreeNode) {
         if(parseTree.isLeaf) return
-        relevanceProcessor.assignRelevanceToVariants(parseTree.subtrees)
+        settings.relevanceProcessor.assignRelevanceToVariants(parseTree.subtrees)
 
         for(childVariant in parseTree.subtrees){
             assignRelevance(childVariant.subTreePair.first)
@@ -61,7 +60,7 @@ class ClassificationController(val gc: GrammarController,
     fun assignDerivationMembership(parseTree : MultiParseTreeNode, inhValue : IntervalFuzzyNumber = FULL_MEMBERSHIP, relValue : IntervalFuzzyNumber = FULL_RELEVANCE)
             : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>{
         if(parseTree.isLeaf || inhValue == DO_NOT_BELONG_AT_ALL) return mutableListOf(mutableListOf(Pair(inhValue, relValue)))
-        heatmapProcessor.assignDerivationMembershipToVariants(gc, inhValue, relValue, parseTree, settings)
+        settings.heatmapProcessor.assignDerivationMembershipToVariants(gc, inhValue, relValue, parseTree, settings)
 
         var valuesToReturn : MutableList<MutableList<Pair<IntervalFuzzyNumber, IntervalFuzzyNumber>>>? = null
 
@@ -89,7 +88,7 @@ class ClassificationController(val gc: GrammarController,
 
     fun getExampleHeatmap(parseTree : MultiParseTreeNode) : List<IntervalFuzzyNumber> {
         val membershipsList = assignDerivationMembership(parseTree)
-            .map { heatmapProcessor.assignValueToSymbol(it) }
+            .map { settings.heatmapProcessor.assignValueToSymbol(it) }
             .toMutableList()
 
         //uniform 'n' upper eq

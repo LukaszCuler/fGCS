@@ -31,6 +31,7 @@ const val SUPER_ROOT = "#"
 
 class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                                    val classificationController : ClassificationController,
+                                   val settings: Settings,
                                    val listToVisualize : List<FGCS.ExampleAnalysisResult>){
     /**
      * region public methods
@@ -62,8 +63,8 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             html += exampleString+NEW_LINE
 
             if(!example.multiParseTreeNode.isDeadEnd &&
-                (classificationController.heatmapProcessor.mainTreeDistinguishable()
-                        || classificationController.heatmapProcessor.showAllSubtrees())){
+                (settings.heatmapProcessor.mainTreeDistinguishable()
+                        || settings.heatmapProcessor.showAllSubtrees())){
                 val startNodes = getNode(example.multiParseTreeNode)
                 val root : TreeNode
                 if(startNodes.size==1){
@@ -95,9 +96,9 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             nodesList.add(myNode)
         } else {
             //we have to print children
-            if(classificationController.heatmapProcessor.mainTreeDistinguishable()){
+            if(settings.heatmapProcessor.mainTreeDistinguishable()){
                 val myNode = TreeNode(tree.node.symbol.toString())
-                val mainTree = classificationController.heatmapProcessor.getMainTree(tree, grammarController) ?: return mutableListOf(myNode)
+                val mainTree = settings.heatmapProcessor.getMainTree(tree, grammarController) ?: return mutableListOf(myNode)
                 myNode.membership = mainTree.derivationMembership.midpoint
                 myNode.children.addAll(getNode(mainTree.subTreePair.first, mainTree.derivationMembership))
                 myNode.children.addAll(getNode(mainTree.subTreePair.second, mainTree.derivationMembership))

@@ -60,7 +60,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
 
-        ExamplesHeatmapVisualization(grammarController, classificationController, exampleList).saveToFile("heatmap.html")
+        ExamplesHeatmapVisualization(grammarController, classificationController, settings, exampleList).saveToFile("heatmap.html")
     }
     //endregion
     /**
