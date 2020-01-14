@@ -13,8 +13,8 @@ abstract class GrammarMeasure {
     /**
      * region public, general methods
      */
-    fun getComparatorForMeasure(){
-        
+    fun getComparator() = Comparator<Grammar> { g1, g2 ->
+        getDoubleMeasure(g1).compareTo(getDoubleMeasure(g2))
     }
     //endregion
 }
