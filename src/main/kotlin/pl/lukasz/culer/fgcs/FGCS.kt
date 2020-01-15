@@ -14,6 +14,7 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.RxUtils
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 
+//@TODO fill UT
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
            val testSet : List<TestExample>? = null,
@@ -32,16 +33,21 @@ class FGCS(val inputSet : List<TestExample>? = null,
         if(!initiateFGCS()) return //no need for inference
 
         //if not, let's infer!
-        var perfectGrammar = false      //are we perfect yet? ༼ つ ◕_◕ ༽つ
         var iterationNum = 0
 
+        var bestGrammar = grammarController.grammar
         //iteration loop
         do {
             iterationNum++
 
+            //@TODO parallelize ??
 
+            refreshAttributes()
+            witherRules()
 
-        } while((maxIterations!=null && iterationNum<maxIterations) || !perfectGrammar)      //iteration can be also interrupted by timeout
+            //iteration can be also interrupted by timeout
+        } while((maxIterations!=null && iterationNum<maxIterations)
+            || !settings.grammarMeasure.isGrammarPerfect(grammarController.grammar))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
     }
 
     fun verifyPerformance(){
@@ -50,7 +56,6 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         val properTestSet : List<TestExample> = testSet ?: (inputSet ?: return) //ooops...
 
-        //process parallelly
         val exampleList = RxUtils.computeParallelly(properTestSet, ::testExample)
 
         for(example in exampleList){
@@ -65,6 +70,18 @@ class FGCS(val inputSet : List<TestExample>? = null,
     /**
      * region public methods
      */
+    private fun parseAndCoverExample(){
+
+    }
+
+    private fun refreshAttributes(){
+        //refreshes rules
+    }
+
+    private fun witherRules(){
+
+    }
+
     private fun initiateFGCS() : Boolean{
         //ok we have grammar on input, no need for inference :(
         grammarController = when {
