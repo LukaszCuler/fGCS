@@ -11,11 +11,13 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.settings.Settings
+import pl.lukasz.culer.utils.RxUtils
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
            val testSet : List<TestExample>? = null,
+           val maxIterations : Int? = null,
            val settings : Settings) {
 
     //important controllers
@@ -29,7 +31,17 @@ class FGCS(val inputSet : List<TestExample>? = null,
     fun inferGrammar(){
         if(!initiateFGCS()) return //no need for inference
 
-        //@TODO :)
+        //if not, let's infer!
+        var perfectGrammar = false      //are we perfect yet? ༼ つ ◕_◕ ༽つ
+        var iterationNum = 0
+
+        //iteration loop
+        do {
+            iterationNum++
+
+
+
+        } while((maxIterations!=null && iterationNum<maxIterations) || !perfectGrammar)      //iteration can be also interrupted by timeout
     }
 
     fun verifyPerformance(){
@@ -38,21 +50,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         val properTestSet : List<TestExample> = testSet ?: (inputSet ?: return) //ooops...
 
-        //since we want multithreading, we need to do some initial work
-        val exampleList = Single.zip(properTestSet.map { example ->
-            Single.create(SingleOnSubscribe<ExampleAnalysisResult> {
-                try {
-                    it.onSuccess(testExample(example))
-                } catch (ex : Throwable) {
-                    it.onError(ex)
-                }
-
-            }).doOnError {
-                it.printStackTrace()
-            }
-        }.toList()) { resultsArray ->
-            resultsArray.map { it as ExampleAnalysisResult }.toList()
-        }.subscribeOn(Schedulers.computation()).blockingGet()
+        //process parallelly
+        val exampleList = RxUtils.computeParallelly(properTestSet, ::testExample)
 
         for(example in exampleList){
             val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
@@ -78,7 +77,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
         cykController = CYKController(grammarController)
         parseTreeController = ParseTreeController(grammarController, cykController)
         classificationController =  ClassificationController(grammarController, settings)
-        return inputGrammar==null //@TODO make this look better, please
+
+        return inputGrammar==null //if there is no input grammar, we have to infer it x]
     }
 
     private fun testExample(example: TestExample) : ExampleAnalysisResult{

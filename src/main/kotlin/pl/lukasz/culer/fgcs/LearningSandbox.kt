@@ -29,7 +29,7 @@ class LearningSandbox(private val params : InputParams) {
         params.settingsFile?.let {settings = Settings.loadFromObject(it)}
         //simulation
         Logger.instance.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
-        val fgcs = FGCS(inputSet, inputGrammar, testSet, settings)
+        val fgcs = FGCS(inputSet, inputGrammar, testSet, params.maxIterations, settings)
 
         var simulationObservable = Observable.create<Boolean> {
             //this is the part where it learns
@@ -71,4 +71,5 @@ data class InputParams(var inputSet : String? = null,
                        var outputDict : String = "",
                        var settingsFile : String? = null,
                        var paramPairs : MutableList<Pair<String, String>> = mutableListOf(),
-                       var timeout : Int? = null)
+                       var timeout : Int? = null,
+                       var maxIterations : Int? = null)

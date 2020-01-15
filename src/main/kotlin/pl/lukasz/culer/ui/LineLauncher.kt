@@ -58,14 +58,15 @@ fun main(args: Array<String>) {
 }
 
 /**
- * Komendy dostępne z linii poleceń:
- *  -i - /opcjonalny/ zbiór uczący w formacie abbadingo, w przypadku braku nie jest przeprowadzany proces uczenia
- *  -g - /opcjonalny/ wykluczający się z -i - wczytuje gramatykę do badań
- *  -o - nazwa katalogu wyjściowego, do którego zapisywane są gramatyki, raporty i wyniki. [MOD] - zamieniane jest na datę + czas
- *  -t - /opcjonalny/ - zbiór testowy, w przypadku braku wykorzystywany jest uczący
- *  -s - /opcjonalny/ - plik zawierający ustawienia dla symulacji, w przypadku braku wykorzystywane są standardowe
- *  -p - /opcjonalny/ - podmiana wartości konkretnego parametru
- *  -tout - /opcjonalny/ - timeout w sekundach
+ * Terminal command lines:
+ *  -i - /optional/ learning set in abaddingo format for the learning process
+ *  -g - /optional/ exclusive with -i - loads a grammar to test
+ *  -o - output directory for grammars, reports and results. [MOD] - is substituted with date + time
+ *  -t - /optional/ - test set file - learning set used by default
+ *  -s - /optional/ - file with the simulation settings, standard parameters used by default
+ *  -p - /optional/ - switch a given settings parameter
+ *  -tout - /optional/ - timeout in seconds
+ *  -it - /optional/ - max number of iterations
  **/
 const val INPUT = "i"
 const val GRAMMAR = "g"
@@ -74,6 +75,7 @@ const val TEST = "t"
 const val SETTINGS = "s"
 const val PARAMETER = "p"
 const val TIMEOUT = "tout"
+const val ITERATIONS = "it"
 
 const val TAG = "LineLauncher"
 
@@ -118,6 +120,7 @@ class LineLauncher(private val args: Array<String>) {
             SETTINGS -> handleSettings(inputParams, lineCommand.values)
             PARAMETER -> handleParameter(inputParams, lineCommand.values)
             TIMEOUT -> handleTimeout(inputParams, lineCommand.values)
+            ITERATIONS -> handleMaxIterations(inputParams, lineCommand.values)
         }
     }
 
@@ -153,6 +156,10 @@ class LineLauncher(private val args: Array<String>) {
     private fun handleTimeout(inputParams: InputParams, timeout: List<String>)
     {
         if (timeout.isNotEmpty()) inputParams.timeout = timeout[0].toIntOrNull()
+    }
+
+    private fun handleMaxIterations(inputParams: InputParams, maxIt : List<String>){
+        if (maxIt.isNotEmpty()) inputParams.maxIterations = maxIt[0].toIntOrNull()
     }
 
     private fun isCommand(cmd: String) = cmd.length > 1 && cmd[0] == '-'
