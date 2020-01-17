@@ -13,4 +13,7 @@ class TRule(
     //region public
     fun getRight() = right[0]
     //endregion
+    //region overrides
+    override fun copy() = TRule(left, getRight())
+    //endregion
 }

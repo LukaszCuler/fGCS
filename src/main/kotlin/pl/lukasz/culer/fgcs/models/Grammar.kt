@@ -19,4 +19,15 @@ class Grammar(
 
     @SerializedName("startSymbol")
     lateinit var starSymbol : NSymbol
+
+    //note - symbols are not copied, since they have no iteration-dependent values
+    fun copy() : Grammar {
+        val newGrammar = Grammar()
+        newGrammar.nRules.addAll(nRules.map { it.copy() })
+        newGrammar.tRules.addAll(tRules.map { it.copy() })
+        newGrammar.nSymbols.addAll(nSymbols)
+        newGrammar.tSymbols.addAll(tSymbols)
+        newGrammar.starSymbol = starSymbol
+        return newGrammar
+    }
 }

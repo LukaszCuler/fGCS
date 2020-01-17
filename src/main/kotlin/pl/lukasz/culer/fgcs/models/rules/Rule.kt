@@ -25,6 +25,9 @@ abstract class Rule<T : Symbol> (
     @Transient
     var sideDirection = F(0.0)
 
+    //abstract methods
+    abstract fun copy() : Rule<T>
+
 
     //boilerplate stuff
     override fun equals(other: Any?): Boolean {

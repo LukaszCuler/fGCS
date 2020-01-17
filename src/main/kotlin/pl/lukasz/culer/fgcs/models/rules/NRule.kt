@@ -15,4 +15,7 @@ class NRule(
     fun getRightFirst() = right[0]
     fun getRightSecond() = right[1]
     //endregion
+    //region overrides
+    override fun copy() = NRule(left, NRuleRHS(getRightFirst(), getRightSecond()), membership)
+    //endregion
 }

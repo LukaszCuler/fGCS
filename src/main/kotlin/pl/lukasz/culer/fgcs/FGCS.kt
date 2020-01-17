@@ -35,7 +35,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         //if not, let's infer!
         var iterationNum = 0
 
-        var bestGrammar = grammarController.grammar
+        var bestGrammar = grammarController.grammar.copy()
         //iteration loop
         do {
             iterationNum++
@@ -44,6 +44,10 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
             refreshAttributes()
             witherRules()
+
+            //saving best grammar
+            if(settings.grammarMeasure.getComparator().compare(grammarController.grammar, bestGrammar) >= 0)
+                bestGrammar = grammarController.grammar.copy()
 
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
