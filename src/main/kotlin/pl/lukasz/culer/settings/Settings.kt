@@ -65,7 +65,7 @@ class Settings {
     var relevanceProcessorFactory : RelevanceProcessorFactory = RelevanceProcessorFactory.WTA
 
     @SerializedName("grammarMeasureFactory")
-    var grammarMeasureFactory : GrammarMeasureFactory = GrammarMeasureFactory.ENTROPY
+    var grammarMeasureFactory : GrammarMeasureFactory = GrammarMeasureFactory.CRISP_FITNESS
 
     init {
         initialize()
