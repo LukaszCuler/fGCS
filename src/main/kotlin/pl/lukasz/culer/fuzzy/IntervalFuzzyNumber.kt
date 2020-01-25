@@ -6,7 +6,7 @@ import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 
 typealias F = IntervalFuzzyNumber
-
+//@TODO UT?
 class IntervalFuzzyNumber(
     @SerializedName("lowerBound")
     var lowerBound : Double = 0.0,
@@ -22,6 +22,24 @@ class IntervalFuzzyNumber(
         upperBound = exactValue
     }
     //endregion
+    //region static methods, to mimic original method
+    companion object {
+        fun abs(i: IntervalFuzzyNumber): IntervalFuzzyNumber {
+            if(i.lowerBound <= 0 && i.upperBound >= 0) {
+                var upper =
+                    if(kotlin.math.abs(i.lowerBound) > i.upperBound) kotlin.math.abs(i.lowerBound)
+                    else i.upperBound
+                return IntervalFuzzyNumber(0.0, upper)
+            }
+
+            val a = kotlin.math.abs(i.lowerBound)
+            val b = kotlin.math.abs(i.upperBound)
+
+            if(a>b) return IntervalFuzzyNumber(b,a)
+            return IntervalFuzzyNumber(a,b)
+        }
+    }
+    //region
     //region public
     override fun toString() = "[ ${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)},${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
 
@@ -85,5 +103,6 @@ class IntervalFuzzyNumber(
         return IntervalFuzzyNumber(if(second != 0.0) lowerBound / second else 0.0,
             if(second != 0.0) upperBound / second else 0.0)
     }
+
     //endregion
 }

@@ -50,7 +50,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
             refreshAttributes()
             witherRules()
 
-            //final performance test
+            //final performance test //needed?
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             //saving best grammar
