@@ -31,31 +31,41 @@ class FGCS(val inputSet : List<TestExample>? = null,
      */
     fun inferGrammar(){
         if(!initiateFGCS()) return //no need for inference
+        if(inputSet==null) return //should not happen ¯\_(ツ)_/¯
 
         //if not, let's infer!
         var iterationNum = 0
 
         var bestGrammar = grammarController.grammar.copy()
+        var bestExamples = listOf<ExampleAnalysisResult>()
         //iteration loop
         do {
             iterationNum++
 
             //@TODO parallelize ??
 
+            //verification after creation process, base for further operations
+            var parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
+
             refreshAttributes()
             witherRules()
 
+            //final performance test
+            parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
+
             //saving best grammar
-            if(settings.grammarMeasure.getComparator().compare(grammarController.grammar, bestGrammar) >= 0)
+            if(settings.grammarMeasure.getComparator(parsedExamples).compare(grammarController.grammar, bestGrammar) >= 0){
                 bestGrammar = grammarController.grammar.copy()
+                bestExamples = parsedExamples
+            }
 
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
-            || !settings.grammarMeasure.isGrammarPerfect(grammarController.grammar))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
+            || !settings.grammarMeasure.isGrammarPerfect(grammarController.grammar, parsedExamples))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
     }
 
     fun verifyPerformance(){
-        //it's time to face the truth
+        //it's time tod face the truth
         if(!::grammarController.isInitialized) return  //something went wrong
 
         val properTestSet : List<TestExample> = testSet ?: (inputSet ?: return) //ooops...
