@@ -1,9 +1,8 @@
 package pl.lukasz.culer.settings
 
-import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.annotations.Exclude
-import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarMeasure
+import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarPerfectionMeasure
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarMeasureFactory
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
@@ -32,7 +31,7 @@ class Settings {
     fun initialize(){
         heatmapProcessor = heatmapProcessorFactory()
         relevanceProcessor = relevanceProcessorFactory()
-        grammarMeasure = grammarMeasureFactory()
+        grammarPerfectionMeasure = grammarMeasureFactory()
     }
 
     //initialization result - should not be parsed
@@ -43,7 +42,7 @@ class Settings {
     lateinit var relevanceProcessor: RelevanceProcessor
 
     @Exclude
-    lateinit var grammarMeasure: GrammarMeasure
+    lateinit var grammarPerfectionMeasure: GrammarPerfectionMeasure
 
     //"raw" setting parameters
     @SerializedName("sNorm")

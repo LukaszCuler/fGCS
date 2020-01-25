@@ -1,7 +1,5 @@
 package pl.lukasz.culer.fgcs
 
-import io.reactivex.*
-import io.reactivex.schedulers.Schedulers
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.ClassificationController
@@ -10,6 +8,7 @@ import pl.lukasz.culer.fgcs.controllers.ParseTreeController
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
+import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.RxUtils
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
@@ -38,6 +37,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         var bestGrammar = grammarController.grammar.copy()
         var bestExamples = listOf<ExampleAnalysisResult>()
+        var perfectionMeasure = Double.MIN_VALUE
         //iteration loop
         do {
             iterationNum++
@@ -54,14 +54,17 @@ class FGCS(val inputSet : List<TestExample>? = null,
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             //saving best grammar
-            if(settings.grammarMeasure.getComparator(parsedExamples).compare(grammarController.grammar, bestGrammar) >= 0){
+            val currentMeasure = settings.grammarPerfectionMeasure.getDoubleMeasure(grammarController.grammar, parsedExamples)
+
+            if(currentMeasure >= perfectionMeasure){
                 bestGrammar = grammarController.grammar.copy()
                 bestExamples = parsedExamples
+                perfectionMeasure = currentMeasure
             }
 
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
-            || !settings.grammarMeasure.isGrammarPerfect(grammarController.grammar, parsedExamples))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
+            || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
     }
 
     fun verifyPerformance(){
@@ -120,12 +123,20 @@ class FGCS(val inputSet : List<TestExample>? = null,
         classificationController.assignRelevance(parseTree)                 //assigning relevance
 
         //ok, so lets collect what we got :)
-        return ExampleAnalysisResult(example, exampleTable, parseTree)
+        return ExampleAnalysisResult(example,
+            exampleTable,
+            parseTree,
+            classificationController.getFuzzyClassification(parseTree),
+            classificationController.getCrispClassification(parseTree))
     }
     //endregion
     /**
      * inner classes
      */
-    data class ExampleAnalysisResult(val example: TestExample, val table : CYKTable, val multiParseTreeNode: MultiParseTreeNode)
+    data class ExampleAnalysisResult(val example: TestExample,
+                                     val table : CYKTable,
+                                     val multiParseTreeNode: MultiParseTreeNode,
+                                     val fuzzyClassification : IntervalFuzzyNumber,
+                                     val crispClassification : Boolean)
     //endregion
 }
