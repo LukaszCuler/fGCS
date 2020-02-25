@@ -211,9 +211,13 @@ class GrammarController {
 
     //helper symbols functions
 
-
-    fun nRulesWith(left : NSymbol? = null, first : NSymbol? = null, second : NSymbol? = null) : MutableSet<NRule> {
+    //@TODO fill UT with extend rules
+    fun nRulesWith(left : NSymbol? = null,
+                   first : NSymbol? = null,
+                   second : NSymbol? = null,
+                   extendRules : Set<NRule> = setOf()) : MutableSet<NRule> {
         return grammar.nRules
+            .union(extendRules)
             .filter {
                 (left==null || it.left == left) &&
                         (first==null || it.getRightFirst() == first) &&

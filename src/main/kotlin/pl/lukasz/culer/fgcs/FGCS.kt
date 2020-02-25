@@ -123,7 +123,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         val exampleTable = CYKTable(example)    //we are creating cyk table for example
         if(cykController.isExampleParsed(exampleTable)) return //nothing to do here @TODO small chance for creation of additional ones
 
-
+        settings.covering.apply(exampleTable, grammarController, cykController)
     }
 
     private fun testExample(example: TestExample) : ExampleAnalysisResult{

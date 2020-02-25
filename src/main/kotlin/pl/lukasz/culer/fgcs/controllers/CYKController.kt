@@ -82,21 +82,23 @@ class CYKController(val gc: GrammarController) {
     fun fillNonTerminalRules(table : CYKTable){
         for(i in 1..table.lastIndex){
             for (j in 0..table.lastIndex-i){    //i and j iterates through cells
-                table.cykTable[i][j].addAll(getEfectors(findDetectors(table, i, j)))
+                table.cykTable[i][j].addAll(getEfectors(table, findDetectors(table, i, j)))
             }
         }
     }
 
-    fun getEfectors(detectors: Detectors) : Set<NSymbol> {
+    //@TODO fill UT
+    fun getEfectors(table : CYKTable, detectors: Detectors) : Set<NSymbol> {
         return detectors
-            .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol) }
+            .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet) }
             .map { it.left }
             .toSet()
     }
 
-    fun getDetectorsForLeft(left : NSymbol, detectors: Detectors) : Detectors {
+    //@TODO fill UT
+    fun getDetectorsForLeft(table : CYKTable, left : NSymbol, detectors: Detectors) : Detectors {
         return detectors
-            .filter { gc.nRulesWith(left = left, first = it.first.symbol, second = it.second.symbol).isNotEmpty() }
+            .filter { gc.nRulesWith(left = left, first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet).isNotEmpty() }
             .toMutableList()
     }
     //endregion

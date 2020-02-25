@@ -124,7 +124,7 @@ class CYKControllerTests {
         cykController.fillTerminalRules(table)
 
         //execution
-        val effectors = cykController.getEfectors(cykController.findDetectors(table, 1, 0))
+        val effectors = cykController.getEfectors(table, cykController.findDetectors(table, 1, 0))
 
         //verification
         val nA = gc.findNSymbolByChar('A')!!
@@ -135,6 +135,7 @@ class CYKControllerTests {
         //preparing data
         val gc = createGrammarForExample()
         val cykController = CYKController(gc)
+        val table = CYKTable(example)
 
         //verification
         val nA = gc.findNSymbolByChar('A')!!
@@ -142,7 +143,7 @@ class CYKControllerTests {
         val nC = gc.findNSymbolByChar('C')!!
 
         //execution
-        val detectorsForLeft = cykController.getDetectorsForLeft(
+        val detectorsForLeft = cykController.getDetectorsForLeft(table,
             nA, mutableListOf(
                 Detector(DetectorElement(nA, x = 0, y = 0), DetectorElement(nA, x = 0, y = 0)),
                 Detector(DetectorElement(nA, x = 0, y = 0), DetectorElement(nB, x = 0, y = 0)),

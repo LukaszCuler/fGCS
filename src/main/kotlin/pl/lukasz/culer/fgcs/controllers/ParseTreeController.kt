@@ -27,7 +27,7 @@ class ParseTreeController(val gc: GrammarController, val cykController: CYKContr
 
         //children time!
         node.subtrees.addAll(
-            cykController.getDetectorsForLeft(symbol, cykController.findDetectors(cykTable, y, x))
+            cykController.getDetectorsForLeft(cykTable, symbol, cykController.findDetectors(cykTable, y, x))
                 .map { MultiParseTreeNode.SubTreePair(Pair(
                     getTreeForSymbolAndPosition(it.first.symbol, it.first.y, it.first.x, cykTable),
                     getTreeForSymbolAndPosition(it.second.symbol, it.second.y, it.second.x, cykTable))
