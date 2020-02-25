@@ -38,19 +38,23 @@ class FGCS(val inputSet : List<TestExample>? = null,
         var bestGrammar = grammarController.grammar.copy()
         var bestExamples = listOf<ExampleAnalysisResult>()
         var perfectionMeasure = Double.MIN_VALUE
+
+        //@TODO sort in lexical order?
         //iteration loop
         do {
             iterationNum++
 
             //@TODO parallelize ??
+            //creative process!
+            inputSet.forEach { parseAndCoverExample(it) }
 
-            //verification after creation process, base for further operations
+            //updating all examples with created new rules
             var parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             refreshAttributes()
             witherRules()
 
-            //final performance test //needed?
+            //performance test before evaluation
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             //saving best grammar
@@ -65,6 +69,9 @@ class FGCS(val inputSet : List<TestExample>? = null,
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
             || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
+
+        //ok, inference is done, so we are setting best grammar
+        grammarController.grammar = bestGrammar
     }
 
     fun verifyPerformance(){
@@ -87,10 +94,6 @@ class FGCS(val inputSet : List<TestExample>? = null,
     /**
      * region public methods
      */
-    private fun parseAndCoverExample(){
-
-    }
-
     private fun refreshAttributes(){
         //refreshes rules
     }
@@ -113,6 +116,14 @@ class FGCS(val inputSet : List<TestExample>? = null,
         classificationController =  ClassificationController(grammarController, settings)
 
         return inputGrammar==null //if there is no input grammar, we have to infer it x]
+    }
+
+    //@TODO UT
+    private fun parseAndCoverExample(example: TestExample){
+        val exampleTable = CYKTable(example)    //we are creating cyk table for example
+        if(cykController.isExampleParsed(exampleTable)) return //nothing to do here @TODO small chance for creation of additional ones
+
+
     }
 
     private fun testExample(example: TestExample) : ExampleAnalysisResult{

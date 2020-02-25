@@ -2,6 +2,8 @@ package pl.lukasz.culer.settings
 
 import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.annotations.Exclude
+import pl.lukasz.culer.fgcs.covering.base.Covering
+import pl.lukasz.culer.fgcs.covering.base.CoveringFactory
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarPerfectionMeasure
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarMeasureFactory
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
@@ -32,6 +34,7 @@ class Settings {
         heatmapProcessor = heatmapProcessorFactory()
         relevanceProcessor = relevanceProcessorFactory()
         grammarPerfectionMeasure = grammarMeasureFactory()
+        covering = coveringFactory()
     }
 
     //initialization result - should not be parsed
@@ -43,6 +46,9 @@ class Settings {
 
     @Exclude
     lateinit var grammarPerfectionMeasure: GrammarPerfectionMeasure
+
+    @Exclude
+    lateinit var covering : Covering
 
     //"raw" setting parameters
     @SerializedName("sNorm")
@@ -66,6 +72,9 @@ class Settings {
 
     @SerializedName("grammarMeasureFactory")
     var grammarMeasureFactory : GrammarMeasureFactory = GrammarMeasureFactory.CRISP_FITNESS
+
+    @SerializedName("coveringFactory")
+    var coveringFactory : CoveringFactory = CoveringFactory.COMPLETING
 
     init {
         initialize()
