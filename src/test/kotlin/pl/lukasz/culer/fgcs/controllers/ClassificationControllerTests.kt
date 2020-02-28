@@ -18,7 +18,6 @@ import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
 import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessorFactory
-import pl.lukasz.culer.fuzzy.tnorms.TNormT2
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 
@@ -52,7 +51,7 @@ class ClassificationControllerTests {
         gc = GrammarController(grammar)
 
         settings = Settings()
-        settings.subtreeMembership = SubtreeMembershipT2.MIN
+        settings.tOperatorReg = SubtreeMembershipT2.MIN
         settings.relevanceProcessorFactory = RelevanceProcessorFactory.WTA
         settings.heatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
         settings.crispClassificationThreshold = 0.4

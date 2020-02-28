@@ -7,7 +7,6 @@ import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeData
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.SymbolDerivativeMembership
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
@@ -34,7 +33,7 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
             child.derivationMembership = DO_NOT_BELONG_AT_ALL
         }
         if(bestValue!=null&&bestChild!=null){
-            bestChild.derivationMembership = settings.tNorm(inhValue, bestValue)
+            bestChild.derivationMembership = settings.tOperatorRev(inhValue, bestValue)
             bestChild.derivationRelevance = FULL_RELEVANCE
         }
     }

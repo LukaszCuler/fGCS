@@ -45,7 +45,7 @@ class EqualTreesHeatmapProcessorTests {
         gc = GrammarController(grammar)
 
         settings = Settings()
-        settings.tNorm = TNormT2.MIN
+        settings.tOperatorRev = TNormT2.MIN
 
         aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
         saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))

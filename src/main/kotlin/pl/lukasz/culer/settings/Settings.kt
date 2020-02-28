@@ -51,14 +51,14 @@ class Settings {
     lateinit var covering : Covering
 
     //"raw" setting parameters
-    @SerializedName("sNorm")
-    var sNorm = SNormT2.MAX
+    @SerializedName("sOperatorReg")
+    var sOperatorReg = SNormT2.MAX
 
-    @SerializedName("tNorm")
-    var tNorm = TNormT2.MIN
+    @SerializedName("tOperatorRev")
+    var tOperatorRev = TNormT2.MIN
 
-    @SerializedName("subtreeMembership")
-    var subtreeMembership = SubtreeMembershipT2.MIN_SQRT
+    @SerializedName("tOperatorReg")
+    var tOperatorReg = SubtreeMembershipT2.MIN_SQRT
 
     @SerializedName("threshold")
     var crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]

@@ -3,13 +3,11 @@ package pl.lukasz.culer.fgcs.controllers
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
-import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 import pl.lukasz.culer.utils.Consts.Companion.FULL_MEMBERSHIP
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
-import pl.lukasz.culer.utils.Consts.Companion.NOT_RELEVANT_AT_ALL
 
 class ClassificationController(val gc: GrammarController,
                                val settings: Settings) {
@@ -35,7 +33,7 @@ class ClassificationController(val gc: GrammarController,
             assignClassificationMembership(subtree.subTreePair.second)
 
             //membership calculation of subtrees and link rule
-            subtree.classificationMembership = settings.subtreeMembership(
+            subtree.classificationMembership = settings.tOperatorReg(
                 subtree.subTreePair.first.mainMembership,
                 subtree.subTreePair.second.mainMembership,
                 gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership)

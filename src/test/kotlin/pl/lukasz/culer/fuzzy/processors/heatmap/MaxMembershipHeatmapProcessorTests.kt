@@ -46,7 +46,7 @@ class MaxMembershipHeatmapProcessorTests {
         gc = GrammarController(grammar)
 
         settings = Settings()
-        settings.tNorm = TNormT2.MIN
+        settings.tOperatorRev = TNormT2.MIN
 
         aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)))
         saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)))

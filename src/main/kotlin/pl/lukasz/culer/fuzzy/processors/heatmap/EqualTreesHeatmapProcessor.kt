@@ -5,8 +5,6 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.utils.Consts
-import pl.lukasz.culer.utils.Consts.Companion.DO_NOT_BELONG_AT_ALL
 import pl.lukasz.culer.utils.Consts.Companion.FULL_RELEVANCE
 
 class EqualTreesHeatmapProcessor : HeatmapProcessor {
@@ -19,7 +17,7 @@ class EqualTreesHeatmapProcessor : HeatmapProcessor {
         for(child in parseTreeNode.subtrees){
             val appliedRuleMembership =
                 grammarController.nRulesWith(parseTreeNode.node, child.subTreePair.first.node, child.subTreePair.second.node).single().membership
-            child.derivationMembership = settings.tNorm(inhValue, appliedRuleMembership)
+            child.derivationMembership = settings.tOperatorRev(inhValue, appliedRuleMembership)
             child.derivationRelevance = FULL_RELEVANCE
         }
     }
