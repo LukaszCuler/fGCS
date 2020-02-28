@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import pl.lukasz.culer.fgcs.controllers.CYKController.DetectorElement
+import pl.lukasz.culer.fgcs.models.CYKCell
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
@@ -50,9 +51,27 @@ class CYKController(val gc: GrammarController) {
         return detectors
     }
 
+    //@TODO fill UT?
     fun fillCell(table : CYKTable, y: Int, x: Int){
         table.cykTable[y][x].addAll(getEfectors(table, findDetectors(table, y, x)))
     }
+
+    fun doForEveryCell(table : CYKTable, func : (Int, Int, CYKCell) -> Unit){
+        for(i in 1..table.lastIndex){
+            for (j in 0..table.lastIndex-i){    //i and j iterates through cells
+                func(i,j, table.cykTable[i][j])
+            }
+        }
+    }
+
+    //@TODO fill UT
+    fun getEfectors(table : CYKTable, detectors: Detectors) : Set<NSymbol> {
+        return detectors
+            .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet) }
+            .map { it.left }
+            .toSet()
+    }
+
 
     fun isExampleParsed(table : CYKTable) = table.rootCell.contains(gc.grammar.starSymbol)
 
@@ -89,14 +108,6 @@ class CYKController(val gc: GrammarController) {
                 fillCell(table, i, j)
             }
         }
-    }
-
-    //@TODO fill UT
-    fun getEfectors(table : CYKTable, detectors: Detectors) : Set<NSymbol> {
-        return detectors
-            .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet) }
-            .map { it.left }
-            .toSet()
     }
 
     //@TODO fill UT

@@ -13,12 +13,13 @@ class Consts {
         val FULL_RELEVANCE = F(1.0)
         val NOT_RELEVANT_AT_ALL = F(0.0)
 
-        val DEFAULT_THRESHOLD = 0.5
+        const val DEFAULT_THRESHOLD = 0.5
 
         const val DEFAULT_START_SYMBOL = '$'
         val END_STRING_SYMBOL = NSymbol('Γ')
 
         const val N_GEN_START = 'A'
+        const val N_GEN_START_TEMP = 'α'
         const val MEMBERSHIP_SHORT_FORMATTER = "%.2f"
     }
 }
