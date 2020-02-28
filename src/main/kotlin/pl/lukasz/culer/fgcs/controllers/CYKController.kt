@@ -50,6 +50,10 @@ class CYKController(val gc: GrammarController) {
         return detectors
     }
 
+    fun fillCell(table : CYKTable, y: Int, x: Int){
+        table.cykTable[y][x].addAll(getEfectors(table, findDetectors(table, y, x)))
+    }
+
     fun isExampleParsed(table : CYKTable) = table.rootCell.contains(gc.grammar.starSymbol)
 
     fun wasTableUpdated(table : CYKTable) = table.recentlyModified
@@ -82,7 +86,7 @@ class CYKController(val gc: GrammarController) {
     fun fillNonTerminalRules(table : CYKTable){
         for(i in 1..table.lastIndex){
             for (j in 0..table.lastIndex-i){    //i and j iterates through cells
-                table.cykTable[i][j].addAll(getEfectors(table, findDetectors(table, i, j)))
+                fillCell(table, i, j)
             }
         }
     }
