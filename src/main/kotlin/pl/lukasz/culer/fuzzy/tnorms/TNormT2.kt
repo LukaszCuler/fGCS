@@ -1,25 +1,26 @@
 package pl.lukasz.culer.fuzzy.tnorms
 
+import pl.lukasz.culer.fuzzy.FuzzyOperator
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
-enum class TNormT2 : (IntervalFuzzyNumber, IntervalFuzzyNumber) -> IntervalFuzzyNumber {
+enum class TNormT2 : FuzzyOperator {
     MIN {
-        override fun invoke(a: IntervalFuzzyNumber, b: IntervalFuzzyNumber) =
-            IntervalFuzzyNumber(TNorm.MIN(a.lowerBound, b.lowerBound), TNorm.MIN(a.upperBound, b.upperBound))
+        override fun invoke(num : Array<IntervalFuzzyNumber>) =
+            IntervalFuzzyNumber(TNorm.MIN(num.map { it.lowerBound }.toTypedArray()), TNorm.MIN(num.map { it.upperBound }.toTypedArray()))
     },
 
     LUKASIEWICZ {
-        override fun invoke(a: IntervalFuzzyNumber, b: IntervalFuzzyNumber) =
-            IntervalFuzzyNumber(TNorm.LUKASIEWICZ(a.lowerBound, b.lowerBound), TNorm.LUKASIEWICZ(a.upperBound, b.upperBound))
+        override fun invoke(num : Array<IntervalFuzzyNumber>) =
+            IntervalFuzzyNumber(TNorm.LUKASIEWICZ(num.map { it.lowerBound }.toTypedArray()), TNorm.LUKASIEWICZ(num.map { it.upperBound }.toTypedArray()))
     },
 
     PROD {
-        override fun invoke(a: IntervalFuzzyNumber, b: IntervalFuzzyNumber) =
-            IntervalFuzzyNumber(TNorm.PROD(a.lowerBound, b.lowerBound), TNorm.PROD(a.upperBound, b.upperBound))
+        override fun invoke(num : Array<IntervalFuzzyNumber>) =
+            IntervalFuzzyNumber(TNorm.PROD(num.map { it.lowerBound }.toTypedArray()), TNorm.PROD(num.map { it.upperBound }.toTypedArray()))
     },
 
     DRASTIC {
-        override fun invoke(a: IntervalFuzzyNumber, b: IntervalFuzzyNumber) =
-            IntervalFuzzyNumber(TNorm.DRASTIC(a.lowerBound, b.lowerBound), TNorm.DRASTIC(a.upperBound, b.upperBound))
+        override fun invoke(num : Array<IntervalFuzzyNumber>) =
+            IntervalFuzzyNumber(TNorm.DRASTIC(num.map { it.lowerBound }.toTypedArray()), TNorm.DRASTIC(num.map { it.upperBound }.toTypedArray()))
     }
 }
