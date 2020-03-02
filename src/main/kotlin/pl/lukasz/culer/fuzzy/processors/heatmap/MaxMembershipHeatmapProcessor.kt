@@ -33,7 +33,7 @@ class MaxMembershipHeatmapProcessor : HeatmapProcessor {
             child.derivationMembership = DO_NOT_BELONG_AT_ALL
         }
         if(bestValue!=null&&bestChild!=null){
-            bestChild.derivationMembership = settings.tOperatorRev(inhValue, bestValue)
+            bestChild.derivationMembership = settings.tOperatorRev(arrayOf(inhValue, bestValue))
             bestChild.derivationRelevance = FULL_RELEVANCE
         }
     }
