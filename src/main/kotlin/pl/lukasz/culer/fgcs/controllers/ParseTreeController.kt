@@ -14,6 +14,26 @@ class ParseTreeController(val gc: GrammarController, val cykController: CYKContr
         return getTreeForSymbolAndPosition(gc.grammar.starSymbol, cykTable.lastIndex, 0, cykTable)
     }
 
+    fun processRootToNodes(treeToProcess: MultiParseTreeNode,
+                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Any){
+        processFunc(treeToProcess)
+        if(treeToProcess.isLeaf) return
+        treeToProcess
+            .subtrees
+            .flatMap { it.subTreePair.toList() }
+            .forEach { processRootToNodes(it, processFunc)}
+    }
+
+    fun processNodesToRoot(treeToProcess: MultiParseTreeNode,
+                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Any){
+        if(!treeToProcess.isLeaf){
+            treeToProcess
+                .subtrees
+                .flatMap { it.subTreePair.toList() }
+                .forEach { processNodesToRoot(it, processFunc)}
+        }
+        processFunc(treeToProcess)
+    }
     //endregion
 
     /**
