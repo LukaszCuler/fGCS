@@ -20,13 +20,7 @@ class ClassificationController(val gc: GrammarController,
      * region public methods
      */
     fun assignClassificationMembership(parseTree : MultiParseTreeNode) {
-        //for leaves we return default membership
-        if(parseTree.isLeaf) {
-            parseTree.mainMembership = if(parseTree.isDeadEnd) DO_NOT_BELONG_AT_ALL else Consts.T_RULE_MEMBERSHIP
-            return
-        }
-
-        //now for multiple subtree variants
+        //for multiple subtree variants
         for(subtree in parseTree.subtrees){
             //tagging subtrees
             assignClassificationMembership(subtree.subTreePair.first)
@@ -34,15 +28,10 @@ class ClassificationController(val gc: GrammarController,
 
             //membership calculation of subtrees and link rule
             subtree.classificationMembership = settings.tOperatorReg(
-                subtree.subTreePair.first.mainMembership,
-                subtree.subTreePair.second.mainMembership,
+                getFuzzyClassification(subtree.subTreePair.first),
+                getFuzzyClassification(subtree.subTreePair.second),
                 gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership)
         }
-
-        parseTree.subtrees.sortBy { it.classificationMembership }
-        parseTree.mainChild = parseTree.subtrees.last()
-        //@TODO should be S-norm
-        parseTree.mainMembership = parseTree.subtrees.last().classificationMembership
     }
 
     fun assignRelevance(parseTree : MultiParseTreeNode) {
@@ -75,13 +64,20 @@ class ClassificationController(val gc: GrammarController,
         return valuesToReturn ?: mutableListOf()
     }
 
-    @Deprecated("should implement selection")
     fun getFuzzyClassification(parseTree : MultiParseTreeNode) : IntervalFuzzyNumber {
-        return parseTree.mainMembership
+        //for leaves we return default membership
+        if(parseTree.isLeaf) {
+            return if(parseTree.isDeadEnd) DO_NOT_BELONG_AT_ALL else Consts.T_RULE_MEMBERSHIP
+        }
+
+        return settings.sOperatorReg(
+            parseTree.subtrees.map { it.classificationMembership }.toTypedArray()
+        )
+
     }
 
     fun getCrispClassification(parseTree : MultiParseTreeNode) : Boolean {
-        return parseTree.mainMembership.midpoint >= (settings.crispClassificationThreshold?: 0.0)
+        return getFuzzyClassification(parseTree).midpoint >= (settings.crispClassificationThreshold?: 0.0)
     }
 
     fun getExampleHeatmap(parseTree : MultiParseTreeNode) : List<IntervalFuzzyNumber> {

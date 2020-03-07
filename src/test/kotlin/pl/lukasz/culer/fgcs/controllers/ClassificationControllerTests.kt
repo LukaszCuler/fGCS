@@ -68,7 +68,7 @@ class ClassificationControllerTests {
     @Test
     fun assignClassificationMembershipTest(){
         classificationController.assignClassificationMembership(multiParseTreeFromCYK)
-        Assert.assertTrue(multiParseTreeFromCYK.mainMembership.equals(0.5))
+        Assert.assertTrue(classificationController.getFuzzyClassification(multiParseTreeFromCYK).midpoint.equals(0.5))
     }
 
     @Test
