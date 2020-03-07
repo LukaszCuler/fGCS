@@ -9,7 +9,10 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
+import kotlin.math.max
+import kotlin.math.min
 
 //@TODO UT
 class CompletingCovering : Covering() {
@@ -47,6 +50,42 @@ class CompletingCovering : Covering() {
 
         //creating tree for possible paths
         val parseTree = parseTreeController.getMultiParseTreeFromCYK(table)
+
+        val tags = mutableMapOf<MultiParseTreeNode, Pair<Int, Int>>()
+        parseTreeController.processNodesToRoot(parseTree) {
+            if(parseTree.isLeaf){
+                tags[parseTree] = 0 to 0
+            } else {
+                //edge values to tag
+                var maxVal = Int.MIN_VALUE
+                var minVal = Int.MAX_VALUE
+
+                //going through all variants
+                for(sub in parseTree.subtrees){
+                    var childSumMin = (tags[sub.subTreePair.first]?.first ?: 0) + (tags[sub.subTreePair.second]?.first ?: 0)
+                    var childSumMax = (tags[sub.subTreePair.first]?.second ?: 0) + (tags[sub.subTreePair.second]?.second ?: 0)
+
+                    val constructedRule = grammarController.nRulesWith(
+                        parseTree.node,
+                        sub.subTreePair.first.node,
+                        sub.subTreePair.second.node,
+                        tempRules
+                    )
+
+                    var increase = 0
+                    if(constructedRule.size > 0 && tempRules.contains(constructedRule.first())) increase = 1
+
+                    childSumMin += increase
+                    childSumMax += increase
+
+                    //how this variant affect?
+                    maxVal = max(maxVal, childSumMax)
+                    minVal = min(minVal, childSumMin)
+                }
+
+                tags[parseTree] = minVal to maxVal
+            }
+        }
 
         //clearing our mess
         tempRules.clear()
