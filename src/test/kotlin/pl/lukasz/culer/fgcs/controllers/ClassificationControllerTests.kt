@@ -68,7 +68,7 @@ class ClassificationControllerTests {
     @Test
     fun assignClassificationMembershipTest(){
         classificationController.assignClassificationMembership(multiParseTreeFromCYK)
-        Assert.assertTrue(classificationController.getFuzzyClassification(multiParseTreeFromCYK).midpoint.equals(0.5))
+        Assert.assertTrue(multiParseTreeFromCYK.classificationMembership.midpoint.equals(0.5))
     }
 
     @Test
@@ -99,7 +99,7 @@ class ClassificationControllerTests {
     @Test @Deprecated("mainMembership & mainChild are deprecated")
     fun getFuzzyClassificationTest(){
         classificationController.assignClassificationMembership(multiParseTreeFromCYK)
-        Assert.assertEquals(F(0.5), classificationController.getFuzzyClassification(multiParseTreeFromCYK))
+        Assert.assertEquals(F(0.5), multiParseTreeFromCYK.classificationMembership)
     }
 
     @Test

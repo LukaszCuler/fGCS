@@ -83,7 +83,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         val exampleList = RxUtils.computeParallelly(properTestSet, ::testExample)
 
         for(example in exampleList){
-            val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
+            val fuzzyClass = example.multiParseTreeNode.classificationMembership
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
@@ -137,7 +137,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         return ExampleAnalysisResult(example,
             exampleTable,
             parseTree,
-            classificationController.getFuzzyClassification(parseTree),
+            parseTree.classificationMembership,
             classificationController.getCrispClassification(parseTree))
     }
     //endregion

@@ -40,7 +40,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
         var html = File(HEAD_CONTENT_FILE).readText()   //starts html file with proper head
 
         for(example in listToVisualize){
-            val fuzzyClass = classificationController.getFuzzyClassification(example.multiParseTreeNode)
+            val fuzzyClass = example.multiParseTreeNode.classificationMembership
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             val exampleHeatmap = classificationController.getExampleHeatmap(example.multiParseTreeNode)
 
