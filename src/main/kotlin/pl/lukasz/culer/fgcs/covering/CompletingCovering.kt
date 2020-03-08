@@ -104,14 +104,15 @@ class CompletingCovering(table: CYKTable,
     private fun getNewTempValue(last : NSymbol?) = NSymbol(last?.symbol?.let { it+1 } ?: Consts.N_GEN_START_TEMP)
 
     private fun identifyConstraints(){
-        /**
-         * constraints are in form of equalities linked with conjunction e.g.
-         * A = (BvCvD) ^ E=F
-         */
+
 
     }
     //endregion
     //region internal structures
+    /**
+     * constraints are in form of equalities linked with conjunction e.g.
+     * A = (BvCvD) ^ E=F
+     */
     data class Constraint(val left : MutableList<NSymbol> = mutableListOf(), val right : MutableList<NSymbol> = mutableListOf())
     data class ConstraintSet(val constraints : MutableList<Constraint> = mutableListOf())
     //endregion
