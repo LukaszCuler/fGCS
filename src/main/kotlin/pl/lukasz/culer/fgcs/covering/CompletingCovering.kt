@@ -9,6 +9,7 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
 import kotlin.math.max
@@ -23,7 +24,7 @@ class CompletingCovering(table: CYKTable,
     private val tempRules = table.privateRuleSet
     private val tempVars = mutableListOf<NSymbol>()
     private val tags = mutableMapOf<MultiParseTreeNode, Pair<Int, Int>>()
-
+    private val constraintSet = mutableListOf<ConstraintSet>()
 
     //region overrides
     override fun apply() {
@@ -38,6 +39,8 @@ class CompletingCovering(table: CYKTable,
 
         //tagging nodes with possible rules to create in descendants
         parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules)
+
+        identifyConstraints()
 
         //clearing our mess
         tempRules.clear()
@@ -99,5 +102,17 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun getNewTempValue(last : NSymbol?) = NSymbol(last?.symbol?.let { it+1 } ?: Consts.N_GEN_START_TEMP)
+
+    private fun identifyConstraints(){
+        /**
+         * constraints are in form of equalities linked with conjunction e.g.
+         * A = (BvCvD) ^ E=F
+         */
+
+    }
+    //endregion
+    //region internal structures
+    data class Constraint(val left : MutableList<NSymbol> = mutableListOf(), val right : MutableList<NSymbol> = mutableListOf())
+    data class ConstraintSet(val constraints : MutableList<Constraint> = mutableListOf())
     //endregion
 }
