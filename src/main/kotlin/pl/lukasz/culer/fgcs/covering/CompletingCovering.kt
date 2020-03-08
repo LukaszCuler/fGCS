@@ -41,6 +41,7 @@ class CompletingCovering(table: CYKTable,
         parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules)
 
         identifyConstraints()
+        clusterConstraints()
 
         //clearing our mess
         tempRules.clear()
@@ -104,7 +105,20 @@ class CompletingCovering(table: CYKTable,
     private fun getNewTempValue(last : NSymbol?) = NSymbol(last?.symbol?.let { it+1 } ?: Consts.N_GEN_START_TEMP)
 
     private fun identifyConstraints(){
+        //is one rule similar to another?
+        tempRules.forEach {
+            /**
+             * first type of analyzed constraints - rules in form of:
+             * X1 -> X2A v X1 -> A2X
+             * where X1 and X2 are any temporary symbols, and A any existing symbol .
+             */
+            if(tempVars.contains(it.getRightFirst()) xor tempVars.contains(it.getRightSecond())){
 
+            }
+        }
+    }
+
+    private fun clusterConstraints(){
 
     }
     //endregion
