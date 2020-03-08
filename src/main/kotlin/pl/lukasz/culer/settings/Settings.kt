@@ -34,7 +34,6 @@ class Settings {
         heatmapProcessor = heatmapProcessorFactory()
         relevanceProcessor = relevanceProcessorFactory()
         grammarPerfectionMeasure = grammarMeasureFactory()
-        covering = coveringFactory()
     }
 
     //initialization result - should not be parsed
@@ -46,9 +45,6 @@ class Settings {
 
     @Exclude
     lateinit var grammarPerfectionMeasure: GrammarPerfectionMeasure
-
-    @Exclude
-    lateinit var covering : Covering
 
     //"raw" setting parameters
     @SerializedName("sOperatorReg")

@@ -56,6 +56,8 @@ class CYKController(val gc: GrammarController) {
         table.cykTable[y][x].addAll(getEfectors(table, findDetectors(table, y, x)))
     }
 
+    //executed bottom-down
+    //@TODO UT
     fun doForEveryCell(table : CYKTable, func : (Int, Int, CYKCell) -> Unit){
         for(i in 1..table.lastIndex){
             for (j in 0..table.lastIndex-i){    //i and j iterates through cells

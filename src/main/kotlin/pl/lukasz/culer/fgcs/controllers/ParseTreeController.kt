@@ -15,7 +15,7 @@ class ParseTreeController(val gc: GrammarController, val cykController: CYKContr
     }
 
     fun processRootToNodes(treeToProcess: MultiParseTreeNode,
-                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Any){
+                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Unit){
         processFunc(treeToProcess)
         if(treeToProcess.isLeaf) return
         treeToProcess
@@ -25,7 +25,7 @@ class ParseTreeController(val gc: GrammarController, val cykController: CYKContr
     }
 
     fun processNodesToRoot(treeToProcess: MultiParseTreeNode,
-                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Any){
+                           processFunc : ( /*"parent" node*/MultiParseTreeNode) -> Unit){
         if(!treeToProcess.isLeaf){
             treeToProcess
                 .subtrees
