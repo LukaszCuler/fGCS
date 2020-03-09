@@ -9,7 +9,6 @@ import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
-import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
 import kotlin.math.max
@@ -24,7 +23,7 @@ class CompletingCovering(table: CYKTable,
     private val tempRules = table.privateRuleSet
     private val tempVars = mutableListOf<NSymbol>()
     private val tags = mutableMapOf<MultiParseTreeNode, Pair<Int, Int>>()
-    private val constraintSet = mutableListOf<ConstraintSet>()
+    private val constraintSets = mutableSetOf<ConstraintSet>()
 
     //region overrides
     override fun apply() {
@@ -106,14 +105,30 @@ class CompletingCovering(table: CYKTable,
 
     private fun identifyConstraints(){
         //is one rule similar to another?
-        tempRules.forEach {
+        tempRules.forEach { tempRule ->
             /**
              * first type of analyzed constraints - rules in form of:
              * X1 -> X2A v X1 -> A2X
              * where X1 and X2 are any temporary symbols, and A any existing symbol .
              */
-            if(tempVars.contains(it.getRightFirst()) xor tempVars.contains(it.getRightSecond())){
-
+            if(tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond())){
+                if(tempVars.contains(tempRule.getRightFirst())){
+                    val constrainProps = grammarController.nRulesWith(second = tempRule.getRightSecond())
+                    val sets = constrainProps
+                        .map { it.left to it.getRightFirst()}
+                        .groupBy { it.first }
+                        .map { foundRule ->
+                            ConstraintSet(mutableListOf(Constraint(foundRule.key, foundRule.value.map { it.second }.toMutableList()))) }
+                    constraintSets.addAll(sets)
+                } else {
+                    val constrainProps = grammarController.nRulesWith(first = tempRule.getRightFirst())
+                    val sets = constrainProps
+                        .map { it.left to it.getRightSecond()}
+                        .groupBy { it.first }
+                        .map { foundRule ->
+                            ConstraintSet(mutableListOf(Constraint(foundRule.key, foundRule.value.map { it.second }.toMutableList()))) }
+                    constraintSets.addAll(sets)
+                }
             }
         }
     }
@@ -127,7 +142,7 @@ class CompletingCovering(table: CYKTable,
      * constraints are in form of equalities linked with conjunction e.g.
      * A = (BvCvD) ^ E=F
      */
-    data class Constraint(val left : MutableList<NSymbol> = mutableListOf(), val right : MutableList<NSymbol> = mutableListOf())
+    data class Constraint(val left : NSymbol, val right : MutableList<NSymbol> = mutableListOf())
     data class ConstraintSet(val constraints : MutableList<Constraint> = mutableListOf())
     //endregion
 }
