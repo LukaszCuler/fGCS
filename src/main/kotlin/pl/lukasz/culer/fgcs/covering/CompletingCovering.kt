@@ -23,7 +23,8 @@ class CompletingCovering(table: CYKTable,
     private val tempRules = table.privateRuleSet
     private val tempVars = mutableListOf<NSymbol>()
     private val tags = mutableMapOf<MultiParseTreeNode, Pair<Int, Int>>()
-    private val constraintSets = mutableSetOf<ConstraintSet>()
+    private val possibleConstraintSets = mutableSetOf<ConstraintSet>()
+    private var selectedConstraintSet = ConstraintSet()
 
     //region overrides
     override fun apply() {
@@ -41,6 +42,8 @@ class CompletingCovering(table: CYKTable,
 
         identifyConstraints()
         clusterConstraints()
+
+        assignSymbolsToTemps()
 
         //clearing our mess
         tempRules.clear()
@@ -114,11 +117,11 @@ class CompletingCovering(table: CYKTable,
             if(tempVars.contains(tempRule.left) &&
                 (tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond()))){
                 if(tempVars.contains(tempRule.getRightFirst())){
-                    constraintSets.addAll(getConstraintsForOneOnRight(tempRule,
+                    possibleConstraintSets.addAll(getConstraintsForOneOnRight(tempRule,
                         grammarController.nRulesWith(second = tempRule.getRightSecond())
                     ) {it.getRightFirst()})
                 } else {
-                    constraintSets.addAll(getConstraintsForOneOnRight(tempRule,
+                    possibleConstraintSets.addAll(getConstraintsForOneOnRight(tempRule,
                         grammarController.nRulesWith(second = tempRule.getRightFirst())
                     ) {it.getRightSecond()})
                 }
@@ -148,6 +151,10 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun clusterConstraints(){
+
+    }
+
+    private fun assignSymbolsToTemps(){
 
     }
     //endregion
