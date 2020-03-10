@@ -111,23 +111,47 @@ class CompletingCovering(table: CYKTable,
              * X1 -> X2A v X1 -> A2X
              * where X1 and X2 are any temporary symbols, and A any existing symbol .
              */
-            if(tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond())){
+            if(tempVars.contains(tempRule.left) &&
+                (tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond()))){
                 if(tempVars.contains(tempRule.getRightFirst())){
+                    //looking for matches for left / first right combinations
                     val constrainProps = grammarController.nRulesWith(second = tempRule.getRightSecond())
-                    val sets = constrainProps
+                    constrainProps
                         .map { it.left to it.getRightFirst()}
                         .groupBy { it.first }
-                        .map { foundRule ->
-                            ConstraintSet(mutableListOf(Constraint(foundRule.key, foundRule.value.map { it.second }.toMutableList()))) }
-                    constraintSets.addAll(sets)
+                        .forEach { foundRule ->
+                            //first constraint - for left symbol
+                            val cs = ConstraintSet()
+                            val leftConstraint = Constraint(tempRule.left, mutableSetOf(foundRule.key))
+                            cs.constraints.add(leftConstraint)
+
+                            //for right - no new constraint for a symbol if the same, just filling the first one
+                            val rightConstraint = if(tempRule.left==tempRule.getRightFirst()) leftConstraint
+                            else Constraint(tempRule.getRightFirst())
+                            cs.constraints.add(rightConstraint)
+                            rightConstraint.right.addAll(foundRule.value.map { it.second })
+                            constraintSets.add(cs)
+                        }
+
                 } else {
+                    //looking for matches for left / second right combinations
                     val constrainProps = grammarController.nRulesWith(first = tempRule.getRightFirst())
-                    val sets = constrainProps
+                    constrainProps
                         .map { it.left to it.getRightSecond()}
                         .groupBy { it.first }
-                        .map { foundRule ->
-                            ConstraintSet(mutableListOf(Constraint(foundRule.key, foundRule.value.map { it.second }.toMutableList()))) }
-                    constraintSets.addAll(sets)
+                        .forEach { foundRule ->
+                            //first constraint - for left symbol
+                            val cs = ConstraintSet()
+                            val leftConstraint = Constraint(tempRule.left, mutableSetOf(foundRule.key))
+                            cs.constraints.add(leftConstraint)
+
+                            //for right - no new constraint for a symbol if the same, just filling the first one
+                            val rightConstraint = if(tempRule.left==tempRule.getRightSecond()) leftConstraint
+                            else Constraint(tempRule.getRightSecond())
+                            cs.constraints.add(rightConstraint)
+                            rightConstraint.right.addAll(foundRule.value.map { it.second })
+                            constraintSets.add(cs)
+                        }
                 }
             }
         }
@@ -142,7 +166,7 @@ class CompletingCovering(table: CYKTable,
      * constraints are in form of equalities linked with conjunction e.g.
      * A = (BvCvD) ^ E=F
      */
-    data class Constraint(val left : NSymbol, val right : MutableList<NSymbol> = mutableListOf())
-    data class ConstraintSet(val constraints : MutableList<Constraint> = mutableListOf())
+    data class Constraint(val left : NSymbol, val right : MutableSet<NSymbol> = mutableSetOf())
+    data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf())
     //endregion
 }
