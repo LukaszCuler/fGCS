@@ -114,47 +114,37 @@ class CompletingCovering(table: CYKTable,
             if(tempVars.contains(tempRule.left) &&
                 (tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond()))){
                 if(tempVars.contains(tempRule.getRightFirst())){
-                    //looking for matches for left / first right combinations
-                    val constrainProps = grammarController.nRulesWith(second = tempRule.getRightSecond())
-                    constrainProps
-                        .map { it.left to it.getRightFirst()}
-                        .groupBy { it.first }
-                        .forEach { foundRule ->
-                            //first constraint - for left symbol
-                            val cs = ConstraintSet()
-                            val leftConstraint = Constraint(tempRule.left, mutableSetOf(foundRule.key))
-                            cs.constraints.add(leftConstraint)
-
-                            //for right - no new constraint for a symbol if the same, just filling the first one
-                            val rightConstraint = if(tempRule.left==tempRule.getRightFirst()) leftConstraint
-                            else Constraint(tempRule.getRightFirst())
-                            cs.constraints.add(rightConstraint)
-                            rightConstraint.right.addAll(foundRule.value.map { it.second })
-                            constraintSets.add(cs)
-                        }
-
+                    constraintSets.addAll(getConstraintsForOneOnRight(tempRule,
+                        grammarController.nRulesWith(second = tempRule.getRightSecond())
+                    ) {it.getRightFirst()})
                 } else {
-                    //looking for matches for left / second right combinations
-                    val constrainProps = grammarController.nRulesWith(first = tempRule.getRightFirst())
-                    constrainProps
-                        .map { it.left to it.getRightSecond()}
-                        .groupBy { it.first }
-                        .forEach { foundRule ->
-                            //first constraint - for left symbol
-                            val cs = ConstraintSet()
-                            val leftConstraint = Constraint(tempRule.left, mutableSetOf(foundRule.key))
-                            cs.constraints.add(leftConstraint)
-
-                            //for right - no new constraint for a symbol if the same, just filling the first one
-                            val rightConstraint = if(tempRule.left==tempRule.getRightSecond()) leftConstraint
-                            else Constraint(tempRule.getRightSecond())
-                            cs.constraints.add(rightConstraint)
-                            rightConstraint.right.addAll(foundRule.value.map { it.second })
-                            constraintSets.add(cs)
-                        }
+                    constraintSets.addAll(getConstraintsForOneOnRight(tempRule,
+                        grammarController.nRulesWith(second = tempRule.getRightFirst())
+                    ) {it.getRightSecond()})
                 }
             }
         }
+    }
+
+    private fun getConstraintsForOneOnRight(tempRule : NRule, constrainProps : MutableSet<NRule>, getProperSymbol :(NRule) -> NSymbol) : Set<ConstraintSet> {
+        val foundSets = mutableSetOf<ConstraintSet>()
+        constrainProps
+            .map { it.left to getProperSymbol(it)}
+            .groupBy { it.first }
+            .forEach { foundRule ->
+                //first constraint - for left symbol
+                val cs = ConstraintSet()
+                val leftConstraint = Constraint(tempRule.left, mutableSetOf(foundRule.key))
+                cs.constraints.add(leftConstraint)
+
+                //for right - no new constraint for a symbol if the same, just filling the first one
+                val rightConstraint = if(tempRule.left==getProperSymbol(tempRule)) leftConstraint
+                else Constraint(getProperSymbol(tempRule))
+                cs.constraints.add(rightConstraint)
+                rightConstraint.right.addAll(foundRule.value.map { it.second })
+                foundSets.add(cs)
+            }
+        return foundSets
     }
 
     private fun clusterConstraints(){
