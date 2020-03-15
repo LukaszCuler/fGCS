@@ -7,10 +7,12 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
+import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DEFAULT_START_SYMBOL
+import kotlin.random.Random
 
-class GrammarController {
+class GrammarController(val settings : Settings) {
     /**
      * region params
      * **/
@@ -23,14 +25,14 @@ class GrammarController {
      * region constructors
      **/
     //creating grammar from data
-    constructor(learningData : List<TestExample>, testData : List<TestExample>? = null){
+    constructor(settings : Settings, learningData : List<TestExample>, testData : List<TestExample>? = null) : this(settings) {
         this.learningData = learningData
         this.testData = testData
         createGrammarFromData()
     }
 
     //simply loading grammar
-    constructor(grammar: Grammar, testData : List<TestExample>? = null){
+    constructor(settings : Settings, grammar: Grammar, testData : List<TestExample>? = null) : this(settings) {
         //grammar is ready, just needs some refreshment
         this.grammar = grammar
         updateSymbolReferences()
@@ -263,12 +265,43 @@ class GrammarController {
         return grammar.nSymbols.find { it.symbol == symbolChar }
     }
 
+    //@TODO UT
+    fun getRandomNSymbol(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) =
+        symbolsToDrawFrom.toList()[Random.nextInt(symbolsToDrawFrom.size)]
+
+    //@TODO UT?
+    fun getNewOrExistingNSymbolRandomly(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) : NSymbol {
+        when(settings.newSymbolSelectionMethod) {
+            NewSymbolSelectionMethod.INCREMENTAL -> {
+                val drawnValue = Random.nextDouble(symbolsToDrawFrom.size.toDouble()+settings.newSymbolCoef)
+                return if(drawnValue<=settings.newSymbolCoef) {
+                    getNewNSymbol() ?: getRandomNSymbol(symbolsToDrawFrom)
+                } else {
+                    getRandomNSymbol(symbolsToDrawFrom)
+                }
+            }
+
+            NewSymbolSelectionMethod.FIXED -> {
+                return if(Random.nextDouble(settings.newSymbolCoef)<=settings.newSymbolCoef) {
+                    getNewNSymbol() ?: getRandomNSymbol(symbolsToDrawFrom)
+                } else {
+                    getRandomNSymbol(symbolsToDrawFrom)
+                }
+            }
+        }
+    }
+
     private fun parseTestData(){
         if(testData!=null) {
             for(example in testData!!) {
                 example.parse(this)
             }
         }
+    }
+    //endregion
+    //region structures
+    enum class NewSymbolSelectionMethod {
+        INCREMENTAL, FIXED  //no need for factory etc. unlikely to modify
     }
     //endregion
 }

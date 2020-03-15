@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
@@ -11,18 +12,25 @@ import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.settings.Settings
 
 @RunWith(MockitoJUnitRunner::class)
 class CYKControllerTests {
     val example = TestExample("abca")
     val exampleUnit = TestExample("a")
+    private lateinit var settings : Settings
+
+    @Before
+    fun init(){
+        settings = Settings()
+    }
 
     @Test
     fun findDetectorsTest(){
         //preparing data
         val te1 = TestExample("aabb")
         val dataSet = listOf(te1)
-        val gc = GrammarController(dataSet)
+        val gc = GrammarController(settings, dataSet)
         val nC = NSymbol('C').also { gc.addNSymbol(it) }
         val nD = NSymbol('D').also { gc.addNSymbol(it) }
         val nE = NSymbol('E').also { gc.addNSymbol(it) }
@@ -184,7 +192,7 @@ class CYKControllerTests {
 
     //private methods
     private fun createGrammarForExample() : GrammarController {
-        val gc = GrammarController(listOf(example, exampleUnit))
+        val gc = GrammarController(settings, listOf(example, exampleUnit))
 
         val ta = gc.findTSymbolByChar('a')!!
         val tb = gc.findTSymbolByChar('b')!!

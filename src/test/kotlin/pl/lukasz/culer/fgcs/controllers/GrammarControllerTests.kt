@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import org.junit.Assert
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
@@ -11,10 +12,17 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
+import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 
 @RunWith(MockitoJUnitRunner::class)
 class GrammarControllerTests {
+    private lateinit var settings : Settings
+    
+    @Before
+    fun init(){
+        settings = Settings()
+    }
 
     @Test
     fun createGrammarFromDataTest(){
@@ -25,7 +33,7 @@ class GrammarControllerTests {
         val dataSet = listOf(te1, te2, te3)
 
         //execution
-        val gc = GrammarController(dataSet)
+        val gc = GrammarController(settings, dataSet)
 
         //validation
         Assert.assertEquals(3, gc.grammar.tSymbols.size) //good number of terminals
@@ -62,7 +70,7 @@ class GrammarControllerTests {
         grammar.nRules.add(NRule(NSymbol('$', true), NRuleRHS(NSymbol('$'), NSymbol('$'))))
 
         //execution
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //validation
         //references should be substituted
@@ -97,7 +105,7 @@ class GrammarControllerTests {
         grammar.nRules.add(NRule(nS, NRuleRHS(nB,nB)))       //unproductive
         grammar.nRules.add(NRule(nC, NRuleRHS(nA,nA)))       //unreachable
 
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //execution
         gc.removeUnreachableAndUnproductiveRules()
@@ -111,7 +119,7 @@ class GrammarControllerTests {
         //preparing data
         val grammar = getSimpleGrammar()
         grammar.nSymbols.add(NSymbol('B'))
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //execution
         gc.removeUnusedSymbols()
@@ -124,7 +132,7 @@ class GrammarControllerTests {
     fun addNRuleTest(){     //simple for now, probably will be extended
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         val newRule = NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol))
 
@@ -143,7 +151,7 @@ class GrammarControllerTests {
     fun removeNRuleTest(){     //simple for now, probably will be extended
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         val ruleToRemove = grammar.nRules.single() //should be S->AA
 
@@ -162,7 +170,7 @@ class GrammarControllerTests {
     fun addNSymbolTest(){     //simple for now, probably will be extended
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         val newSymbol = NSymbol('N')
 
@@ -181,7 +189,7 @@ class GrammarControllerTests {
     fun removeNSymbolTest(){     //simple for now, probably will be extended
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         val symbolToRemove = gc.findNSymbolByChar('A')
 
@@ -217,7 +225,7 @@ class GrammarControllerTests {
         grammar.nRules.add(NRule(nS, NRuleRHS(nA,nS)))
         grammar.nRules.add(NRule(nA, NRuleRHS(nS,nB)))
 
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //validation
         Assert.assertEquals(2, gc.nRulesWith(left = nS).size)
@@ -230,7 +238,7 @@ class GrammarControllerTests {
     fun setStartSymbolTest(){
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         val newStartSymbol = gc.findNSymbolByChar('A')
         val oldStartSymbol = gc.findNSymbolByChar(Consts.DEFAULT_START_SYMBOL)
@@ -254,7 +262,7 @@ class GrammarControllerTests {
         //preparing data
         val grammarPre = getSimpleGrammar()
         val grammarModified = getSimpleGrammar()
-        val gcMod = GrammarController(grammarModified)
+        val gcMod = GrammarController(settings, grammarModified)
 
         //execution
         val newSymbol = gcMod.getNewNSymbol()
@@ -270,7 +278,7 @@ class GrammarControllerTests {
     fun findTSymbolByCharTest(){
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //execution & verification
         Assert.assertNotNull(gc.findTSymbolByChar('a'))
@@ -281,7 +289,7 @@ class GrammarControllerTests {
     fun findNSymbolByCharTest(){
         //preparing data
         val grammar = getSimpleGrammar()
-        val gc = GrammarController(grammar)
+        val gc = GrammarController(settings, grammar)
 
         //execution & verification
         Assert.assertNotNull(gc.findNSymbolByChar('$'))

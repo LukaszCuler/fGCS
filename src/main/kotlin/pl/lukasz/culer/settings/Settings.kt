@@ -2,6 +2,7 @@ package pl.lukasz.culer.settings
 
 import com.google.gson.annotations.SerializedName
 import pl.lukasz.culer.annotations.Exclude
+import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.covering.base.Covering
 import pl.lukasz.culer.fgcs.covering.base.CoveringFactory
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarPerfectionMeasure
@@ -71,6 +72,12 @@ class Settings {
 
     @SerializedName("coveringFactory")
     var coveringFactory : CoveringFactory = CoveringFactory.COMPLETING
+
+    @SerializedName("newSymbolSelectionMethod")
+    var newSymbolSelectionMethod : GrammarController.NewSymbolSelectionMethod = GrammarController.NewSymbolSelectionMethod.INCREMENTAL
+
+    @SerializedName("newSymbolCoef")
+    var newSymbolCoef : Double = 1.0
 
     init {
         initialize()

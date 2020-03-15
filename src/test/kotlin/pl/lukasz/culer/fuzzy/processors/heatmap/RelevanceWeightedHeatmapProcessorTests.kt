@@ -34,6 +34,9 @@ class RelevanceWeightedHeatmapProcessorTests {
     fun init(){
         processor = RelavanceWeightedHeatmapProcessor()
         //preparing data
+        settings = Settings()
+        settings.tOperatorRev = TNormT2.MIN
+
         val grammar = Grammar()
         grammar.starSymbol = NSymbol('$', true)
         val aSymbol = NSymbol('A', false)
@@ -42,10 +45,7 @@ class RelevanceWeightedHeatmapProcessorTests {
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(aSymbol, aSymbol), F(1.0)))
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, aSymbol), F(1.0)))
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.6)))
-        gc = GrammarController(grammar)
-
-        settings = Settings()
-        settings.tOperatorRev = TNormT2.MIN
+        gc = GrammarController(settings, grammar)
 
         aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
         saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))

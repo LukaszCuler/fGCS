@@ -31,6 +31,12 @@ class ClassificationControllerTests {
     @Before
     fun setUp(){
         //preparing data
+        settings = Settings()
+        settings.tOperatorReg = SubtreeMembershipT2.MIN
+        settings.relevanceProcessorFactory = RelevanceProcessorFactory.WTA
+        settings.heatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
+        settings.crispClassificationThreshold = 0.4
+
         val grammar = Grammar()
         grammar.starSymbol = NSymbol('$', true)
         val aSymbol = NSymbol('A', false)
@@ -48,13 +54,7 @@ class ClassificationControllerTests {
         grammar.nRules.add(NRule(bSymbol, NRuleRHS(bSymbol, bSymbol), F(0.5)))
         grammar.tRules.add(TRule(aSymbol, atSymbol))
         grammar.tRules.add(TRule(bSymbol, btSymbol))
-        gc = GrammarController(grammar)
-
-        settings = Settings()
-        settings.tOperatorReg = SubtreeMembershipT2.MIN
-        settings.relevanceProcessorFactory = RelevanceProcessorFactory.WTA
-        settings.heatmapProcessorFactory = HeatmapProcessorFactory.MINMAX
-        settings.crispClassificationThreshold = 0.4
+        gc = GrammarController(settings, grammar)
 
         val cykController = CYKController(gc)
         val testExample = TestExample("aabb", F(1.0))
