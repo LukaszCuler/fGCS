@@ -21,14 +21,14 @@ class LearningSandbox(private val params : InputParams) {
 
     fun startSimulation(){
         //preparing simulation...
-        Logger.instance.d(TAG, LEARNING_SANDBOX_PREPARING_SIMULATION)
+        Logger.d(TAG, LEARNING_SANDBOX_PREPARING_SIMULATION)
 
         params.inputSet?.let {inputSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
         params.testSet?.let { testSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
         params.grammarFile?.let { inputGrammar = ProcessDataLoader.loadGrammar(it)}
         params.settingsFile?.let {settings = Settings.loadFromObject(it)}
         //simulation
-        Logger.instance.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
+        Logger.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
         val fgcs = FGCS(inputSet, inputGrammar, testSet, params.maxIterations, settings)
 
         var simulationObservable = Observable.create<Boolean> {
@@ -52,13 +52,13 @@ class LearningSandbox(private val params : InputParams) {
             }
 
             override fun onNext(timeout: Boolean) {
-                if(timeout) Logger.instance.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
+                if(timeout) Logger.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
                 else fgcs.verifyPerformance()
                 if(simulation?.isDisposed == false) simulation?.dispose()
             }
 
             override fun onError(e: Throwable) {
-                Logger.instance.e(TAG, LEARNING_SANDBOX_SIMULATION_UNKNOWN_ERROR)
+                Logger.e(TAG, LEARNING_SANDBOX_SIMULATION_UNKNOWN_ERROR)
                 e.printStackTrace()
             }
         })

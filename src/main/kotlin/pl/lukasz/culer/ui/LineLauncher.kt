@@ -85,7 +85,7 @@ class LineLauncher(private val args: Array<String>) {
         val commandsFromArgs = getCommandsFromArgs(args)
         val inputParams = InputParams()
         commandsFromArgs.forEach { dispatchCommand(inputParams, it) }
-        Logger.instance.i(TAG, LINE_LAUNCHER_LOADED.format(inputParams.toString()))
+        Logger.i(TAG, LINE_LAUNCHER_LOADED.format(inputParams.toString()))
         return inputParams
     }
 

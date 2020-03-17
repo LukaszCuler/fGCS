@@ -11,10 +11,13 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.Logger
 import kotlin.math.max
 import kotlin.math.min
 
 //@TODO UT
+const val TAG = "Completing Covering"
+
 class CompletingCovering(table: CYKTable,
                          grammarController: GrammarController,
                          cykController: CYKController,
@@ -112,7 +115,7 @@ class CompletingCovering(table: CYKTable,
             /**
              * first type of analyzed constraints - rules in form of:
              * X1 -> X2A v X1 -> A2X
-             * where X1 and X2 are any temporary symbols, and A any existing symbol .
+             * where X1 and X2 are any temporary symbols, and A any existing symbol.
              */
             if(tempVars.contains(tempRule.left) &&
                 (tempVars.contains(tempRule.getRightFirst()) xor tempVars.contains(tempRule.getRightSecond()))){
@@ -155,13 +158,45 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun assignSymbolsToTemps(){
+        val replacements = mutableMapOf<NSymbol,NSymbol>()
 
+        //creating replacement table
+        selectedConstraintSet.constraints.forEach { constraint ->
+            if(constraint.right.size == 1 && tempVars.contains(constraint.right.first())){
+                //there was constraint or random value was already created
+                var rightReplacement = replacements[constraint.right.first()]
+                if(rightReplacement==null){
+                    //we need to obtain a random one
+                    rightReplacement = grammarController.getNewOrExistingNSymbolRandomly()
+                    replacements[constraint.left] = rightReplacement
+                }
+                replacements[constraint.right.first()] = rightReplacement
+            } else {
+                replacements[constraint.left] = grammarController.getRandomNSymbol(constraint.right)
+            }
+        }
+
+        //performing replacement
+        val updatedRules : MutableSet<NRule> = mutableSetOf()
+        tempRules.forEach {
+            val left = replacements[it.left] ?: it.left
+            val rightFirst = replacements[it.getRightFirst()] ?: it.getRightFirst()
+            val rightSecond = replacements[it.getRightSecond()] ?: it.getRightSecond()
+            updatedRules.add(NRule(left, NRuleRHS(rightFirst, rightSecond)))
+        }
+        tempRules.clear()
+        tempRules.addAll(updatedRules)
     }
     //endregion
     //region internal structures
     /**
      * constraints are in form of equalities linked with conjunction e.g.
-     * A = (BvCvD) ^ E=F
+     * X1 = (BvCvD) ^ X1=X2
+     * first equality type - single temp symbol on the left and multiple on the right
+     * second equality type - two single temp symbols on both sides
+     * left side should be unique
+     * Rhs is assigned to Lhs
+     * Type two equalities should be placed at the end
      */
     data class Constraint(val left : NSymbol, val right : MutableSet<NSymbol> = mutableSetOf())
     data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf())

@@ -23,7 +23,7 @@ class AbbadingoLoader {
 
 
         fun loadAbbadingoTestSet(filePath : String) : List<TestExample> {
-            Logger.instance.d(TAG, ABBADINGO_LOADING_DATA.format(filePath))
+            Logger.d(TAG, ABBADINGO_LOADING_DATA.format(filePath))
             val reader: BufferedReader
             try {
                 reader = BufferedReader(FileReader(filePath))
@@ -54,7 +54,7 @@ class AbbadingoLoader {
         }
 
         private fun returnWithError(message : String, testSet : List<TestExample> = listOf()) : List<TestExample> {
-            Logger.instance.e(TAG, message)
+            Logger.e(TAG, message)
             return testSet
         }
     }

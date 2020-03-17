@@ -1,14 +1,10 @@
 package pl.lukasz.culer.utils
 
-class Logger {
-    companion object {
-        val instance = Logger()
-
-        const val LOG_DEBUG = 0
-        const val LOG_INFO = 1
-        const val LOG_ERROR = 2
-        const val MUTE = 1000
-    }
+object Logger {
+    const val LOG_DEBUG = 0
+    const val LOG_INFO = 1
+    const val LOG_ERROR = 2
+    const val MUTE = 1000
 
     var currentLogLevel : Int = LOG_DEBUG
 
