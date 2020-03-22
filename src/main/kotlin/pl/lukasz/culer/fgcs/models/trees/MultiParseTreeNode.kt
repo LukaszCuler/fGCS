@@ -5,7 +5,7 @@ import pl.lukasz.culer.fuzzy.F
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.Consts
 
-open class MultiParseTreeNode(val node : NSymbol = Consts.END_STRING_SYMBOL, val subtrees : MutableList<SubTreePair> = mutableListOf()) {
+open class MultiParseTreeNode(var node : NSymbol = Consts.END_STRING_SYMBOL, val subtrees : MutableList<SubTreePair> = mutableListOf()) {
     var classificationMembership : IntervalFuzzyNumber = F(0.0)
 
     //shortcuts

@@ -14,6 +14,7 @@ import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Logger
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 //@TODO UT
 const val TAG = "Completing Covering"
@@ -26,8 +27,10 @@ class CompletingCovering(table: CYKTable,
     private val tempRules = table.privateRuleSet
     private val tempVars = mutableListOf<NSymbol>()
     private val tags = mutableMapOf<MultiParseTreeNode, Pair<Int, Int>>()
+    private val tagsSubtree = mutableMapOf<MultiParseTreeNode.SubTreePair, Pair<Int, Int>>()
     private val possibleConstraintSets = mutableSetOf<ConstraintSet>()
     private var selectedConstraintSet = ConstraintSet()
+    private val replacements = mutableMapOf<NSymbol,NSymbol>()
 
     //region overrides
     override fun apply() {
@@ -38,15 +41,23 @@ class CompletingCovering(table: CYKTable,
         cykController.doForEveryCell(table, this::addPossibleRules)
 
         //creating tree for possible paths
-        val parseTree = parseTreeController.getMultiParseTreeFromCYK(table)
+        var parseTree = parseTreeController.getMultiParseTreeFromCYK(table)
 
         //tagging nodes with possible rules to create in descendants
-        parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules)
+        parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules) // remove if frequency not utilized
 
+        //constrains identification, processing and application
         identifyConstraints()
         clusterConstraints()
-
         assignSymbolsToTemps()
+
+        //updating parsing tree
+        cykController.fillCYKTable(table)
+        parseTree = parseTreeController.getMultiParseTreeFromCYK(table)
+        parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules) //tagging nodes with possible rules to create in descendants
+
+        //selecting and adding new rules!
+        parseTreeController.processSingleTreeFromRoot(parseTree, this::selectTreeAndRulesToAdd)
 
         //clearing our mess
         tempRules.clear()
@@ -85,18 +96,15 @@ class CompletingCovering(table: CYKTable,
                 var childSumMin = (tags[sub.subTreePair.first]?.first ?: 0) + (tags[sub.subTreePair.second]?.first ?: 0)
                 var childSumMax = (tags[sub.subTreePair.first]?.second ?: 0) + (tags[sub.subTreePair.second]?.second ?: 0)
 
-                val constructedRule = grammarController.nRulesWith(
-                    processedNode.node,
-                    sub.subTreePair.first.node,
-                    sub.subTreePair.second.node,
-                    tempRules
-                )
+                val constructedRule = getRuleForNodeAndSubtree(processedNode, sub)
 
                 var increase = 0
                 if(constructedRule.size > 0 && tempRules.contains(constructedRule.first())) increase = 1
 
                 childSumMin += increase
                 childSumMax += increase
+
+                tagsSubtree[sub] = childSumMin to childSumMax
 
                 //how this variant affect?
                 maxVal = max(maxVal, childSumMax)
@@ -110,6 +118,7 @@ class CompletingCovering(table: CYKTable,
     private fun getNewTempValue(last : NSymbol?) = NSymbol(last?.symbol?.let { it+1 } ?: Consts.N_GEN_START_TEMP)
 
     private fun identifyConstraints(){
+        //@TODO S->XX
         //is one rule similar to another?
         tempRules.forEach { tempRule ->
             /**
@@ -130,6 +139,38 @@ class CompletingCovering(table: CYKTable,
                 }
             }
         }
+    }
+
+    private fun selectTreeAndRulesToAdd(processedNode: MultiParseTreeNode) : MultiParseTreeNode.SubTreePair? {
+        if(processedNode.isLeaf) return null;
+        //the smaller possible new rules, the bigger chance to be randomly selected
+
+        //construction of probability tab
+        val sum = processedNode.subtrees.sumBy { ((tagsSubtree[it]?.first ?: 0) + (tagsSubtree[it]?.second ?: 0))/2 }
+        val probabilityTab = mutableListOf<Pair<Double, MultiParseTreeNode.SubTreePair>>()
+        var currentSum = 0.0
+        for(sub in processedNode.subtrees){
+            currentSum += sum - ((tagsSubtree[sub]?.first ?: 0) + (tagsSubtree[sub]?.second ?: 0))/2
+            probabilityTab.add(currentSum to sub)
+        }
+
+        //selecting subtree based on probability tab
+        val drawnNumber = Random.nextDouble(probabilityTab.last().first)
+        var selectedTree : MultiParseTreeNode.SubTreePair? = null
+
+        for(i in probabilityTab.indices){
+            if(drawnNumber <= probabilityTab[i].first){
+                selectedTree = probabilityTab[i].second
+                break
+            }
+        }
+        if(selectedTree==null) return null
+
+        //adding rule associated with subtree
+        val constructedRule = getRuleForNodeAndSubtree(processedNode, selectedTree)
+        return null
+        //if(tempRules.)
+        //@TODO should "new" rules be recounted if we add rule based on constraint?
     }
 
     private fun getConstraintsForOneOnRight(tempRule : NRule, constrainProps : MutableSet<NRule>, getProperSymbol :(NRule) -> NSymbol) : Set<ConstraintSet> {
@@ -158,8 +199,6 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun assignSymbolsToTemps(){
-        val replacements = mutableMapOf<NSymbol,NSymbol>()
-
         //creating replacement table
         selectedConstraintSet.constraints.forEach { constraint ->
             if(constraint.right.size == 1 && tempVars.contains(constraint.right.first())){
@@ -187,6 +226,13 @@ class CompletingCovering(table: CYKTable,
         tempRules.clear()
         tempRules.addAll(updatedRules)
     }
+
+    private fun getRuleForNodeAndSubtree(node : MultiParseTreeNode, sub: MultiParseTreeNode.SubTreePair) = grammarController.nRulesWith(
+        node.node,
+        sub.subTreePair.first.node,
+        sub.subTreePair.second.node,
+        tempRules
+    )
     //endregion
     //region internal structures
     /**
