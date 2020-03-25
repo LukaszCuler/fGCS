@@ -47,7 +47,7 @@ class CompletingCovering(table: CYKTable,
 
         //constrains identification, processing and application
         identifyConstraints()
-        clusterConstraints()
+        clusterConstraintsAndSelectOne()
         assignSymbolsBasedOnSelectedConstraint()
 
         //updating parsing tree
@@ -208,9 +208,8 @@ class CompletingCovering(table: CYKTable,
         return foundSets
     }
 
-    private fun clusterConstraints(){
-        //some heuristics are needed, probably testing all combinations is not a good idea
-
+    private fun clusterConstraintsAndSelectOne(){
+        //possibleConstraintSets.
     }
 
     private fun assignSymbolsBasedOnSelectedConstraint(){
