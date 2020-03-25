@@ -209,6 +209,7 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun clusterConstraints(){
+        //some heuristics are needed, probably testing all combinations is not a good idea
 
     }
 
@@ -276,7 +277,27 @@ class CompletingCovering(table: CYKTable,
      * Rhs is assigned to Lhs
      * Type two equalities should be placed at the end
      */
-    data class Constraint(val left : NSymbol, val right : MutableSet<NSymbol> = mutableSetOf())
-    data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf())
+    data class Constraint(val left : NSymbol, var right : MutableSet<NSymbol> = mutableSetOf()) {
+        public fun intersect(con : Constraint){
+            if(con.left != left) return
+            right = (right intersect con.right).toMutableSet()
+        }
+    }
+
+    data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf()) {
+        public fun intersect(cs : ConstraintSet){
+            constraints.forEach {
+                merginCon ->
+                cs.constraints.find {
+                    merginCon.left == it.left
+                }?.also {
+                    merginCon.intersect(it)
+                }
+            }
+            constraints.addAll(
+                cs.constraints
+                    .filter { mergeCon -> constraints.find { it.left == mergeCon.left } == null })
+        }
+    }
     //endregion
 }
