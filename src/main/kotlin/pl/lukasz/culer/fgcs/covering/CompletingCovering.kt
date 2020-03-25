@@ -11,7 +11,6 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
-import pl.lukasz.culer.utils.Logger
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -49,7 +48,7 @@ class CompletingCovering(table: CYKTable,
         //constrains identification, processing and application
         identifyConstraints()
         clusterConstraints()
-        assignSymbolsToTemps()
+        assignSymbolsBasedOnSelectedConstraint()
 
         //updating parsing tree
         cykController.fillCYKTable(table)
@@ -65,6 +64,10 @@ class CompletingCovering(table: CYKTable,
     //endregion
     //region private helpers
     private fun addPossibleRules(y: Int, x: Int, cell: CYKCell){
+        /**
+         * note - for now, only rules in form X->AA share temp symbol (effector exists for detectors in temp rules)
+         * X1 -> X2A or X3 -> AX4 - not
+         */
         //filling only empty cells
         if(cell.isEmpty()){
             val detectors = cykController.findDetectors(table, y, x)
@@ -118,7 +121,6 @@ class CompletingCovering(table: CYKTable,
     private fun getNewTempValue(last : NSymbol?) = NSymbol(last?.symbol?.let { it+1 } ?: Consts.N_GEN_START_TEMP)
 
     private fun identifyConstraints(){
-        //@TODO S->XX
         //is one rule similar to another?
         tempRules.forEach { tempRule ->
             /**
@@ -138,6 +140,9 @@ class CompletingCovering(table: CYKTable,
                     ) {it.getRightSecond()})
                 }
             }
+            /**
+             * probably we won't need X1 = X2 - will see, how more diversification will work out
+             */
         }
     }
 
@@ -166,11 +171,20 @@ class CompletingCovering(table: CYKTable,
         }
         if(selectedTree==null) return null
 
+        //replacing unassinged symbols
+        processedNode.node = replaceSymbolIfNeeded(processedNode.node)
+        selectedTree.subTreePair.first.node = replaceSymbolIfNeeded(selectedTree.subTreePair.first.node)
+        selectedTree.subTreePair.second.node = replaceSymbolIfNeeded(selectedTree.subTreePair.second.node)
+
         //adding rule associated with subtree
-        val constructedRule = getRuleForNodeAndSubtree(processedNode, selectedTree)
-        return null
-        //if(tempRules.)
-        //@TODO should "new" rules be recounted if we add rule based on constraint?
+        val ruleForSubtree = getRuleForNodeAndSubtree(processedNode, selectedTree).single()
+        if(tempRules.contains(ruleForSubtree)) {
+            //adding new rule!
+            grammarController.addNRule(ruleForSubtree)
+            tempRules.remove(ruleForSubtree)
+            //@TODO should "new" rules be recounted if we add rule based on constraint?
+        }
+        return selectedTree
     }
 
     private fun getConstraintsForOneOnRight(tempRule : NRule, constrainProps : MutableSet<NRule>, getProperSymbol :(NRule) -> NSymbol) : Set<ConstraintSet> {
@@ -198,33 +212,51 @@ class CompletingCovering(table: CYKTable,
 
     }
 
-    private fun assignSymbolsToTemps(){
+    private fun assignSymbolsBasedOnSelectedConstraint(){
         //creating replacement table
         selectedConstraintSet.constraints.forEach { constraint ->
             if(constraint.right.size == 1 && tempVars.contains(constraint.right.first())){
                 //there was constraint or random value was already created
+                //X1 = X2 - probably not needed
                 var rightReplacement = replacements[constraint.right.first()]
                 if(rightReplacement==null){
                     //we need to obtain a random one
-                    rightReplacement = grammarController.getNewOrExistingNSymbolRandomly()
+                    rightReplacement = grammarController.getNewOrExistingNSymbolRandomly() //@TODO symbols added excessively - isolate before adding? not needed to refactor if X1=X2 removed
                     replacements[constraint.left] = rightReplacement
                 }
                 replacements[constraint.right.first()] = rightReplacement
             } else {
+                //X1 = A,B,C...
                 replacements[constraint.left] = grammarController.getRandomNSymbol(constraint.right)
             }
         }
 
-        //performing replacement
-        val updatedRules : MutableSet<NRule> = mutableSetOf()
+        //please note, that only replacement used in constraints are assigned
+        updateRulesWithReplacements()
+    }
+
+    private fun updateRulesWithReplacements(){
+        //please note, that only replacement used in constraints are assigned
         tempRules.forEach {
-            val left = replacements[it.left] ?: it.left
-            val rightFirst = replacements[it.getRightFirst()] ?: it.getRightFirst()
-            val rightSecond = replacements[it.getRightSecond()] ?: it.getRightSecond()
-            updatedRules.add(NRule(left, NRuleRHS(rightFirst, rightSecond)))
+            it.left = replacements[it.left] ?: it.left
+            it.updateRightFirst(replacements[it.getRightFirst()] ?: it.getRightFirst())
+            it.updateRightFirst(replacements[it.getRightSecond()] ?: it.getRightSecond())
         }
-        tempRules.clear()
-        tempRules.addAll(updatedRules)
+    }
+
+    private fun replaceSymbolIfNeeded(symbol : NSymbol) : NSymbol{
+        if(tempVars.contains(symbol)){
+            var repl = replacements[symbol]
+            if(repl==null){
+                repl = grammarController.getNewOrExistingNSymbolRandomly()
+                replacements[symbol] = repl
+
+                //we also need to replace symbols in rules...
+                updateRulesWithReplacements()
+            }
+            return repl
+        }
+        return symbol
     }
 
     private fun getRuleForNodeAndSubtree(node : MultiParseTreeNode, sub: MultiParseTreeNode.SubTreePair) = grammarController.nRulesWith(

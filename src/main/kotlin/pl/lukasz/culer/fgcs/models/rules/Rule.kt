@@ -8,23 +8,12 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 
 abstract class Rule<T : Symbol> (
     @SerializedName("left")
-    val left : NSymbol,
+    var left : NSymbol,
     @SerializedName("right")
     val right : Array<T>,
     @SerializedName("membership")
     var membership : IntervalFuzzyNumber
     ){
-    //temporary properties
-    @Transient
-    var vitalLength = F(0.0)
-    @Transient
-    var vitalDirection = F(0.0)
-
-    @Transient
-    var sideLength = F(0.0)
-    @Transient
-    var sideDirection = F(0.0)
-
     //abstract methods
     abstract fun copy() : Rule<T>
 
