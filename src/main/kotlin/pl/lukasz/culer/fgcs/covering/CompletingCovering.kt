@@ -1,5 +1,6 @@
 package pl.lukasz.culer.fgcs.covering
 
+import io.reactivex.Observable
 import pl.lukasz.culer.fgcs.controllers.CYKController
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.controllers.ParseTreeController
@@ -209,6 +210,9 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun clusterConstraintsAndSelectOne(){
+/*        Observable.create(Observable.create<> {
+            possibleConstraintSets.
+        })*/
         //possibleConstraintSets.
     }
 
@@ -277,14 +281,14 @@ class CompletingCovering(table: CYKTable,
      * Type two equalities should be placed at the end
      */
     data class Constraint(val left : NSymbol, var right : MutableSet<NSymbol> = mutableSetOf()) {
-        public fun intersect(con : Constraint){
+        fun intersect(con : Constraint){
             if(con.left != left) return
             right = (right intersect con.right).toMutableSet()
         }
     }
 
     data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf()) {
-        public fun intersect(cs : ConstraintSet){
+        fun intersect(cs : ConstraintSet){
             constraints.forEach {
                 merginCon ->
                 cs.constraints.find {
