@@ -1,6 +1,5 @@
 package pl.lukasz.culer.utils
 
-//@TODO UT?
 class OrderlessPair<T>(val first: T, val second: T) {
     fun contains(obj : T) = first == obj || second == obj
 
