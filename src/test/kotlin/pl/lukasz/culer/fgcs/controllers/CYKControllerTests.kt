@@ -1,12 +1,14 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.runners.MockitoJUnitRunner
 import pl.lukasz.culer.data.TestExample
 import pl.lukasz.culer.fgcs.controllers.CYKController.DetectorElement
+import pl.lukasz.culer.fgcs.models.CYKCell
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
@@ -188,6 +190,30 @@ class CYKControllerTests {
 
         //stage1 - verification
         Assert.assertFalse(cykController.isExampleParsed(tableNotParsed))
+    }
+
+    @Test
+    fun doForEveryCellTest(){
+        //preparing data
+        val gc = createGrammarForExample()
+        val cykController = CYKController(gc)
+        val table = CYKTable(TestExample("abc"))
+        val nA = gc.findNSymbolByChar('A')!!
+
+        //execution
+        cykController.doForEveryCell(table) { i: Int, i1: Int, mutableSet: CYKCell ->
+            mutableSet.add(nA)
+        }
+
+        //validation
+        assertEquals(nA, table.cykTable[0][0].single())
+        assertEquals(nA, table.cykTable[0][1].single())
+        assertEquals(nA, table.cykTable[0][2].single())
+
+        assertEquals(nA, table.cykTable[1][0].single())
+        assertEquals(nA, table.cykTable[1][1].single())
+
+        assertEquals(nA, table.cykTable[2][0].single())
     }
 
     //private methods

@@ -51,22 +51,19 @@ class CYKController(val gc: GrammarController) {
         return detectors
     }
 
-    //@TODO fill UT?
     fun fillCell(table : CYKTable, y: Int, x: Int){
         table.cykTable[y][x].addAll(getEfectors(table, findDetectors(table, y, x)))
     }
 
     //executed bottom-down
-    //@TODO UT
     fun doForEveryCell(table : CYKTable, func : (Int, Int, CYKCell) -> Unit){
-        for(i in 1..table.lastIndex){
+        for(i in 0..table.lastIndex){
             for (j in 0..table.lastIndex-i){    //i and j iterates through cells
                 func(i,j, table.cykTable[i][j])
             }
         }
     }
 
-    //@TODO fill UT
     fun getEfectors(table : CYKTable, detectors: Detectors) : Set<NSymbol> {
         return detectors
             .flatMap { gc.nRulesWith(first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet) }
@@ -112,7 +109,6 @@ class CYKController(val gc: GrammarController) {
         }
     }
 
-    //@TODO fill UT
     fun getDetectorsForLeft(table : CYKTable, left : NSymbol, detectors: Detectors) : Detectors {
         return detectors
             .filter { gc.nRulesWith(left = left, first = it.first.symbol, second = it.second.symbol, extendRules = table.privateRuleSet).isNotEmpty() }
