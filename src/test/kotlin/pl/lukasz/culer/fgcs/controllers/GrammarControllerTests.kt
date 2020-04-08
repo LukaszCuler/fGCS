@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import org.junit.Assert
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -294,6 +295,16 @@ class GrammarControllerTests {
         //execution & verification
         Assert.assertNotNull(gc.findNSymbolByChar('$'))
         Assert.assertNull(gc.findNSymbolByChar('B'))
+    }
+
+    @Test
+    fun getRandomNSymbolTest(){
+        //preparing data
+        val grammar = getSimpleGrammar()
+        val gc = GrammarController(settings, grammar)
+
+        //execution & verification
+        assertTrue(grammar.nSymbols.contains(gc.getRandomNSymbol()))
     }
 
     //helper methods

@@ -213,7 +213,6 @@ class GrammarController(val settings : Settings) {
 
     //helper symbols functions
 
-    //@TODO fill UT with extend rules
     fun nRulesWith(left : NSymbol? = null,
                    first : NSymbol? = null,
                    second : NSymbol? = null,
@@ -265,11 +264,9 @@ class GrammarController(val settings : Settings) {
         return grammar.nSymbols.find { it.symbol == symbolChar }
     }
 
-    //@TODO UT
     fun getRandomNSymbol(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) =
         symbolsToDrawFrom.toList()[Random.nextInt(symbolsToDrawFrom.size)]
 
-    //@TODO UT?
     fun getNewOrExistingNSymbolRandomly(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) : NSymbol {
         when(settings.newSymbolSelectionMethod) {
             NewSymbolSelectionMethod.INCREMENTAL -> {
