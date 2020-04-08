@@ -118,7 +118,7 @@ class GrammarController(val settings : Settings) {
         grammar.nRules.addAll(newNRules)
 
         //start symbol
-        val startSymbol = findNSymbolByChar(grammar.starSymbol.symbol);
+        val startSymbol = findNSymbolByChar(grammar.starSymbol.symbol)
         if(startSymbol!=null) grammar.starSymbol = startSymbol
     }
 

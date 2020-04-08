@@ -8,7 +8,6 @@ import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.utils.Consts
 
 /**
- * @TODO UT
  * based on - Kosko, Bart. "Fuzzy entropy and conditioning." Information sciences 40.2 (1986): 165-174.
  * should not be applied "alone" as measure for grammar fitness.
  * Entropy of -RULES- not examples are counted
@@ -17,6 +16,7 @@ import pl.lukasz.culer.utils.Consts
 class EntropyGrammarPerfectionMeasure : GrammarPerfectionMeasure() {
     companion object {
         const val NOT_FUZZIFIED = 0.0
+        const val FULLY_FUZZIFIED = 1.0
         const val MIDDLE = 0.5
     }
 
