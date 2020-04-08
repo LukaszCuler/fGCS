@@ -12,6 +12,8 @@ import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.OrderlessPair
+import pl.lukasz.culer.utils.RxUtils
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -210,10 +212,26 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun clusterConstraintsAndSelectOne(){
-/*        Observable.create(Observable.create<> {
-            possibleConstraintSets.
-        })*/
-        //possibleConstraintSets.
+        //for now, select randomly
+        if(possibleConstraintSets.size>0){
+            selectedConstraintSet = possibleConstraintSets.elementAt(Random.nextInt(possibleConstraintSets.size))
+        }
+        //computeDistances()
+    }
+
+    private fun computeDistances(){
+        val constraintsList = possibleConstraintSets.toList()
+
+        RxUtils.computeParallelly(Observable.create<OrderlessPair<ConstraintSet>> {
+            for(i in constraintsList.indices){
+                for(j in i+1..constraintsList.size){
+                    it.onNext(OrderlessPair(constraintsList[i], constraintsList[j]))
+                }
+            }
+            it.onComplete()
+        }) {
+            it to it.first.getDistanceTo(grammarController, it.second)
+        }.sortedBy { it.second }
     }
 
     private fun assignSymbolsBasedOnSelectedConstraint(){
@@ -281,25 +299,46 @@ class CompletingCovering(table: CYKTable,
      * Type two equalities should be placed at the end
      */
     data class Constraint(val left : NSymbol, var right : MutableSet<NSymbol> = mutableSetOf()) {
-        fun intersect(con : Constraint){
-            if(con.left != left) return
-            right = (right intersect con.right).toMutableSet()
+        fun intersect(con : Constraint) : Constraint {
+            if(con.left != left) return Constraint(left)
+            return Constraint(left, (right intersect con.right).toMutableSet())
         }
     }
 
     data class ConstraintSet(val constraints : MutableSet<Constraint> = mutableSetOf()) {
-        fun intersect(cs : ConstraintSet){
+        fun intersectAndAssign(cs : ConstraintSet){
             constraints.forEach {
                 merginCon ->
                 cs.constraints.find {
                     merginCon.left == it.left
                 }?.also {
-                    merginCon.intersect(it)
+                    merginCon.right = merginCon.intersect(it).right
                 }
             }
             constraints.addAll(
                 cs.constraints
                     .filter { mergeCon -> constraints.find { it.left == mergeCon.left } == null })
+        }
+
+        fun getDistanceTo(grammarController: GrammarController, cs : ConstraintSet) : Int {
+            val count = grammarController.grammar.nSymbols.count()
+            var distance = 0
+            grammarController.grammar.nSymbols.forEach {
+                    symbol ->
+                val firstConstraint = constraints.find { it.left == symbol }
+                val secondConstraint = cs.constraints.find { it.left == symbol }
+
+                if(firstConstraint!=null&&secondConstraint!=null){
+                    val intersectConstraint = firstConstraint.intersect(secondConstraint)
+                    distance += firstConstraint.right.size - intersectConstraint.right.size
+                    distance += secondConstraint.right.size - intersectConstraint.right.size
+                } else if(firstConstraint!=null&&secondConstraint==null) {
+                    distance += count - firstConstraint.right.size
+                } else if(firstConstraint==null&&secondConstraint!=null) {
+                    distance += count - secondConstraint.right.size
+                }
+            }
+            return distance
         }
     }
     //endregion
