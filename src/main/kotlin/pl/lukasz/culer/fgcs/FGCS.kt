@@ -13,7 +13,6 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.RxUtils
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 
-//@TODO fill UT
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
            val testSet : List<TestExample>? = null,
@@ -39,7 +38,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
         var bestExamples = listOf<ExampleAnalysisResult>()
         var perfectionMeasure = Double.MIN_VALUE
 
-        //@TODO sort in lexical order?
+        //preprocess input data
+        sortInQuasiLexicographicOrder(inputSet)
         //iteration loop
         do {
             iterationNum++
@@ -92,8 +92,23 @@ class FGCS(val inputSet : List<TestExample>? = null,
     }
     //endregion
     /**
-     * region public methods
+     * region private methods
      */
+    private fun sortInQuasiLexicographicOrder(examplesToSort : List<TestExample>) {
+        examplesToSort.sortedWith(object : Comparator<TestExample> {
+            override fun compare(e1: TestExample, e2: TestExample): Int {
+                if(e1.size < e2.size) return -1
+                if(e1.size > e2.size) return 1
+                for(i in e1.parsedSequence.indices){
+                    val symbolComp = e1.parsedSequence[i].symbol.compareTo(e2.parsedSequence[i].symbol)
+                    if(symbolComp==0) continue
+                    return symbolComp
+                }
+                return 0
+            }
+        })
+    }
+
     private fun refreshAttributes(){
         //refreshes rules
     }
@@ -118,7 +133,6 @@ class FGCS(val inputSet : List<TestExample>? = null,
         return inputGrammar==null //if there is no input grammar, we have to infer it x]
     }
 
-    //@TODO UT
     private fun parseAndCoverExample(example: TestExample){
         val exampleTable = CYKTable(example)    //we are creating cyk table for example
         if(cykController.isExampleParsed(exampleTable)) return //nothing to do here @TODO small chance for creation of additional ones
