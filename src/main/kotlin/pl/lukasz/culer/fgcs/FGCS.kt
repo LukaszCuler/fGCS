@@ -53,9 +53,9 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
             refreshAttributes(parsedExamples)
 
-            var ruleRefresNeeded = witherRules()
-            ruleRefresNeeded = ruleRefresNeeded || postProcessGrammar()
-            if(ruleRefresNeeded) refreshAttributes(parsedExamples)
+            var ruleRefreshNeeded = witherRules()
+            ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
+            if(ruleRefreshNeeded) refreshAttributes(parsedExamples)
 
             //performance test before evaluation
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
@@ -112,7 +112,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         })
     }
 
-    private fun refreshAttributes(examples :List<ExampleAnalysisResult>) = settings.membershipAssigner.assignMemberships(grammarController.grammar, examples)
+    private fun refreshAttributes(examples :List<ExampleAnalysisResult>) = settings.membershipAssigner.assignMemberships(parseTreeController, grammarController, examples)
 
     private fun witherRules() = settings.witheringSelector.applyWithering(grammarController)
 
