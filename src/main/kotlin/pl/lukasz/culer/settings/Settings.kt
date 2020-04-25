@@ -7,10 +7,7 @@ import pl.lukasz.culer.fgcs.covering.base.Covering
 import pl.lukasz.culer.fgcs.covering.base.CoveringFactory
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarPerfectionMeasure
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarMeasureFactory
-import pl.lukasz.culer.fgcs.rules.base.MembershipAssigner
-import pl.lukasz.culer.fgcs.rules.base.MembershipAssignerFactory
-import pl.lukasz.culer.fgcs.rules.base.WitheringSelector
-import pl.lukasz.culer.fgcs.rules.base.WitheringSelectorFactory
+import pl.lukasz.culer.fgcs.rules.base.*
 import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
@@ -42,6 +39,7 @@ class Settings {
         grammarPerfectionMeasure = grammarMeasureFactory()
         membershipAssigner = membershipAssignerFactory()
         witheringSelector = witheringSelectorFactory()
+        grammarPostProcessor = grammarPostProcessorFactory()
     }
 
     //initialization result - should not be parsed
@@ -59,6 +57,9 @@ class Settings {
 
     @Exclude
     lateinit var witheringSelector: WitheringSelector
+
+    @Exclude
+    lateinit var grammarPostProcessor: GrammarPostProcessor
 
     //"raw" setting parameters
     @SerializedName("sOperatorReg")
@@ -94,6 +95,9 @@ class Settings {
 
     @SerializedName("witheringSelectorFactory")
     var witheringSelectorFactory : WitheringSelectorFactory = WitheringSelectorFactory.BOTTOM_WITHERING
+
+    @SerializedName("grammarPostProcessorFactory")
+    var grammarPostProcessorFactory : GrammarPostProcessorFactory = GrammarPostProcessorFactory.GENETIC_ALGORITHMS
 
     @SerializedName("coveringFactory")
     var coveringFactory : CoveringFactory = CoveringFactory.COMPLETING
