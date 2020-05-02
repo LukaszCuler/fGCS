@@ -1,4 +1,6 @@
 package pl.lukasz.culer.vis.report.base
 
-open class ReportsSaver {
+interface ReportsSaver {
+    fun initialize()
+    fun finalize()
 }

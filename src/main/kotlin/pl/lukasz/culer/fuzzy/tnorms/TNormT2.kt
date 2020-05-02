@@ -9,6 +9,13 @@ enum class TNormT2 : FuzzyOperator {
             IntervalFuzzyNumber(TNorm.MIN(num.map { it.lowerBound }.toTypedArray()), TNorm.MIN(num.map { it.upperBound }.toTypedArray()))
     },
 
+    MIN_SQRT {
+        override fun invoke(vararg num : IntervalFuzzyNumber) =
+            IntervalFuzzyNumber(
+                TNorm.MIN_SQRT(num.map { it.lowerBound }.toTypedArray()),
+                TNorm.MIN_SQRT(num.map { it.upperBound }.toTypedArray()))
+    },
+
     LUKASIEWICZ {
         override fun invoke(vararg num : IntervalFuzzyNumber) =
             IntervalFuzzyNumber(TNorm.LUKASIEWICZ(num.map { it.lowerBound }.toTypedArray()), TNorm.LUKASIEWICZ(num.map { it.upperBound }.toTypedArray()))

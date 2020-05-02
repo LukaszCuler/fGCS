@@ -8,7 +8,6 @@ import pl.lukasz.culer.fgcs.covering.base.CoveringFactory
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarPerfectionMeasure
 import pl.lukasz.culer.fgcs.measures.grammar.base.GrammarMeasureFactory
 import pl.lukasz.culer.fgcs.rules.base.*
-import pl.lukasz.culer.fuzzy.memberships.SubtreeMembershipT2
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessor
 import pl.lukasz.culer.fuzzy.processors.heatmap.base.HeatmapProcessorFactory
 import pl.lukasz.culer.fuzzy.processors.relevance.base.RelevanceProcessor
@@ -20,6 +19,8 @@ import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 import pl.lukasz.culer.utils.JsonController
 import pl.lukasz.culer.utils.Logger
 import pl.lukasz.culer.utils.SETTINGS_LOADING
+import pl.lukasz.culer.vis.report.base.ReportsSaver
+import pl.lukasz.culer.vis.report.base.ReportsSaverFactory
 import java.io.File
 
 const val TAG = "Settings"
@@ -40,6 +41,7 @@ class Settings {
         membershipAssigner = membershipAssignerFactory()
         witheringSelector = witheringSelectorFactory()
         grammarPostProcessor = grammarPostProcessorFactory()
+        reportsSaver = reportsSaverFactory()
     }
 
     //initialization result - should not be parsed
@@ -61,6 +63,9 @@ class Settings {
     @Exclude
     lateinit var grammarPostProcessor: GrammarPostProcessor
 
+    @Exclude
+    lateinit var reportsSaver: ReportsSaver
+
     //"raw" setting parameters
     @SerializedName("sOperatorReg")
     var sOperatorReg = SNormT2.MAX
@@ -69,7 +74,7 @@ class Settings {
     var tOperatorRev = TNormT2.MIN
 
     @SerializedName("tOperatorReg")
-    var tOperatorReg = SubtreeMembershipT2.MIN_SQRT
+    var tOperatorReg = TNormT2.MIN_SQRT
 
     @SerializedName("threshold")
     var crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]
@@ -107,6 +112,9 @@ class Settings {
 
     @SerializedName("coveringFactory")
     var coveringFactory : CoveringFactory = CoveringFactory.COMPLETING
+
+    @SerializedName("reportsSaverFactory")
+    var reportsSaverFactory : ReportsSaverFactory = ReportsSaverFactory.TEXT_REPORT
 
     init {
         initialize()

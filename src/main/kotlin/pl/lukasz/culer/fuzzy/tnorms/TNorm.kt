@@ -1,8 +1,14 @@
 package pl.lukasz.culer.fuzzy.tnorms
 
+import kotlin.math.pow
+
 enum class TNorm : (Array<Double>) -> Double {
     MIN {
         override fun invoke(nums : Array<Double>) = nums.min() ?: 0.0
+    },
+
+    MIN_SQRT {
+        override fun invoke(nums : Array<Double>) = MIN.invoke(nums).pow(1.0/nums.size.toDouble())
     },
 
     LUKASIEWICZ {

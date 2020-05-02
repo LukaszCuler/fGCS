@@ -34,9 +34,9 @@ class ClassificationController(val gc: GrammarController,
 
             //membership calculation of subtrees and link rule
             subtree.classificationMembership = settings.tOperatorReg(
-                subtree.subTreePair.first.classificationMembership,
+                arrayOf(subtree.subTreePair.first.classificationMembership,
                 subtree.subTreePair.second.classificationMembership,
-                gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership)
+                gc.nRulesWith(parseTree.node, subtree.subTreePair.first.node, subtree.subTreePair.second.node).single().membership))
         }
 
         parseTree.classificationMembership = settings.sOperatorReg(
