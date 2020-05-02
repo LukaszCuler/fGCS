@@ -57,6 +57,9 @@ class FGCS(val inputSet : List<TestExample>? = null,
             ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
             if(ruleRefreshNeeded) refreshAttributes(parsedExamples)
 
+            //clear grammar
+            clearGrammar()
+
             //performance test before evaluation
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
@@ -117,6 +120,14 @@ class FGCS(val inputSet : List<TestExample>? = null,
     private fun witherRules() = settings.witheringSelector.applyWithering(grammarController)
 
     private fun postProcessGrammar() = settings.grammarPostProcessor.applyOperators(grammarController)
+
+    private fun clearGrammar(){
+        //removing unused ones
+        val unusedRules = grammarController.grammar.nRules.filter { !it.occurredInParsing.get() }
+        unusedRules.forEach {
+            grammarController.removeNRule(it)
+        }
+    }
 
     private fun initiateFGCS() : Boolean{
         //ok we have grammar on input, no need for inference :(
