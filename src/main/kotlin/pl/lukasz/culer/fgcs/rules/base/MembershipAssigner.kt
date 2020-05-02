@@ -20,7 +20,7 @@ abstract class MembershipAssigner {
         this.examples = examples
         this.parseTreeController = parseTreeController
 
-        initialize()
+        initializeAssigner()
         RxUtils.computeParallelly(examples, ::markAndAnalyzeExample)
         finalize()
     }
@@ -38,6 +38,11 @@ abstract class MembershipAssigner {
 
         //general stuff implemented, more specific one needed
         analyzeExample(example)
+    }
+
+    private fun initializeAssigner(){
+        this.grammarController?.grammar?.nRules?.forEach { it.occurredInParsing.set(false) }
+        initialize()
     }
 
     //abstract stuff

@@ -80,6 +80,12 @@ class Settings {
     @SerializedName("newSymbolCoef")
     var newSymbolCoef : Double = 1.0
 
+    @SerializedName("bottomWithering_maxNumber")
+    var bottomWitheringMaxNumber = 1
+
+    @SerializedName("bottomWithering_proportionalProbability")
+    var bottomWitheringProportionalProbability = false
+
     //initializable parameters
     @SerializedName("heatmapProcessorFactory")
     var heatmapProcessorFactory : HeatmapProcessorFactory = HeatmapProcessorFactory.EQUAL_TREES
