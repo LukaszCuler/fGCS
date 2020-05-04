@@ -7,11 +7,13 @@ import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.controllers.ParseTreeController
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
+import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.RxUtils
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
+import pl.lukasz.culer.vis.report.ReportsController
 
 class FGCS(val inputSet : List<TestExample>? = null,
            val inputGrammar : Grammar? = null,
@@ -40,11 +42,13 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         //preprocess input data
         sortInQuasiLexicographicOrder(inputSet)
+
+        val reportsController = ReportsController(settings.reportsSaverFactory())
+        reportsController.startReport(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
             iterationNum++
-
-            //@TODO parallelize ??
+            reportsController.startIteration(iterationNum)
             //creative process!
             inputSet.forEach { parseAndCoverExample(it) }
 
@@ -72,6 +76,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
                 perfectionMeasure = currentMeasure
             }
 
+            reportsController.finishIteration(grammarController.grammar, parsedExamples, currentMeasure)
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
             || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ

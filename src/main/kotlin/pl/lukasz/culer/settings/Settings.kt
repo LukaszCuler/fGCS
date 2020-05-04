@@ -41,7 +41,6 @@ class Settings {
         membershipAssigner = membershipAssignerFactory()
         witheringSelector = witheringSelectorFactory()
         grammarPostProcessor = grammarPostProcessorFactory()
-        reportsSaver = reportsSaverFactory()
     }
 
     //initialization result - should not be parsed
@@ -62,9 +61,6 @@ class Settings {
 
     @Exclude
     lateinit var grammarPostProcessor: GrammarPostProcessor
-
-    @Exclude
-    lateinit var reportsSaver: ReportsSaver
 
     //"raw" setting parameters
     @SerializedName("sOperatorReg")

@@ -6,5 +6,5 @@ import pl.lukasz.culer.settings.Settings
 
 data class InitData(val inputSet : List<TestExample>,
                     val testSet : List<TestExample>? = null,
-                    val maxIterations : Int,
+                    val maxIterations : Int?,
                     val settings : Settings)
