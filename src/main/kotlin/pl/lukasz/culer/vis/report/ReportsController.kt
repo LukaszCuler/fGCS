@@ -51,20 +51,19 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
             })
     }
 
-    fun startReport(initData: InitData){
+    fun startInference(initData: InitData){
+        reportsSaver.saveInferenceInitialData(initData)
+    }
+
+    fun finishInference(finalResult: FinalResult){
+        iterationConsumer.onComplete()
+        iterationConsumer.blockingLast()        //waiting to complete saving previous
+        reportsSaver.saveInferenceFinalData(finalResult)
 
     }
 
     fun startIteration(itNum : Int){
         currentIteration = Iteration(itNum)
-    }
-
-    fun addedRule(rule : NRule, source : String){
-
-    }
-
-    fun removedRule(removedRule : NRule, source : String){
-
     }
 
     fun finishIteration(grammar : Grammar, analizedExamples : List<FGCS.ExampleAnalysisResult>, perfectionMeasure : Double){
@@ -74,10 +73,16 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
         iterationConsumer.onNext(currentIteration)
     }
 
-    fun finishReport(finalResult: FinalResult){
-        iterationConsumer.onComplete()
-        iterationConsumer.blockingLast()        //waiting to complete saving previous
-        reportsSaver.saveFinalData(finalResult)
+    fun addedRule(addedRule : NRule, source : String){
+        currentIteration.addedRules.add(addedRule to source)
+    }
+
+    fun removedRule(removedRule : NRule, source : String){
+        currentIteration.removedRules.add(removedRule to source)
+    }
+
+    fun finishVerification(testExamples : List<FGCS.ExampleAnalysisResult>){
+        reportsSaver.saveTestResults(testExamples)
         reportsSaver.finalize()
     }
 }

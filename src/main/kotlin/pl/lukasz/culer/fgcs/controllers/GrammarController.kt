@@ -10,6 +10,8 @@ import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.DEFAULT_START_SYMBOL
+import pl.lukasz.culer.utils.Consts.Companion.UNDEFINED_SOURCE
+import pl.lukasz.culer.vis.report.ReportsController
 import kotlin.random.Random
 
 class GrammarController(val settings : Settings) {
@@ -19,6 +21,7 @@ class GrammarController(val settings : Settings) {
     lateinit var grammar : Grammar
     var learningData : List<TestExample> = mutableListOf()
     var testData : List<TestExample>? = null
+    var reportsController : ReportsController? = null
     //endregion
 
     /**
@@ -193,12 +196,14 @@ class GrammarController(val settings : Settings) {
     }
 
     //set manipulation methods
-    fun addNRule(rule : NRule) {
+    fun addNRule(rule : NRule, source : String = UNDEFINED_SOURCE) {
         grammar.nRules.add(rule)
+        reportsController?.addedRule(rule, source)
     }
 
-    fun removeNRule(rule : NRule){
+    fun removeNRule(rule : NRule, source : String = UNDEFINED_SOURCE){
         grammar.nRules.remove(rule)
+        reportsController?.removedRule(rule, source)
     }
 
     fun addNSymbol(symbol : NSymbol) {

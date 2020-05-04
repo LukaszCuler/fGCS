@@ -21,5 +21,6 @@ class Consts {
         const val N_GEN_START = 'A'
         const val N_GEN_START_TEMP = 'α'
         const val MEMBERSHIP_SHORT_FORMATTER = "%.2f"
+        const val UNDEFINED_SOURCE = "Undefined"
     }
 }

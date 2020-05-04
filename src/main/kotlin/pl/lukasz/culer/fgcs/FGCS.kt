@@ -7,6 +7,7 @@ import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.controllers.ParseTreeController
 import pl.lukasz.culer.fgcs.models.CYKTable
 import pl.lukasz.culer.fgcs.models.Grammar
+import pl.lukasz.culer.fgcs.models.reports.FinalResult
 import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
@@ -26,6 +27,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
     lateinit var cykController: CYKController
     lateinit var parseTreeController: ParseTreeController
     lateinit var classificationController: ClassificationController
+    private val reportsController = ReportsController(settings.reportsSaverFactory())
     /**
      * region public methods
      */
@@ -43,8 +45,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         //preprocess input data
         sortInQuasiLexicographicOrder(inputSet)
 
-        val reportsController = ReportsController(settings.reportsSaverFactory())
-        reportsController.startReport(InitData(inputSet, testSet, maxIterations, settings))
+        reportsController.startInference(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
             iterationNum++
@@ -83,6 +84,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         //ok, inference is done, so we are setting best grammar
         grammarController.grammar = bestGrammar
+        reportsController.finishInference(FinalResult(iterationNum,bestGrammar,bestExamples,perfectionMeasure))
     }
 
     fun verifyPerformance(){
@@ -98,6 +100,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
             println("${example.example.sequence}: $fuzzyClass - $crispClass")
         }
+        reportsController.finishVerification(exampleList)
 
         ExamplesHeatmapVisualization(grammarController, classificationController, settings, exampleList).saveToFile("heatmap.html")
     }
@@ -146,6 +149,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
         cykController = CYKController(grammarController)
         parseTreeController = ParseTreeController(grammarController, cykController)
         classificationController =  ClassificationController(grammarController, settings)
+        grammarController.reportsController = reportsController
 
         return inputGrammar==null //if there is no input grammar, we have to infer it x]
     }
