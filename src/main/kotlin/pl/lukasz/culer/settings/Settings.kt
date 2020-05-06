@@ -115,4 +115,6 @@ class Settings {
     init {
         initialize()
     }
+
+    override fun toString(): String = JsonController.gson.toJson(this)
 }

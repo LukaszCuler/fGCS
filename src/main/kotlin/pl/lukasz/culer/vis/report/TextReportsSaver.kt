@@ -17,11 +17,19 @@ class TextReportsSaver : ReportsSaver, TextReport() {
 
         const val START_REPORT = "tr_start.txt"
         const val INFERENCE_START = "tr_inference_start.txt"
+        const val INFERENCE_END = "tr_inference_end.txt"
         const val ITERATION = "tr_iteration.txt"
+        const val GENERIC = "tr_generic.txt"
 
         const val UNLIMITED_ITERATIONS = "(unlimited)"
         const val RULES_SEPARATOR = ", "
+        const val NEW_LINE_SEPARATOR = "\n"
+        const val TITLE_SETTINGS = "Settings"
+        const val TITLE_INPUT_SET = "Inference Set"
     }
+    //endregion
+    //region properties
+    var initialData: InitData? = null
     //endregion
     override fun initialize(reportName: String) {
         initReport(GENERATED_REPORTS_PATH+reportName+REPORT_EXTENSION,
@@ -30,6 +38,8 @@ class TextReportsSaver : ReportsSaver, TextReport() {
     }
 
     override fun saveInferenceInitialData(initialData: InitData) {
+        this.initialData = initialData
+
         addToReport(getTemplate(INFERENCE_START).format(
             initialData.inputSet.size,
             initialData.maxIterations?.toString() ?: UNLIMITED_ITERATIONS
@@ -60,15 +70,25 @@ class TextReportsSaver : ReportsSaver, TextReport() {
     }
 
     override fun saveInferenceFinalData(finalResult: FinalResult) {
-        TODO("Not yet implemented")
+        addToReport(getTemplate(INFERENCE_END).format(
+            finalResult.finalIteration,
+            finalResult.finalMeasure,
+            finalResult.bestGrammar.nRules.joinToString(RULES_SEPARATOR),
+            finalResult.bestGrammar.nSymbols.joinToString(RULES_SEPARATOR)
+        ))
     }
 
     override fun finalize() {
-        TODO("Not yet implemented")
+/*        addToReport(getTemplate(GENERIC).format(
+            TITLE_SETTINGS,
+            initialData?.settings.
+        ))*/
     }
 
     override fun saveTestResults(testExamples: List<FGCS.ExampleAnalysisResult>) {
-        TODO("Not yet implemented")
+        addToReport(getTemplate(INFERENCE_END).format(
+            testExamples.joinToString(NEW_LINE_SEPARATOR) { "${it.example.sequence} | ${it.example.explicitMembership} | ${it.fuzzyClassification} | ${it.crispClassification}" }
+        ))
     }
     //region private methods
     private fun getRuleDesc(ruleDesc : Pair<NRule, String>) = "${ruleDesc.first} (${ruleDesc.second})"
