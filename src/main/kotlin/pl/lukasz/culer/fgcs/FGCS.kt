@@ -62,7 +62,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
             ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
             if(ruleRefreshNeeded) refreshAttributes(parsedExamples)
 
-            //clear grammar
+            //clear grammar - consider if needed every iteration
             clearGrammar()
 
             //performance test before evaluation
@@ -130,11 +130,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
     private fun postProcessGrammar() = settings.grammarPostProcessor.applyOperators(grammarController)
 
     private fun clearGrammar(){
-        //removing unused ones
-        val unusedRules = grammarController.grammar.nRules.filter { !it.occurredInParsing.get() }
-        unusedRules.forEach {
-            grammarController.removeNRule(it)
-        }
+        grammarController.removeUnreachableAndUnproductiveRules()
+        grammarController.removeUnusedSymbols()
     }
 
     private fun initiateFGCS() : Boolean{

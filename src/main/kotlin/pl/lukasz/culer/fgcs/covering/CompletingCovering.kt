@@ -19,8 +19,6 @@ import kotlin.math.min
 import kotlin.random.Random
 
 //@TODO UT
-const val TAG = "Completing Covering"
-
 class CompletingCovering(table: CYKTable,
                          grammarController: GrammarController,
                          cykController: CYKController,
@@ -33,7 +31,12 @@ class CompletingCovering(table: CYKTable,
     private val possibleConstraintSets = mutableSetOf<ConstraintSet>()
     private var selectedConstraintSet = ConstraintSet()
     private val replacements = mutableMapOf<NSymbol,NSymbol>()
-
+    //region consts
+    companion object {
+        const val TAG = "Completing Covering"
+        const val ADDING_SOURCE = "Completing Covering"
+    }
+    //endregion
     //region overrides
     override fun apply() {
         //initiating stuff
@@ -183,7 +186,7 @@ class CompletingCovering(table: CYKTable,
         val ruleForSubtree = getRuleForNodeAndSubtree(processedNode, selectedTree).single()
         if(tempRules.contains(ruleForSubtree)) {
             //adding new rule!
-            grammarController.addNRule(ruleForSubtree)
+            grammarController.addNRule(ruleForSubtree, ADDING_SOURCE)
             tempRules.remove(ruleForSubtree)
             //@TODO should "new" rules be recounted if we add rule based on constraint?
         }

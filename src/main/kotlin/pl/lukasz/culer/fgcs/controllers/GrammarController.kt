@@ -1,6 +1,7 @@
 package pl.lukasz.culer.fgcs.controllers
 
 import pl.lukasz.culer.data.TestExample
+import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.models.Grammar
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.rules.NRuleRHS
@@ -23,7 +24,14 @@ class GrammarController(val settings : Settings) {
     var testData : List<TestExample>? = null
     var reportsController : ReportsController? = null
     //endregion
-
+    //region consts
+    companion object {
+        const val REASON_UNUSED_RULE = "Rule Unused"
+        const val REASON_UNACHIEVABLE_RULE = "Rule Unachievable"
+        const val REASON_UNPRODUCTIVE_RULE = "Rule Unproductive"
+        const val REASON_UNUSED_SYMBOL = "Symbol Unused"
+    }
+    //endregion
     /**
      * region constructors
      **/
@@ -149,7 +157,7 @@ class GrammarController(val settings : Settings) {
         //now we remove unachievable rules
         grammar.nRules
             .filter { !achievableRules.contains(it) }
-            .forEach { removeNRule(it) }
+            .forEach { removeNRule(it, REASON_UNACHIEVABLE_RULE) }
 
         //then productivity
         val productiveSymbols : MutableSet<NSymbol> = mutableSetOf()
@@ -172,7 +180,16 @@ class GrammarController(val settings : Settings) {
         //now we remove unproductive rules
         grammar.nRules
             .filter { !productiveRules.contains(it) }
-            .forEach { removeNRule(it) }
+            .forEach { removeNRule(it, REASON_UNPRODUCTIVE_RULE) }
+    }
+
+    //@TODO UT
+    fun removeUnusedRules(){
+        //not equal to not achievable - it's more strict
+        val unusedRules = grammar.nRules.filter { !it.occurredInParsing.get() }
+        unusedRules.forEach {
+            removeNRule(it, REASON_UNUSED_RULE)
+        }
     }
 
     fun removeUnusedSymbols(){

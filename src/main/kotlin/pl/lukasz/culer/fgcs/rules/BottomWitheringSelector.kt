@@ -13,6 +13,11 @@ import pl.lukasz.culer.utils.ReversedMembershipSelector
  */
 //@TODO UT
 class BottomWitheringSelector : WitheringSelector(){
+    //region consts
+    companion object {
+        const val REASON_BOTTOM_WITHERING = "Rule withered (Bottom)"
+    }
+    //endregion
     //region override section
     override fun applyWithering(grammarController: GrammarController): Boolean {
         val consideredRules = getRulesToSelectFrom(grammarController)
@@ -35,7 +40,7 @@ class BottomWitheringSelector : WitheringSelector(){
         .filter { it.membership < Consts.FULL_MEMBERSHIP }      //no perfect rules!
 
     private fun removeRule(grammarController: GrammarController, rule : NRule?){
-        rule?.let { grammarController.removeNRule(rule) }
+        rule?.let { grammarController.removeNRule(rule, REASON_BOTTOM_WITHERING) }
     }
     //endregion
 }
