@@ -4,9 +4,15 @@ import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.models.reports.FinalResult
 import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.reports.Iteration
+import pl.lukasz.culer.utils.TextReport
 import pl.lukasz.culer.vis.report.base.ReportsSaver
 
-class TextReportsSaver : ReportsSaver {
+class TextReportsSaver : ReportsSaver, TextReport() {
+    //region consts
+    companion object {
+
+    }
+    //endregion
     override fun initialize(reportName: String) {
         TODO("Not yet implemented")
     }
@@ -30,5 +36,5 @@ class TextReportsSaver : ReportsSaver {
     override fun saveTestResults(testExamples: List<FGCS.ExampleAnalysisResult>) {
         TODO("Not yet implemented")
     }
-
+    //private methods
 }

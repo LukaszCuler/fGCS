@@ -9,10 +9,11 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.Consts.Companion.FULL_MEMBERSHIP
 import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
+import pl.lukasz.culer.utils.TextReport
 import java.io.File
 
-const val HEAD_CONTENT_FILE = "fgcsUtils/reports/start.html"
-const val TAIL_CONTENT_FILE = "fgcsUtils/reports/end.html"
+const val HEAD_CONTENT_FILE = "fgcsUtils/reports/start_heatmap.html"
+const val TAIL_CONTENT_FILE = "fgcsUtils/reports/end_heatmap.html"
 const val POSITIVE_LABEL = "<span class=\"label label-success\">positive</span>"
 const val NEGATIVE_LABEL = "<span class=\"label label-danger\">negative</span>"
 const val SEQUENCE_INIT = "&nbsp&nbsp&nbsp&nbsp<span class=\"lead\">"
@@ -32,12 +33,12 @@ const val SUPER_ROOT = "#"
 class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                                    val classificationController : ClassificationController,
                                    val settings: Settings,
-                                   val listToVisualize : List<FGCS.ExampleAnalysisResult>){
+                                   val listToVisualize : List<FGCS.ExampleAnalysisResult>) : TextReport(){
     /**
      * region public methods
      */
     fun saveToFile(filePath : String){
-        var html = File(HEAD_CONTENT_FILE).readText()   //starts html file with proper head
+        var html = getTemplate(HEAD_CONTENT_FILE)  //starts html file with proper head
 
         for(example in listToVisualize){
             val fuzzyClass = example.multiParseTreeNode.classificationMembership
@@ -78,8 +79,8 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
             }
         }
 
-        html+=File(TAIL_CONTENT_FILE).readText()        //adds proper tail
-        File(filePath).writeText(html)
+        html+= getTemplate(TAIL_CONTENT_FILE)        //adds proper tail
+        initReport(filePath, html)
     }
     //endregion
 
