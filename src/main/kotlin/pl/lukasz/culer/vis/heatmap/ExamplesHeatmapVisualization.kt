@@ -38,7 +38,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
      * region public methods
      */
     fun saveToFile(filePath : String){
-        var html = getTemplate(HEAD_CONTENT_FILE)  //starts html file with proper head
+        initReport(filePath,getTemplate(HEAD_CONTENT_FILE))  //starts html file with proper head
 
         for(example in listToVisualize){
             val fuzzyClass = example.multiParseTreeNode.classificationMembership
@@ -61,7 +61,7 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                 }
             }
             exampleString+=MEMBERSHIP_VALUE_START+MEMBERSHIP_SHORT_FORMATTER.format(fuzzyClass.midpoint)+END_ALL_FORMATTING
-            html += exampleString+NEW_LINE
+            addToReport(exampleString+NEW_LINE)
 
             if(!example.multiParseTreeNode.isDeadEnd &&
                 (settings.heatmapProcessor.mainTreeDistinguishable()
@@ -75,12 +75,11 @@ class ExamplesHeatmapVisualization(val grammarController : GrammarController,
                     root.membership = FULL_MEMBERSHIP.midpoint
                     root.children.addAll(startNodes)
                 }
-                html+= PARSE_TREE_CONTAINER_START+root+PARSE_TREE_CONTAINER_END
+                addToReport(PARSE_TREE_CONTAINER_START+root+PARSE_TREE_CONTAINER_END)
             }
         }
 
-        html+= getTemplate(TAIL_CONTENT_FILE)        //adds proper tail
-        initReport(filePath, html)
+        addToReport(getTemplate(TAIL_CONTENT_FILE))        //adds proper tail
     }
     //endregion
 
