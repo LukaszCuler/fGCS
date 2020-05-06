@@ -12,8 +12,8 @@ import pl.lukasz.culer.utils.Consts.Companion.MEMBERSHIP_SHORT_FORMATTER
 import pl.lukasz.culer.utils.TextReport
 import java.io.File
 
-const val HEAD_CONTENT_FILE = "fgcsUtils/reports/start_heatmap.html"
-const val TAIL_CONTENT_FILE = "fgcsUtils/reports/end_heatmap.html"
+const val HEAD_CONTENT_FILE = "start_heatmap.html"
+const val TAIL_CONTENT_FILE = "end_heatmap.html"
 const val POSITIVE_LABEL = "<span class=\"label label-success\">positive</span>"
 const val NEGATIVE_LABEL = "<span class=\"label label-danger\">negative</span>"
 const val SEQUENCE_INIT = "&nbsp&nbsp&nbsp&nbsp<span class=\"lead\">"

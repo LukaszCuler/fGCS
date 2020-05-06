@@ -6,6 +6,7 @@ import java.io.File
 open class TextReport {
     //region consts
     companion object {
+        private const val REPORT_TEMPLATES_BASE = "fgcsUtils/reportTemplates/"
         private const val EMPTY_STRING = ""
     }
     //endregion
@@ -23,11 +24,11 @@ open class TextReport {
         reportFile?.appendText(contentToAdd)
     }
 
-    fun getTemplate(path : String) : String {
-        if(!loadedTemplates.containsKey(path)){
-            loadedTemplates[path] = File(TAIL_CONTENT_FILE).readText()
+    fun getTemplate(template : String) : String {
+        if(!loadedTemplates.containsKey(template)){
+            loadedTemplates[template] = File(REPORT_TEMPLATES_BASE+template).readText()
         }
-        return loadedTemplates[path] ?: EMPTY_STRING
+        return loadedTemplates[template] ?: EMPTY_STRING
     }
     //endregion
 }
