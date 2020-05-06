@@ -246,7 +246,7 @@ class CompletingCovering(table: CYKTable,
                 var rightReplacement = replacements[constraint.right.first()]
                 if(rightReplacement==null){
                     //we need to obtain a random one
-                    rightReplacement = grammarController.getNewOrExistingNSymbolRandomly() //@TODO symbols added excessively - isolate before adding? not needed to refactor if X1=X2 removed
+                    rightReplacement = grammarController.getNewOrExistingNSymbolRandomly(source = ADDING_SOURCE) //@TODO symbols added excessively - isolate before adding? not needed to refactor if X1=X2 removed
                     replacements[constraint.left] = rightReplacement
                 }
                 replacements[constraint.right.first()] = rightReplacement
@@ -273,7 +273,7 @@ class CompletingCovering(table: CYKTable,
         if(tempVars.contains(symbol)){
             var repl = replacements[symbol]
             if(repl==null){
-                repl = grammarController.getNewOrExistingNSymbolRandomly()
+                repl = grammarController.getNewOrExistingNSymbolRandomly(source = ADDING_SOURCE)
                 replacements[symbol] = repl
 
                 //we also need to replace symbols in rules...

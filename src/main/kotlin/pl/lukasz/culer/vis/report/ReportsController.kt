@@ -10,6 +10,7 @@ import pl.lukasz.culer.fgcs.models.reports.FinalResult
 import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.reports.Iteration
 import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.vis.report.base.ReportsSaver
 import java.text.SimpleDateFormat
 import java.util.*
@@ -79,6 +80,14 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
 
     fun removedRule(removedRule : NRule, source : String){
         currentIteration.removedRules.add(removedRule to source)
+    }
+
+    fun addedSymbol(addedSymbol : NSymbol, source : String){
+        currentIteration.addedSymbols.add(addedSymbol to source)
+    }
+
+    fun removedSymbol(removedSymbol : NSymbol, source : String){
+        currentIteration.removedSymbols.add(removedSymbol to source)
     }
 
     fun finishVerification(testExamples : List<FGCS.ExampleAnalysisResult>){

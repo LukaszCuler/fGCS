@@ -209,7 +209,7 @@ class GrammarController(val settings : Settings) {
                 .toSet())
 
         //it's time to say goodbye
-        unusedSymbols.forEach { removeNSymbol(it) }
+        unusedSymbols.forEach { removeNSymbol(it, REASON_UNUSED_SYMBOL) }
     }
 
     //set manipulation methods
@@ -223,12 +223,14 @@ class GrammarController(val settings : Settings) {
         reportsController?.removedRule(rule, source)
     }
 
-    fun addNSymbol(symbol : NSymbol) {
+    fun addNSymbol(symbol : NSymbol, source : String = UNDEFINED_SOURCE) {
         grammar.nSymbols.add(symbol)
+        reportsController?.addedSymbol(symbol, source)
     }
 
-    fun removeNSymbol(symbol : NSymbol){
+    fun removeNSymbol(symbol : NSymbol, source : String = UNDEFINED_SOURCE){
         grammar.nSymbols.remove(symbol)
+        reportsController?.removedSymbol(symbol, source)
     }
 
     fun containsNRule(rule : NRule) = grammar.nRules.contains(rule)
@@ -264,13 +266,13 @@ class GrammarController(val settings : Settings) {
         addNSymbol(newStartSymbol)
     }
 
-    fun getNewNSymbol() : NSymbol?{
+    fun getNewNSymbol(source : String = UNDEFINED_SOURCE) : NSymbol?{
         var currentSymbol = Consts.N_GEN_START
         while(currentSymbol<= Char.MAX_VALUE){
             val findNSymbolByChar = findNSymbolByChar(currentSymbol)
             if(findNSymbolByChar == null){
                 val newSymbol = NSymbol(currentSymbol)
-                grammar.nSymbols.add(newSymbol)
+                addNSymbol(newSymbol, source)
                 return newSymbol
             }
             currentSymbol++
@@ -289,12 +291,12 @@ class GrammarController(val settings : Settings) {
     fun getRandomNSymbol(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) =
         symbolsToDrawFrom.toList()[Random.nextInt(symbolsToDrawFrom.size)]
 
-    fun getNewOrExistingNSymbolRandomly(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols) : NSymbol {
+    fun getNewOrExistingNSymbolRandomly(symbolsToDrawFrom : MutableSet<NSymbol> = grammar.nSymbols, source : String = UNDEFINED_SOURCE) : NSymbol {
         when(settings.newSymbolSelectionMethod) {
             NewSymbolSelectionMethod.INCREMENTAL -> {
                 val drawnValue = Random.nextDouble(symbolsToDrawFrom.size.toDouble()+settings.newSymbolCoef)
                 return if(drawnValue<=settings.newSymbolCoef) {
-                    getNewNSymbol() ?: getRandomNSymbol(symbolsToDrawFrom)
+                    getNewNSymbol(source) ?: getRandomNSymbol(symbolsToDrawFrom)
                 } else {
                     getRandomNSymbol(symbolsToDrawFrom)
                 }
@@ -302,7 +304,7 @@ class GrammarController(val settings : Settings) {
 
             NewSymbolSelectionMethod.FIXED -> {
                 return if(Random.nextDouble(settings.newSymbolCoef)<=settings.newSymbolCoef) {
-                    getNewNSymbol() ?: getRandomNSymbol(symbolsToDrawFrom)
+                    getNewNSymbol(source) ?: getRandomNSymbol(symbolsToDrawFrom)
                 } else {
                     getRandomNSymbol(symbolsToDrawFrom)
                 }
