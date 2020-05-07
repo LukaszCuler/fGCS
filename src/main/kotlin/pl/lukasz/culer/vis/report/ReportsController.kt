@@ -46,7 +46,7 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
                 }
 
                 override fun onError(error: Throwable) {
-                    //Log
+                    error.printStackTrace()
                 }
 
             })

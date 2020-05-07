@@ -7,6 +7,7 @@ import pl.lukasz.culer.fgcs.models.reports.Iteration
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.utils.Consts.Companion.GENERATED_REPORTS_PATH
+import pl.lukasz.culer.utils.JsonController
 import pl.lukasz.culer.utils.TextReport
 import pl.lukasz.culer.vis.report.base.ReportsSaver
 
@@ -79,10 +80,17 @@ class TextReportsSaver : ReportsSaver, TextReport() {
     }
 
     override fun finalize() {
-/*        addToReport(getTemplate(GENERIC).format(
+        if(initialData==null) return
+
+        addToReport(getTemplate(GENERIC).format(
             TITLE_SETTINGS,
-            initialData?.settings.
-        ))*/
+            JsonController.gson.toJson(initialData?.settings)
+        ))
+
+        addToReport(getTemplate(GENERIC).format(
+            TITLE_INPUT_SET,
+            initialData?.inputSet?.joinToString(NEW_LINE_SEPARATOR) { "${it.sequence} | ${it.explicitMembership}" }
+        ))
     }
 
     override fun saveTestResults(testExamples: List<FGCS.ExampleAnalysisResult>) {
