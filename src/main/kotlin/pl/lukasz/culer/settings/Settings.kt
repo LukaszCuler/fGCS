@@ -29,7 +29,7 @@ class Settings {
 
     companion object {
         fun loadFromObject(filename : String?) : Settings {
-            Logger.d(TAG, SETTINGS_LOADING)
+            Logger.i(TAG, SETTINGS_LOADING)
             return JsonController.gson.fromJson<Settings>(File(filename).readText(), Settings::class.java).apply { initialize() }
         }
     }

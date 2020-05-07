@@ -21,14 +21,14 @@ class LearningSandbox(private val params : InputParams) {
 
     fun startSimulation(){
         //preparing simulation...
-        Logger.d(TAG, LEARNING_SANDBOX_PREPARING_SIMULATION)
+        Logger.i(TAG, LEARNING_SANDBOX_PREPARING_SIMULATION)
 
         params.inputSet?.let {inputSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
         params.testSet?.let { testSet = AbbadingoLoader.loadAbbadingoTestSet(it)}
         params.grammarFile?.let { inputGrammar = ProcessDataLoader.loadGrammar(it)}
         params.settingsFile?.let {settings = Settings.loadFromObject(it)}
         //simulation
-        Logger.d(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
+        Logger.i(TAG, LEARNING_SANDBOX_LAUNCHING_SIMULATION)
         val fgcs = FGCS(inputSet, inputGrammar, testSet, params.maxIterations, settings)
 
         var simulationObservable = Observable.create<Boolean> {

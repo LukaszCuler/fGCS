@@ -11,6 +11,10 @@ import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.reports.Iteration
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.utils.Logger
+import pl.lukasz.culer.utils.REPORTS_CONTROLLER_ITERATION_SAVED
+import pl.lukasz.culer.utils.REPORTS_CONTROLLER_ITERATION_SAVE_ERROR
+import pl.lukasz.culer.utils.REPORTS_CONTROLLER_START_INFERENCE
 import pl.lukasz.culer.vis.report.base.ReportsSaver
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,6 +24,8 @@ import java.util.*
  */
 class ReportsController(private val reportsSaver: ReportsSaver) {
     companion object {
+        const val TAG = "ReportsController"
+
         const val datePattern = "YYYYMMddHHmmss"
         const val reportNamePrefix = "Report-"
     }
@@ -42,10 +48,11 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
 
                 override fun onNext(iterationToSave: Iteration) {
                     reportsSaver.saveIteration(iterationToSave)
-                    //Log
+                    Logger.d(TAG, REPORTS_CONTROLLER_ITERATION_SAVED.format(iterationToSave.iterationNum))
                 }
 
                 override fun onError(error: Throwable) {
+                    Logger.e(TAG, REPORTS_CONTROLLER_ITERATION_SAVE_ERROR)
                     error.printStackTrace()
                 }
 
@@ -53,6 +60,7 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
     }
 
     fun startInference(initData: InitData){
+        Logger.e(TAG, REPORTS_CONTROLLER_START_INFERENCE)
         reportsSaver.saveInferenceInitialData(initData)
     }
 

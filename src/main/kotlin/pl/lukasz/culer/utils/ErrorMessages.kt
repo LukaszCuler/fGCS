@@ -12,3 +12,7 @@ const val LEARNING_SANDBOX_SIMULATION_TIMEOUT = "Simulation timeout!"
 const val LEARNING_SANDBOX_SIMULATION_UNKNOWN_ERROR = "Unknown error occured during simulation!"
 
 const val SETTINGS_LOADING = "Loading settings..."
+
+const val REPORTS_CONTROLLER_ITERATION_SAVED = "Iteration %d saved!"
+const val REPORTS_CONTROLLER_ITERATION_SAVE_ERROR = "Error during iteration saving!"
+const val REPORTS_CONTROLLER_START_INFERENCE = "Start of inference data saved!"
