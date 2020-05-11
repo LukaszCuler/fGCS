@@ -11,13 +11,15 @@ import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.*
 import java.util.concurrent.TimeUnit
 
-const val TAG = "LearningSandbox"
-
 class LearningSandbox(private val params : InputParams) {
     var inputSet : List<TestExample>? = null
     var inputGrammar : Grammar? = null
     var testSet : List<TestExample>? = null
     var settings : Settings = Settings()
+
+    companion object {
+        const val TAG = "LearningSandbox"
+    }
 
     fun startSimulation(){
         //preparing simulation...
@@ -33,7 +35,9 @@ class LearningSandbox(private val params : InputParams) {
 
         var simulationObservable = Observable.create<Boolean> {
             //this is the part where it learns
+            Logger.i(TAG, LEARNING_SANDBOX_INFERENCE_START)
             fgcs.inferGrammar()
+            Logger.i(TAG, LEARNING_SANDBOX_INFERENCE_FINISHED)
             it.onNext(false)
         }
 
@@ -53,7 +57,9 @@ class LearningSandbox(private val params : InputParams) {
 
             override fun onNext(timeout: Boolean) {
                 if(timeout) Logger.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
-                else fgcs.verifyPerformance()
+                Logger.i(TAG, LEARNING_SANDBOX_SIMULATION_VERIFICATION_START)
+                fgcs.verifyPerformance()
+                Logger.i(TAG, LEARNING_SANDBOX_SIMULATION_VERIFICATION_END)
                 if(simulation?.isDisposed == false) simulation?.dispose()
             }
 

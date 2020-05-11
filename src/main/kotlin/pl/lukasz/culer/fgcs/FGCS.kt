@@ -12,7 +12,7 @@ import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.utils.RxUtils
+import pl.lukasz.culer.utils.*
 import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 import pl.lukasz.culer.vis.report.ReportsController
 
@@ -28,10 +28,15 @@ class FGCS(val inputSet : List<TestExample>? = null,
     lateinit var parseTreeController: ParseTreeController
     lateinit var classificationController: ClassificationController
     private val reportsController = ReportsController(settings.reportsSaverFactory())
+    //consts
+    companion object {
+        const val TAG = "FGCS"
+    }
     /**
      * region public methods
      */
     fun inferGrammar(){
+        Logger.i(TAG, FGCS_INIT)
         if(!initiateFGCS()) return //no need for inference
         if(inputSet==null) return //should not happen ¯\_(ツ)_/¯
 
@@ -43,29 +48,38 @@ class FGCS(val inputSet : List<TestExample>? = null,
         var perfectionMeasure = Double.MIN_VALUE
 
         //preprocess input data
+        Logger.i(TAG, FGCS_LEARNING_SET_INIT)
         sortInQuasiLexicographicOrder(inputSet)
 
         reportsController.startInference(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
             iterationNum++
+            Logger.i(TAG, FGCS_ITERATION_START.format(iterationNum))
             reportsController.startIteration(iterationNum)
+            Logger.i(TAG, FGCS_COVERING_STAGE.format(iterationNum))
             //creative process!
             inputSet.forEach { parseAndCoverExample(it) }
-
+            Logger.i(TAG, FGCS_COVERING_PARAMS_REFRESH.format(iterationNum))
             //updating all examples with created new rules
             var parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             refreshAttributes(parsedExamples)
 
+            Logger.i(TAG, FGCS_WITHERING_STAGE.format(iterationNum))
             var ruleRefreshNeeded = witherRules()
             ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
-            if(ruleRefreshNeeded) refreshAttributes(parsedExamples)
+            if(ruleRefreshNeeded) {
+                Logger.i(TAG, FGCS_WITHERING_POSTPROCESS_REFRESH.format(iterationNum))
+                refreshAttributes(parsedExamples)
+            }
 
             //clear grammar - consider if needed every iteration
+            Logger.i(TAG, FGCS_CLEARING_GRAMMAR.format(iterationNum))
             clearGrammar()
 
             //performance test before evaluation
+            Logger.i(TAG, FGCS_PERFORMANCE_TEST.format(iterationNum))
             parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
             //saving best grammar
@@ -127,7 +141,10 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
     private fun witherRules() = settings.witheringSelector.applyWithering(grammarController)
 
-    private fun postProcessGrammar() = settings.grammarPostProcessor.applyOperators(grammarController)
+    private fun postProcessGrammar() : Boolean {
+        Logger.i(TAG, FGCS_POSTPROCESSING_STAGE)
+        return settings.grammarPostProcessor.applyOperators(grammarController)
+    }
 
     private fun clearGrammar(){
         grammarController.removeUnreachableAndUnproductiveRules()
