@@ -56,7 +56,10 @@ class LearningSandbox(private val params : InputParams) {
             }
 
             override fun onNext(timeout: Boolean) {
-                if(timeout) Logger.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
+                if(timeout) {
+                    Logger.e(TAG, LEARNING_SANDBOX_SIMULATION_TIMEOUT)
+                    fgcs.finalizeInference()  //interrupted, so we have to finalize it manually
+                }
                 Logger.i(TAG, LEARNING_SANDBOX_SIMULATION_VERIFICATION_START)
                 fgcs.verifyPerformance()
                 Logger.i(TAG, LEARNING_SANDBOX_SIMULATION_VERIFICATION_END)

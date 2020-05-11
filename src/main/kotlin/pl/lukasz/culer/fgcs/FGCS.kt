@@ -27,6 +27,11 @@ class FGCS(val inputSet : List<TestExample>? = null,
     lateinit var parseTreeController: ParseTreeController
     lateinit var classificationController: ClassificationController
     private val reportsController = ReportsController(settings.reportsSaverFactory())
+    private var bestGrammar = grammarController.grammar.copy()
+    private var perfectionMeasure = Double.MIN_VALUE
+    private var iterationNum = 0
+    private var simulationStartTime = 0L
+    private var bestExamples = listOf<ExampleAnalysisResult>()
     //consts
     companion object {
         const val TAG = "FGCS"
@@ -40,18 +45,12 @@ class FGCS(val inputSet : List<TestExample>? = null,
         if(inputSet==null) return //should not happen ¯\_(ツ)_/¯
 
         //if not, let's infer!
-        var iterationNum = 0
-
-        var bestGrammar = grammarController.grammar.copy()
-        var bestExamples = listOf<ExampleAnalysisResult>()
-        var perfectionMeasure = Double.MIN_VALUE
-
         //preprocess input data
         Logger.i(TAG, FGCS_LEARNING_SET_INIT)
         sortInQuasiLexicographicOrder(inputSet)
 
         //initial assignments
-        val simulationStartTime = System.currentTimeMillis()
+        simulationStartTime = System.currentTimeMillis()
         reportsController.startInference(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
@@ -107,6 +106,10 @@ class FGCS(val inputSet : List<TestExample>? = null,
         } while((maxIterations!=null && iterationNum<maxIterations)
             || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
 
+        finalizeInference()
+    }
+
+    fun finalizeInference(){
         //ok, inference is done, so we are setting best grammar
         grammarController.grammar = bestGrammar
 
