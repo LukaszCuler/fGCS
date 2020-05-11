@@ -75,10 +75,16 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
         currentIteration = Iteration(itNum)
     }
 
-    fun finishIteration(grammar : Grammar, analizedExamples : List<FGCS.ExampleAnalysisResult>, perfectionMeasure : Double){
+    fun finishIteration(
+        grammar: Grammar,
+        analizedExamples: List<FGCS.ExampleAnalysisResult>,
+        perfectionMeasure: Double,
+        iterationTime: Long
+    ){
         currentIteration.grammar = grammar.copy()
         currentIteration.analizedExamples = analizedExamples        //no need to copy -> created per iteration
         currentIteration.perfectionMeasure = perfectionMeasure
+        currentIteration.iterationTime = iterationTime
         iterationConsumer.onNext(currentIteration)
     }
 

@@ -13,7 +13,6 @@ import pl.lukasz.culer.fgcs.models.trees.MultiParseTreeNode
 import pl.lukasz.culer.fuzzy.IntervalFuzzyNumber
 import pl.lukasz.culer.settings.Settings
 import pl.lukasz.culer.utils.*
-import pl.lukasz.culer.vis.heatmap.ExamplesHeatmapVisualization
 import pl.lukasz.culer.vis.report.ReportsController
 
 class FGCS(val inputSet : List<TestExample>? = null,
@@ -51,21 +50,29 @@ class FGCS(val inputSet : List<TestExample>? = null,
         Logger.i(TAG, FGCS_LEARNING_SET_INIT)
         sortInQuasiLexicographicOrder(inputSet)
 
+        //initial assignments
+        val simulationStartTime = System.currentTimeMillis()
         reportsController.startInference(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
+            //changing iteration variables
+            val iterationStartTime = System.currentTimeMillis()
             iterationNum++
+
+            //reporting and logging
             Logger.i(TAG, FGCS_ITERATION_START.format(iterationNum))
             reportsController.startIteration(iterationNum)
-            Logger.i(TAG, FGCS_COVERING_STAGE.format(iterationNum))
-            //creative process!
-            inputSet.forEach { parseAndCoverExample(it) }
-            Logger.i(TAG, FGCS_COVERING_PARAMS_REFRESH.format(iterationNum))
-            //updating all examples with created new rules
-            var parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
 
+            //creative process!
+            Logger.i(TAG, FGCS_COVERING_STAGE.format(iterationNum))
+            inputSet.forEach { parseAndCoverExample(it) }
+
+            //updating all examples with created new rules
+            Logger.i(TAG, FGCS_COVERING_PARAMS_REFRESH.format(iterationNum))
+            var parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
             refreshAttributes(parsedExamples)
 
+            //end-stage - withering and params refresh, if needed
             Logger.i(TAG, FGCS_WITHERING_STAGE.format(iterationNum))
             var ruleRefreshNeeded = witherRules()
             ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
@@ -91,14 +98,22 @@ class FGCS(val inputSet : List<TestExample>? = null,
                 perfectionMeasure = currentMeasure
             }
 
-            reportsController.finishIteration(grammarController.grammar, parsedExamples, currentMeasure)
+            //iteration end and logging
+            val iterationTime = System.currentTimeMillis() - iterationStartTime
+            Logger.i(TAG, FGCS_ITERATION_FINISHED.format(iterationNum, perfectionMeasure, iterationTime))
+            reportsController.finishIteration(grammarController.grammar, parsedExamples, currentMeasure, iterationTime)
+
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
             || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
 
         //ok, inference is done, so we are setting best grammar
         grammarController.grammar = bestGrammar
-        reportsController.finishInference(FinalResult(iterationNum,bestGrammar,bestExamples,perfectionMeasure))
+
+        //finishing stuff
+        val simulationTime = System.currentTimeMillis() - simulationStartTime
+        Logger.i(TAG, FGCS_BESTGRAMMAR_FINISHED.format(perfectionMeasure, simulationTime))
+        reportsController.finishInference(FinalResult(iterationNum,bestGrammar,bestExamples,perfectionMeasure,simulationTime))
     }
 
     fun verifyPerformance(){
@@ -112,11 +127,11 @@ class FGCS(val inputSet : List<TestExample>? = null,
         for(example in exampleList){
             val fuzzyClass = example.multiParseTreeNode.classificationMembership
             val crispClass = classificationController.getCrispClassification(example.multiParseTreeNode)
-            println("${example.example.sequence}: $fuzzyClass - $crispClass")
+            Logger.d(TAG, "${example.example.sequence}: $fuzzyClass - $crispClass")
         }
         reportsController.finishVerification(exampleList)
 
-        ExamplesHeatmapVisualization(grammarController, classificationController, settings, exampleList).saveToFile("heatmap.html")
+        //ExamplesHeatmapVisualization(grammarController, classificationController, settings, exampleList).saveToFile("heatmap.html")
     }
     //endregion
     /**

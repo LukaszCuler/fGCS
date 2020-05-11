@@ -9,7 +9,7 @@ import pl.lukasz.culer.fgcs.models.rules.TRule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
 import pl.lukasz.culer.fgcs.models.symbols.TSymbol
 import pl.lukasz.culer.settings.Settings
-import pl.lukasz.culer.utils.Consts
+import pl.lukasz.culer.utils.*
 import pl.lukasz.culer.utils.Consts.Companion.DEFAULT_START_SYMBOL
 import pl.lukasz.culer.utils.Consts.Companion.UNDEFINED_SOURCE
 import pl.lukasz.culer.vis.report.ReportsController
@@ -26,6 +26,7 @@ class GrammarController(val settings : Settings) {
     //endregion
     //region consts
     companion object {
+        const val TAG = "GrammarControler"
         const val REASON_UNUSED_RULE = "Rule Unused"
         const val REASON_UNACHIEVABLE_RULE = "Rule Unachievable"
         const val REASON_UNPRODUCTIVE_RULE = "Rule Unproductive"
@@ -216,21 +217,25 @@ class GrammarController(val settings : Settings) {
     fun addNRule(rule : NRule, source : String = UNDEFINED_SOURCE) {
         grammar.nRules.add(rule)
         reportsController?.addedRule(rule, source)
+        Logger.d(TAG, GRAMMAR_CONTROLLER_RULE_ADDED.format(rule.toString(), source))
     }
 
     fun removeNRule(rule : NRule, source : String = UNDEFINED_SOURCE){
         grammar.nRules.remove(rule)
         reportsController?.removedRule(rule, source)
+        Logger.d(TAG, GRAMMAR_CONTROLLER_RULE_REMOVED.format(rule.toString(), source))
     }
 
     fun addNSymbol(symbol : NSymbol, source : String = UNDEFINED_SOURCE) {
         grammar.nSymbols.add(symbol)
         reportsController?.addedSymbol(symbol, source)
+        Logger.d(TAG, GRAMMAR_CONTROLLER_SYMBOL_ADDED.format(symbol.symbol.toString(), source))
     }
 
     fun removeNSymbol(symbol : NSymbol, source : String = UNDEFINED_SOURCE){
         grammar.nSymbols.remove(symbol)
         reportsController?.removedSymbol(symbol, source)
+        Logger.d(TAG, GRAMMAR_CONTROLLER_SYMBOL_REMOVED.format(symbol.symbol.toString(), source))
     }
 
     fun containsNRule(rule : NRule) = grammar.nRules.contains(rule)

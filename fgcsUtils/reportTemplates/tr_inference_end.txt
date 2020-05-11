@@ -9,6 +9,7 @@
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Perfection measure: %0.3f
+Simulation time: %d ms
 
 Rules:
 %s

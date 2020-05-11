@@ -61,6 +61,7 @@ class TextReportsSaver : ReportsSaver, TextReport() {
         addToReport(getTemplate(ITERATION).format(
             iteration.iterationNum,
             iteration.perfectionMeasure,
+            iteration.iterationTime,
             iteration.addedRules.joinToString(RULES_SEPARATOR) { getRuleDesc(it) },
             remainingRules.joinToString(RULES_SEPARATOR),
             iteration.removedRules.joinToString(RULES_SEPARATOR) { getRuleDesc(it) },
@@ -74,6 +75,7 @@ class TextReportsSaver : ReportsSaver, TextReport() {
         addToReport(getTemplate(INFERENCE_END).format(
             finalResult.finalIteration,
             finalResult.finalMeasure,
+            finalResult.simulationTime,
             finalResult.bestGrammar.nRules.joinToString(RULES_SEPARATOR),
             finalResult.bestGrammar.nSymbols.joinToString(RULES_SEPARATOR)
         ))
