@@ -41,7 +41,7 @@ class IntervalFuzzyNumber(
     }
     //region
     //region public
-    override fun toString() = "[ ${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)},${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
+    override fun toString() = "[${MEMBERSHIP_SHORT_FORMATTER.format(lowerBound)};${MEMBERSHIP_SHORT_FORMATTER.format(upperBound)}]"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

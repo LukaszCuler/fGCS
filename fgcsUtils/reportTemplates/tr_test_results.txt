@@ -4,7 +4,7 @@
 
 ***********************************************************************
 
-Sequence | Membership | Classification | Crisp classification
+Sequence    |   Membership  |   Classification  |   Crisp classification
 -----------------------------------------------------------------------
 %s
 

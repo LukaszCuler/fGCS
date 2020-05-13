@@ -37,5 +37,5 @@ abstract class Rule<T : Symbol> (
         return result
     }
 
-    override fun toString() = left.symbol+"→"+right.map { it.symbol }.joinToString()+"[$membership]"
+    override fun toString() = left.symbol+"->"+right.map { it.symbol }.joinToString()+" $membership"
 }

@@ -5,7 +5,9 @@ import pl.lukasz.culer.fgcs.models.reports.FinalResult
 import pl.lukasz.culer.fgcs.models.reports.InitData
 import pl.lukasz.culer.fgcs.models.reports.Iteration
 import pl.lukasz.culer.fgcs.models.rules.NRule
+import pl.lukasz.culer.fgcs.models.rules.Rule
 import pl.lukasz.culer.fgcs.models.symbols.NSymbol
+import pl.lukasz.culer.fgcs.models.symbols.Symbol
 import pl.lukasz.culer.utils.Consts.Companion.GENERATED_REPORTS_PATH
 import pl.lukasz.culer.utils.JsonController
 import pl.lukasz.culer.utils.TextReport
@@ -20,6 +22,7 @@ class TextReportsSaver : ReportsSaver, TextReport() {
         const val INFERENCE_START = "tr_inference_start.txt"
         const val INFERENCE_END = "tr_inference_end.txt"
         const val ITERATION = "tr_iteration.txt"
+        const val TEST_RESULTS = "tr_test_results.txt"
         const val GENERIC = "tr_generic.txt"
 
         const val UNLIMITED_ITERATIONS = "(unlimited)"
@@ -62,10 +65,10 @@ class TextReportsSaver : ReportsSaver, TextReport() {
             iteration.iterationNum,
             iteration.perfectionMeasure,
             iteration.iterationTime,
-            iteration.grammar.tRules.joinToString(RULESSYMBOL_SEPARATOR),
-            iteration.addedRules.joinToString(RULESSYMBOL_SEPARATOR) { getRuleDesc(it) },
-            remainingRules.joinToString(RULESSYMBOL_SEPARATOR),
-            iteration.removedRules.joinToString(RULESSYMBOL_SEPARATOR) { getRuleDesc(it) },
+            iteration.grammar.tRules.joinToString(NEW_LINE_SEPARATOR),
+            iteration.addedRules.joinToString(NEW_LINE_SEPARATOR) { getRuleDesc(it) },
+            remainingRules.joinToString(NEW_LINE_SEPARATOR),
+            iteration.removedRules.joinToString(NEW_LINE_SEPARATOR) { getRuleDesc(it) },
             iteration.grammar.tSymbols.joinToString(RULESSYMBOL_SEPARATOR),
             iteration.addedSymbols.joinToString(RULESSYMBOL_SEPARATOR),
             remainingSymbols.joinToString(RULESSYMBOL_SEPARATOR),
@@ -78,8 +81,14 @@ class TextReportsSaver : ReportsSaver, TextReport() {
             finalResult.finalIteration,
             finalResult.finalMeasure,
             finalResult.simulationTime,
-            finalResult.bestGrammar.nRules.joinToString(RULESSYMBOL_SEPARATOR),
-            finalResult.bestGrammar.nSymbols.joinToString(RULESSYMBOL_SEPARATOR)
+            mutableListOf<Rule<out Symbol>>().apply {
+                addAll(finalResult.bestGrammar.tRules)
+                addAll(finalResult.bestGrammar.nRules)
+            }.joinToString(NEW_LINE_SEPARATOR),
+            mutableListOf<Symbol>().apply {
+                addAll(finalResult.bestGrammar.tSymbols)
+                addAll(finalResult.bestGrammar.nSymbols)
+            }.joinToString(RULESSYMBOL_SEPARATOR)
         ))
     }
 
@@ -98,8 +107,8 @@ class TextReportsSaver : ReportsSaver, TextReport() {
     }
 
     override fun saveTestResults(testExamples: List<FGCS.ExampleAnalysisResult>) {
-        addToReport(getTemplate(INFERENCE_END).format(
-            testExamples.joinToString(NEW_LINE_SEPARATOR) { "${it.example.sequence} | ${it.example.explicitMembership} | ${it.fuzzyClassification} | ${it.crispClassification}" }
+        addToReport(getTemplate(TEST_RESULTS).format(
+            testExamples.joinToString(NEW_LINE_SEPARATOR) { "${it.example.sequence}\t|\t${it.example.explicitMembership}\t|\t${it.fuzzyClassification}\t|\t${it.crispClassification}" }
         ))
     }
     //region private methods

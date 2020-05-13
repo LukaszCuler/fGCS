@@ -22,6 +22,7 @@ class JsonController {
 
         //proper serializer / deserializer
         val gson: Gson = GsonBuilder()
+            .setPrettyPrinting()
             .setExclusionStrategies(exclusionStrategy)
             .create()
     }
