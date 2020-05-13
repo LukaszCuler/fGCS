@@ -60,7 +60,7 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
     }
 
     fun startInference(initData: InitData){
-        Logger.e(TAG, REPORTS_CONTROLLER_START_INFERENCE)
+        Logger.i(TAG, REPORTS_CONTROLLER_START_INFERENCE)
         reportsSaver.saveInferenceInitialData(initData)
     }
 
