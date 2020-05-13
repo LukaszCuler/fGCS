@@ -23,7 +23,7 @@ class TextReportsSaver : ReportsSaver, TextReport() {
         const val GENERIC = "tr_generic.txt"
 
         const val UNLIMITED_ITERATIONS = "(unlimited)"
-        const val RULES_SEPARATOR = ", "
+        const val RULESSYMBOL_SEPARATOR = ", "
         const val NEW_LINE_SEPARATOR = "\n"
         const val TITLE_SETTINGS = "Settings"
         const val TITLE_INPUT_SET = "Inference Set"
@@ -62,12 +62,14 @@ class TextReportsSaver : ReportsSaver, TextReport() {
             iteration.iterationNum,
             iteration.perfectionMeasure,
             iteration.iterationTime,
-            iteration.addedRules.joinToString(RULES_SEPARATOR) { getRuleDesc(it) },
-            remainingRules.joinToString(RULES_SEPARATOR),
-            iteration.removedRules.joinToString(RULES_SEPARATOR) { getRuleDesc(it) },
-            iteration.addedSymbols.joinToString(RULES_SEPARATOR),
-            remainingSymbols.joinToString(RULES_SEPARATOR),
-            iteration.removedSymbols.joinToString(RULES_SEPARATOR)
+            iteration.grammar.tRules.joinToString(RULESSYMBOL_SEPARATOR),
+            iteration.addedRules.joinToString(RULESSYMBOL_SEPARATOR) { getRuleDesc(it) },
+            remainingRules.joinToString(RULESSYMBOL_SEPARATOR),
+            iteration.removedRules.joinToString(RULESSYMBOL_SEPARATOR) { getRuleDesc(it) },
+            iteration.grammar.tSymbols.joinToString(RULESSYMBOL_SEPARATOR),
+            iteration.addedSymbols.joinToString(RULESSYMBOL_SEPARATOR),
+            remainingSymbols.joinToString(RULESSYMBOL_SEPARATOR),
+            iteration.removedSymbols.joinToString(RULESSYMBOL_SEPARATOR)
         ))
     }
 
@@ -76,8 +78,8 @@ class TextReportsSaver : ReportsSaver, TextReport() {
             finalResult.finalIteration,
             finalResult.finalMeasure,
             finalResult.simulationTime,
-            finalResult.bestGrammar.nRules.joinToString(RULES_SEPARATOR),
-            finalResult.bestGrammar.nSymbols.joinToString(RULES_SEPARATOR)
+            finalResult.bestGrammar.nRules.joinToString(RULESSYMBOL_SEPARATOR),
+            finalResult.bestGrammar.nSymbols.joinToString(RULESSYMBOL_SEPARATOR)
         ))
     }
 

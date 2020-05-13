@@ -9,6 +9,7 @@ import pl.lukasz.culer.utils.RxUtils
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
+//@TODO UT
 abstract class MembershipAssigner {
     var grammarController: GrammarController? = null
     var examples :List<FGCS.ExampleAnalysisResult>? = null

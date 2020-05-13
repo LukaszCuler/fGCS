@@ -11,6 +11,8 @@ abstract class Symbol(
     var isStartSymbol : Boolean = false){
 
     //boilerplate stuff
+
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -28,4 +30,6 @@ abstract class Symbol(
         result = 31 * result + isTerminal.hashCode()
         return result
     }
+
+    override fun toString() = symbol.toString()
 }

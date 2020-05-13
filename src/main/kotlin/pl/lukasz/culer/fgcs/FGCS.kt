@@ -161,7 +161,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
     private fun witherRules() = settings.witheringSelector.applyWithering(grammarController)
 
     private fun postProcessGrammar() : Boolean {
-        Logger.i(TAG, FGCS_POSTPROCESSING_STAGE)
+        Logger.i(TAG, FGCS_POSTPROCESSING_STAGE.format(iterationNum))
         return settings.grammarPostProcessor.applyOperators(grammarController)
     }
 

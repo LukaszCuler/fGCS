@@ -5,6 +5,6 @@ import pl.lukasz.culer.fgcs.rules.base.GrammarPostProcessor
 
 class GAPostProcessor : GrammarPostProcessor() {
     override fun applyOperators(grammarController: GrammarController): Boolean {
-        TODO("Not yet implemented")
+        return false    //not yet implemented
     }
 }

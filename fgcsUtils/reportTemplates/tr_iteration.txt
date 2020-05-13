@@ -2,29 +2,35 @@
                                Iteration %d
 #######################################################################
 STATS:
-Perfection measure: %0.3f
+Perfection measure: %.3f
 Iteration time: %d ms
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Added rules:
+Terminal rules:
 %s
 
-Retained rules:
+Added non-terminal rules:
 %s
 
-Removed rules:
+Retained non-terminal rules:
+%s
+
+Removed non-terminal rules:
 %s
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Added symbols:
+Terminal symbols:
 %s
 
-Retained symbols:
+Added non-terminal symbols:
 %s
 
-Removed symbols:
+Retained non-terminal symbols:
+%s
+
+Removed non-terminal symbols:
 %s
 
 #######################################################################

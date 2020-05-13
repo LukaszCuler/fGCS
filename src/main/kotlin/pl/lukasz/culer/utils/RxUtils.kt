@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers
 class RxUtils {
     companion object {
         fun <T, N>computeParallelly(objsToCompute : List<T>, compFunc : (T) -> N) : List<N> {
+            if(objsToCompute.isEmpty()) return listOf()
             return Single.zip(objsToCompute.map { obj ->
                 Single.create(SingleOnSubscribe<N> {
                     try {
