@@ -26,8 +26,8 @@ class FGCS(val inputSet : List<TestExample>? = null,
     lateinit var cykController: CYKController
     lateinit var parseTreeController: ParseTreeController
     lateinit var classificationController: ClassificationController
+    lateinit var bestGrammar: Grammar
     private val reportsController = ReportsController(settings.reportsSaverFactory())
-    private var bestGrammar = grammarController.grammar.copy()
     private var perfectionMeasure = Double.MIN_VALUE
     private var iterationNum = 0
     private var simulationStartTime = 0L
@@ -51,6 +51,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
         //initial assignments
         simulationStartTime = System.currentTimeMillis()
+        bestGrammar = grammarController.grammar.copy()
         reportsController.startInference(InitData(inputSet, testSet, maxIterations, settings))
         //iteration loop
         do {
