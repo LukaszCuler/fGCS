@@ -209,6 +209,8 @@ class GrammarController(val settings : Settings) {
                 .flatMap { listOf(it.left, it.getRightFirst(), it.getRightSecond()) }
                 .toSet())
 
+        unusedSymbols.remove(grammar.starSymbol)
+
         //it's time to say goodbye
         unusedSymbols.forEach { removeNSymbol(it, REASON_UNUSED_SYMBOL) }
     }

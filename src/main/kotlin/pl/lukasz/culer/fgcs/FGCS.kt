@@ -105,7 +105,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
 
             //iteration can be also interrupted by timeout
         } while((maxIterations!=null && iterationNum<maxIterations)
-            || !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
+            && !settings.grammarPerfectionMeasure.isGrammarPerfect(currentMeasure))       //are we perfect yet? ༼ つ ◕_◕ ༽つ
 
         finalizeInference()
     }
