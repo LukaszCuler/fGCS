@@ -23,6 +23,7 @@ const val REPORTS_CONTROLLER_START_INFERENCE = "Start of inference data saved!"
 
 const val FGCS_INIT = "Initiating fGCS..."
 const val FGCS_LEARNING_SET_INIT = "Learning set preparation..."
+const val FGCS_COVERING_EXAMPLE = "Covering example [%s].."
 const val FGCS_ITERATION_START = "Iteration %d: started..."
 const val FGCS_COVERING_STAGE = "Iteration %d: Covering stage..."
 const val FGCS_COVERING_PARAMS_REFRESH = "Iteration %d: Postcovering parameters refresh..."

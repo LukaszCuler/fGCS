@@ -188,6 +188,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
     }
 
     private fun parseAndCoverExample(example: TestExample){
+        Logger.d(TAG, FGCS_COVERING_EXAMPLE.format(example.sequence))
         val exampleTable = CYKTable(example)    //we are creating cyk table for example
         cykController.fillCYKTable(exampleTable)
         if(cykController.isExampleParsed(exampleTable)) return //nothing to do here @TODO small chance for creation of additional ones

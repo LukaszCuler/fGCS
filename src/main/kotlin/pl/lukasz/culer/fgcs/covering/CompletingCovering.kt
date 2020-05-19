@@ -153,20 +153,20 @@ class CompletingCovering(table: CYKTable,
     }
 
     private fun selectTreeAndRulesToAdd(processedNode: MultiParseTreeNode) : MultiParseTreeNode.SubTreePair? {
-        if(processedNode.isLeaf) return null;
+        if(processedNode.isLeaf) return null
         //the smaller possible new rules, the bigger chance to be randomly selected
 
         //construction of probability tab
-        val sum = processedNode.subtrees.sumBy { ((tagsSubtree[it]?.first ?: 0) + (tagsSubtree[it]?.second ?: 0))/2 }
+        val sum = processedNode.subtrees.sumByDouble { ((tagsSubtree[it]?.first ?: 0) + (tagsSubtree[it]?.second ?: 0))/2.0 }
         val probabilityTab = mutableListOf<Pair<Double, MultiParseTreeNode.SubTreePair>>()
         var currentSum = 0.0
         for(sub in processedNode.subtrees){
-            currentSum += sum - ((tagsSubtree[sub]?.first ?: 0) + (tagsSubtree[sub]?.second ?: 0))/2
+            currentSum += ((tagsSubtree[sub]?.first ?: 0) + (tagsSubtree[sub]?.second ?: 0))/2
             probabilityTab.add(currentSum to sub)
         }
 
         //selecting subtree based on probability tab
-        val drawnNumber = Random.nextDouble(probabilityTab.last().first)
+        val drawnNumber = Random.nextDouble(sum)
         var selectedTree : MultiParseTreeNode.SubTreePair? = null
 
         for(i in probabilityTab.indices){
@@ -265,7 +265,7 @@ class CompletingCovering(table: CYKTable,
         tempRules.forEach {
             it.left = replacements[it.left] ?: it.left
             it.updateRightFirst(replacements[it.getRightFirst()] ?: it.getRightFirst())
-            it.updateRightFirst(replacements[it.getRightSecond()] ?: it.getRightSecond())
+            it.updateRightSecond(replacements[it.getRightSecond()] ?: it.getRightSecond())
         }
     }
 
