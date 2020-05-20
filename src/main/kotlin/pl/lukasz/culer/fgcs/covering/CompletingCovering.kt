@@ -185,6 +185,9 @@ class CompletingCovering(table: CYKTable,
         selectedTree.subTreePair.first.node = replaceSymbolIfNeeded(selectedTree.subTreePair.first.node)
         selectedTree.subTreePair.second.node = replaceSymbolIfNeeded(selectedTree.subTreePair.second.node)
 
+        //we also need to replace symbols in rules...
+        updateRulesWithReplacements()
+
         //adding rule associated with subtree
         val ruleForSubtree = getRuleForNodeAndSubtree(processedNode, selectedTree).single()
         if(tempRules.contains(ruleForSubtree)) {
@@ -270,6 +273,14 @@ class CompletingCovering(table: CYKTable,
             it.updateRightFirst(replacements[it.getRightFirst()] ?: it.getRightFirst())
             it.updateRightSecond(replacements[it.getRightSecond()] ?: it.getRightSecond())
         }
+
+        //remove duplicates
+        val middleSet = tempRules.toSet()
+        tempRules.clear()
+        tempRules.addAll(middleSet)
+
+        //remove ones that occur in the grammar
+        tempRules.removeAll(tempRules.filter { grammarController.containsNRule(it) })
     }
 
     private fun replaceSymbolIfNeeded(symbol : NSymbol) : NSymbol{
@@ -278,9 +289,6 @@ class CompletingCovering(table: CYKTable,
             if(repl==null){
                 repl = grammarController.getNewOrExistingNSymbolRandomly(source = ADDING_SOURCE)
                 replacements[symbol] = repl
-
-                //we also need to replace symbols in rules...
-                updateRulesWithReplacements()
             }
             return repl
         }
