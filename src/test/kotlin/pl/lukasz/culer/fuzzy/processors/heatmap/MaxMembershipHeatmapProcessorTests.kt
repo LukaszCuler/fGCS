@@ -48,11 +48,10 @@ class MaxMembershipHeatmapProcessorTests {
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.1)))
         gc = GrammarController(settings, grammar)
 
-        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)))
-        saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)))
-        ssPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)))
-
-        parseTree = MultiParseTreeNode(grammar.starSymbol, mutableListOf(aaPair, saPair, ssPair))
+        parseTree = MultiParseTreeNode(grammar.starSymbol)
+        aaPair = parseTree.addSubTree(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)))
+        saPair = parseTree.addSubTree(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)))
+        ssPair = parseTree.addSubTree(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)))
 
         symbolValues = listOf(
             SymbolDerivativeData(SymbolDerivativeMembership(0.8), SymbolDerivativeRelevance(0.2)),

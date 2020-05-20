@@ -42,5 +42,9 @@ class TestExample(var sequence : String = "",
         return sequence.hashCode()
     }
 
+    override fun toString(): String {
+        return "$sequence $explicitMembership"
+    }
+
 
 }

@@ -60,6 +60,8 @@ class CompletingCovering(table: CYKTable,
         //updating parsing tree
         cykController.fillCYKTable(table)
         parseTree = parseTreeController.getMultiParseTreeFromCYK(table)
+        tags.clear()
+        tagsSubtree.clear()
         parseTreeController.processNodesToRoot(parseTree, this::tagWithPossibleNewRules) //tagging nodes with possible rules to create in descendants
 
         //selecting and adding new rules!

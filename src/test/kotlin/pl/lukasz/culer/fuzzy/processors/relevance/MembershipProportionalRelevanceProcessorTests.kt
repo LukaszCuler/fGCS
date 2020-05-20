@@ -23,9 +23,10 @@ class MembershipProportionalRelevanceProcessorTests {
     @Test
     fun assignTest(){
         //data preparation
-        val treeA = MultiParseTreeNode.SubTreePair(classificationMembership = F(0.5))
-        val treeB = MultiParseTreeNode.SubTreePair(classificationMembership = F(0.25))
-        val treeC = MultiParseTreeNode.SubTreePair(classificationMembership = F(0.0))
+        val emptyParseTree = MultiParseTreeNode()
+        val treeA = emptyParseTree.addSubTree(classificationMembership = F(0.5))
+        val treeB = emptyParseTree.addSubTree(classificationMembership = F(0.25))
+        val treeC = emptyParseTree.addSubTree(classificationMembership = F(0.0))
 
         val children: MutableList<MultiParseTreeNode.SubTreePair> = mutableListOf(treeA, treeB, treeC)
 

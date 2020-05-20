@@ -47,11 +47,10 @@ class EqualTreesHeatmapProcessorTests {
         grammar.nRules.add(NRule(grammar.starSymbol, NRuleRHS(grammar.starSymbol, grammar.starSymbol), F(0.6)))
         gc = GrammarController(settings, grammar)
 
-        aaPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
-        saPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))
-        ssPair = MultiParseTreeNode.SubTreePair(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)), relevance = F(0.5))
-
-        parseTree = MultiParseTreeNode(grammar.starSymbol, mutableListOf(aaPair, saPair, ssPair))
+        parseTree = MultiParseTreeNode(grammar.starSymbol)
+        aaPair = parseTree.addSubTree(Pair(MultiParseTreeNode(aSymbol), MultiParseTreeNode(aSymbol)), relevance = F(1.0))
+        saPair = parseTree.addSubTree(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(aSymbol)), relevance = F(0.5))
+        ssPair = parseTree.addSubTree(Pair(MultiParseTreeNode(grammar.starSymbol), MultiParseTreeNode(grammar.starSymbol)), relevance = F(0.5))
 
         symbolValues = listOf(
             SymbolDerivativeData(SymbolDerivativeMembership(1.0), SymbolDerivativeRelevance(1.0)),
