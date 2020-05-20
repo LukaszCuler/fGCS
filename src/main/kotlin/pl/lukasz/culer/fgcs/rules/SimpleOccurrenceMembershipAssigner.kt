@@ -4,6 +4,7 @@ import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.fgcs.rules.base.MembershipAssigner
 import pl.lukasz.culer.fuzzy.F
+import pl.lukasz.culer.utils.Consts
 import pl.lukasz.culer.utils.RxUtils
 import java.util.concurrent.atomic.DoubleAdder
 
@@ -38,17 +39,17 @@ class SimpleOccurrenceMembershipAssigner : MembershipAssigner() {
         }
     }
 
-    override fun analyzeExample(example: FGCS.ExampleAnalysisResult) {
+    override fun analyzeExample(exampleContainer: FGCS.ExampleAnalysisResult) {
         val occurredRules = mutableSetOf<NRule>()
-        parseTreeController?.processRootToNodesAll(example.multiParseTreeNode) {node ->
+        parseTreeController?.processRootToNodesAll(exampleContainer.multiParseTreeNode) { node ->
             node.subtrees.forEach { variant ->
                 grammarController?.nRulesWith(node.node, variant.subTreePair.first.node, variant.subTreePair.second.node)
                     ?.single()
                     ?.let { occurredRules.add(it) }
             }
         }
-        val posAdd = example.fuzzyClassification.midpoint
-        val negAdd = 1.0 - posAdd
+        val posAdd = exampleContainer.example.explicitMembership.midpoint
+        val negAdd = Consts.FULL_MEMBERSHIP.midpoint - posAdd
         occurredRules.forEach {
             it.getPositiveAccs().add(posAdd)
             it.getNegativeAccs().add(negAdd)

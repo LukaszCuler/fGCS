@@ -3,11 +3,7 @@ package pl.lukasz.culer.fgcs.rules.base
 import pl.lukasz.culer.fgcs.FGCS
 import pl.lukasz.culer.fgcs.controllers.GrammarController
 import pl.lukasz.culer.fgcs.controllers.ParseTreeController
-import pl.lukasz.culer.fgcs.models.Grammar
-import pl.lukasz.culer.fgcs.models.rules.NRule
 import pl.lukasz.culer.utils.RxUtils
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
 //@TODO UT
 abstract class MembershipAssigner {
@@ -26,9 +22,9 @@ abstract class MembershipAssigner {
         finalize()
     }
 
-    private fun markAndAnalyzeExample(example : FGCS.ExampleAnalysisResult){
+    private fun markAndAnalyzeExample(exampleContainer : FGCS.ExampleAnalysisResult){
         //which rules were utilized
-        parseTreeController?.processRootToNodesAll(example.multiParseTreeNode) {node ->
+        parseTreeController?.processRootToNodesAll(exampleContainer.multiParseTreeNode) { node ->
             node.subtrees.forEach { variant ->
                 grammarController?.nRulesWith(node.node, variant.subTreePair.first.node, variant.subTreePair.second.node)
                     ?.single()
@@ -38,7 +34,7 @@ abstract class MembershipAssigner {
         }
 
         //general stuff implemented, more specific one needed
-        analyzeExample(example)
+        analyzeExample(exampleContainer)
     }
 
     private fun initializeAssigner(){

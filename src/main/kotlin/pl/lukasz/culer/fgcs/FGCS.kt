@@ -78,6 +78,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
             ruleRefreshNeeded = ruleRefreshNeeded || postProcessGrammar()
             if(ruleRefreshNeeded) {
                 Logger.i(TAG, FGCS_WITHERING_POSTPROCESS_REFRESH.format(iterationNum))
+                parsedExamples = RxUtils.computeParallelly(inputSet, ::testExample)
                 refreshAttributes(parsedExamples)
             }
 
