@@ -35,6 +35,7 @@ class CompletingCovering(table: CYKTable,
     companion object {
         const val TAG = "Completing Covering"
         const val ADDING_SOURCE = "Completing Covering"
+        const val BASE_VALUE = 1.0
     }
     //endregion
     //region overrides
@@ -161,12 +162,12 @@ class CompletingCovering(table: CYKTable,
         val probabilityTab = mutableListOf<Pair<Double, MultiParseTreeNode.SubTreePair>>()
         var currentSum = 0.0
         for(sub in processedNode.subtrees){
-            currentSum += ((tagsSubtree[sub]?.first ?: 0) + (tagsSubtree[sub]?.second ?: 0))/2
+            currentSum += sum - ((tagsSubtree[sub]?.first ?: 0) + (tagsSubtree[sub]?.second ?: 0))/2.0 + BASE_VALUE
             probabilityTab.add(currentSum to sub)
         }
 
         //selecting subtree based on probability tab
-        val drawnNumber = Random.nextDouble(sum)
+        val drawnNumber = Random.nextDouble(probabilityTab.last().first)
         var selectedTree : MultiParseTreeNode.SubTreePair? = null
 
         for(i in probabilityTab.indices){
