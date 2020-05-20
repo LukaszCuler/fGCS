@@ -75,6 +75,9 @@ class Settings {
     @SerializedName("threshold")
     var crispClassificationThreshold : Double? = DEFAULT_THRESHOLD      //if null it will be determined dynamically [recommended]
 
+    @SerializedName("coveringThreshold")
+    var coveringThreshold : Double? = DEFAULT_THRESHOLD      //by default the same as classification
+
     @SerializedName("newSymbolSelectionMethod")
     var newSymbolSelectionMethod : GrammarController.NewSymbolSelectionMethod = GrammarController.NewSymbolSelectionMethod.INCREMENTAL
 

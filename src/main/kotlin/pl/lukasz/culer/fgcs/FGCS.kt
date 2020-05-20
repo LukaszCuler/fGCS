@@ -188,6 +188,7 @@ class FGCS(val inputSet : List<TestExample>? = null,
     }
 
     private fun parseAndCoverExample(example: TestExample){
+        if(example.explicitMembership.midpoint <= settings.coveringThreshold ?: 0.0) return //if below threshold, then we are ignoring
         Logger.d(TAG, FGCS_COVERING_EXAMPLE.format(example.sequence))
         val exampleTable = CYKTable(example)    //we are creating cyk table for example
         cykController.fillCYKTable(exampleTable)
