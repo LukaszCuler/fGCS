@@ -63,7 +63,7 @@ class SimpleOccurrenceMembershipAssigner : MembershipAssigner() {
         RxUtils.computeParallelly(nRules) {
             val positive = it.getPositiveAccs().sum()
             val sum = positive + it.getNegativeAccs().sum()
-            it.membership = F(positive/sum)
+            it.membership = if(sum==0.0) Consts.DO_NOT_BELONG_AT_ALL else F(positive/sum)
         }
     }
     //endregion

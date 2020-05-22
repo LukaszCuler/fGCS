@@ -20,6 +20,9 @@ class BottomWitheringSelector : WitheringSelector(){
     //endregion
     //region override section
     override fun applyWithering(grammarController: GrammarController): Boolean {
+       val addedRulesNum = grammarController.reportsController?.getAddedRules()?.size ?: 0
+        if(addedRulesNum!=0) return false //if something is workin dynamically, ignore withering
+
         val consideredRules = getRulesToSelectFrom(grammarController)
         if(consideredRules.isEmpty()) return false //no rules will be removed
 

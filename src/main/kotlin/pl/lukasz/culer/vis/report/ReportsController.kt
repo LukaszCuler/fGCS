@@ -30,7 +30,7 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
         const val reportNamePrefix = "Report-"
     }
 
-    private lateinit var currentIteration : Iteration
+    lateinit var currentIteration : Iteration
     private lateinit var consumerSub : Disposable
     private var iterationConsumer : ReplaySubject<Iteration> = ReplaySubject.create()
 
@@ -103,6 +103,8 @@ class ReportsController(private val reportsSaver: ReportsSaver) {
     fun removedSymbol(removedSymbol : NSymbol, source : String){
         currentIteration.removedSymbols.add(removedSymbol to source)
     }
+
+    fun getAddedRules() = currentIteration.addedRules
 
     fun finishVerification(testExamples : List<FGCS.ExampleAnalysisResult>){
         reportsSaver.saveTestResults(testExamples)
